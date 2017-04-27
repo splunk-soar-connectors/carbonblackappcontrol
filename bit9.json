@@ -1,0 +1,531 @@
+{
+  "appid"    : "9b814caf-a3a2-4e28-8418-04b445d658ad",
+  "name"   : "Carbon Black Protection (Bit9)",
+  "description": "This app supports executing various endpoint-based investigative and containment actions like <b>hunt file</b>, <b>block hash</b> and <b>unblock hash</b> on Carbon Black Enterprise Protection product formally known as Bit9.",
+  "publisher": "Phantom",
+  "type": "endpoint",
+  "main_module": "bit9_connector.pyc",
+    "app_version": "1.0.25",
+    "utctime_updated": "2016-10-05T00:33:45.000000Z",
+  "package_name": "phantom_cbprotect",
+  "product_vendor": "Carbon Black",
+  "product_name": "Carbon Black Protection",
+  "product_version_regex": ".*",
+  "min_phantom_version": "1.2.236",
+  "logo": "carbonblack.png",
+  "license": "Copyright (c) Phantom Cyber Corporation 2016",
+  "configuration": {
+    "base_url": {
+      "data_type": "string",
+      "order": 0,
+      "description": "Device URL, e.g. https://mycb.enterprise.com",
+      "required": true
+    },
+    "api_token": {
+      "data_type": "string",
+      "order": 1,
+      "description": "API Token",
+      "required": true
+    },
+    "verify_server_cert": {
+      "data_type": "boolean",
+      "description": "Verify server certificate",
+      "required": true,
+      "order": 2,
+      "default": false
+    }
+  },
+  "actions": [
+      {
+        "action": "test connectivity",
+        "description": "Validate the API Token by attempting to connect to the Device URL. This action runs a quick query on the device to check the connection and token.",
+        "type": "test",
+        "identifier": "test_connectivity",
+        "read_only": true,
+        "parameters": {},
+        "output": [],
+        "versions":"EQ(*)"
+      },
+      {
+        "action": "hunt file",
+        "description": "Searches for a particular file across all the endpoints",
+        "type": "investigate",
+        "identifier": "hunt_file",
+        "read_only": true,
+        "parameters": {
+          "hash": {
+            "data_type": "string",
+            "description": "hash value of the file",
+            "required": true,
+            "contains": ["hash", "sha256", "sha1", "md5"],
+            "order": 0,
+            "primary": true
+          }
+        },
+        "render": {
+          "type": "table",
+          "width": 10,
+          "height": 5,
+          "title": "Hunt File"
+        },
+        "output": [
+          {
+            "data_path": "action_result.id",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.id",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.md5",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.sha1",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.computerId",
+            "data_type": "string",
+            "column_name": "Computer ID",
+            "column_order": 1
+          },
+          {
+            "data_path": "action_result.data.*.trust",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.sha256",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.threat",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.company",
+            "data_type": "string",
+            "column_name": "Company",
+            "column_order": 3
+          },
+          {
+            "data_path": "action_result.data.*.category",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.fileName",
+            "data_type": "string",
+            "column_name": "File Name",
+            "column_order": 2
+          },
+          {
+            "data_path": "action_result.data.*.fileSize",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.fileType",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.pathName",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.fileFlags",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.fileState",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.publisher",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.prevalence",
+            "data_type": "numeric",
+            "column_name": "Prevalence",
+            "column_order": 0
+          },
+          {
+            "data_path": "action_result.data.*.dateCreated",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.productName",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.publisherId",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.certificateId",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.fileExtension",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.trustMessages",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.effectiveState",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.productVersion",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.publisherState",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.sha256HashType",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.certificateState",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.reputationEnabled",
+            "data_type": "boolean"
+          },
+          {
+            "data_path": "action_result.data.*.publisherOrCompany",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.reputationAvailable",
+            "data_type": "boolean"
+          },
+          {
+            "data_path": "action_result.data.*.approvedByReputation",
+            "data_type": "boolean"
+          },
+          {
+            "data_path": "action_result.data.*.installedProgramName",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.status",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.message",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.summary.prevalence",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.parameter.hash",
+            "data_type": "string",
+            "contains": ["hash", "sha256", "sha1", "md5"]
+          },
+          {
+            "data_path": "summary.total_objects",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "summary.total_objects_successful",
+            "data_type": "numeric"
+          }
+        ],
+        "versions":"EQ(*)"
+      },
+      {
+        "action": "unblock hash",
+        "description": "Unblocks a particular hash",
+        "verbose": "Sets the global state of the hash to either <b>approved</b> or <b>unapproved</b> by updating the file rule. If the action does not find a rule for the hash, it will return an error. If the hash rule found by the action does not contain a description containing a matching Phantom Identification ID, it will return an error status without changing the state of the rule. This is to make sure the app only modifies rules that have been created or updated by itself.",
+        "type": "correct",
+        "undo": "block hash",
+        "identifier": "whitelist",
+        "read_only": false,
+        "parameters": {
+          "hash": {
+            "data_type": "string",
+            "description": "File Hash to unblock",
+            "order": 0,
+            "required": true,
+            "contains": ["hash", "sha256", "sha1", "md5"],
+            "primary": true
+          },
+          "file_state": {
+            "data_type": "string",
+            "description": "File state to set",
+            "order": 1,
+            "required": false,
+            "value_list": ["unapproved", "approved"],
+            "default": "unapproved"
+          }
+        },
+        "render": {
+          "type": "custom",
+          "view": "bit9_view.hash_view",
+          "title": "UnBan File"
+        },
+        "output": [
+        {
+          "data_path": "action_result.parameter.hash",
+          "data_type": "string",
+          "contains": ["hash", "sha256", "sha1", "md5"]          
+        },
+        {
+          "data_path": "action_result.message",
+          "data_type": "string"
+        },
+          {
+            "data_path": "action_result.parameter.file_state",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.name",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.id",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.hash",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.sourceId",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.clVersion",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.createdBy",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.fileState",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.policyIds",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.modifiedBy",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.reportOnly",
+            "data_type": "boolean"
+          },
+          {
+            "data_path": "action_result.data.*.sourceType",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.dateCreated",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.description",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.dateModified",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.fileCatalogId",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.forceInstaller",
+            "data_type": "boolean"
+          },
+          {
+            "data_path": "action_result.data.*.createdByUserId",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.modifiedByUserId",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.forceNotInstaller",
+            "data_type": "boolean"
+          },
+          {
+            "data_path": "action_result.data.*.reputationApprovalsEnabled",
+            "data_type": "boolean"
+          },
+          {
+            "data_path": "action_result.status",
+            "data_type": "string"
+          },
+          {
+            "data_path": "summary.total_objects",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "summary.total_objects_successful",
+            "data_type": "numeric"
+          }
+        ],
+        "versions":"EQ(*)"
+      },
+      {
+        "action": "block hash",
+        "description": "Ban the file hash",
+        "verbose": "Sets the global state of the file hash to <b>ban</b> by adding or updating a <i>file rule</i>. If a file is found in the catalog, the action will use the catalog id in the rule. The action also appends the Phantom Installation ID to the description of the rule. This is the action's way of tagging rules that are created by the app. If the action finds the current state of the file as <i>banned</i> it does not attempt to set the state, this also results in the description of the rule remaining unchanged.",
+        "type": "contain",
+        "identifier": "blacklist",
+        "read_only": false,
+        "undo": "unblock hash",
+        "parameters": {
+          "hash": {
+            "data_type": "string",
+            "description": "File Hash to block/ban",
+            "order": 0,
+            "required": true,
+            "contains": ["hash", "sha256", "sha1", "md5"],
+            "primary": true
+          },
+          "comment": {
+            "data_type": "string",
+            "description": "Description to add to the block rule",
+            "order": 1,
+            "required": false
+          }
+        },
+        "render": {
+          "type": "custom",
+          "view": "bit9_view.hash_view",
+          "title": "Banned Hash"
+        },
+        "output": [
+        {
+          "data_path": "action_result.parameter.hash",
+          "data_type": "string",
+          "contains": ["hash", "sha256", "sha1", "md5"]
+        },
+        {
+          "data_path": "action_result.message",
+          "data_type": "string"
+        },
+          {
+            "data_path": "action_result.data.*.policyFlags",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.policyIds",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.name",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.id",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.hash",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.sourceId",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.clVersion",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.createdBy",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.fileState",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.policyIds",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.modifiedBy",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.reportOnly",
+            "data_type": "boolean"
+          },
+          {
+            "data_path": "action_result.data.*.sourceType",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.dateCreated",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.description",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.dateModified",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.fileCatalogId",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.forceInstaller",
+            "data_type": "boolean"
+          },
+          {
+            "data_path": "action_result.data.*.createdByUserId",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.modifiedByUserId",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.forceNotInstaller",
+            "data_type": "boolean"
+          },
+          {
+            "data_path": "action_result.data.*.reputationApprovalsEnabled",
+            "data_type": "boolean"
+          },
+          {
+            "data_path": "action_result.status",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.parameter.comment",
+            "data_type": "string"
+          },
+          {
+            "data_path": "summary.total_objects",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "summary.total_objects_successful",
+            "data_type": "numeric"
+          }
+        ],
+        "versions":"EQ(*)"
+      }
+  ]
+}
