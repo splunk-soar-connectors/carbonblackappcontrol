@@ -1,7 +1,7 @@
 # --
 # File: bit9_connector.py
 #
-# Copyright (c) Phantom Cyber Corporation, 2017
+# Copyright (c) Phantom Cyber Corporation, 2016-2017
 #
 # This unpublished material is proprietary to Phantom Cyber.
 # All rights reserved. The methods and
@@ -410,8 +410,6 @@ class Bit9Connector(BaseConnector):
 
         ret_val, resp_json = self._make_rest_call(endpoint, action_result, params=params)
 
-        action_result.update_summary({'total_endpoints': 0})
-
         if (phantom.is_fail(ret_val)):
             return action_result.get_status()
 
@@ -420,6 +418,8 @@ class Bit9Connector(BaseConnector):
 
         for curr_endpiont in resp_json:
             action_result.add_data(curr_endpiont)
+
+        action_result.update_summary({'total_endpoints': len(resp_json)})
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
@@ -431,7 +431,8 @@ class Bit9Connector(BaseConnector):
         file_id = param['file_id']
 
         endpoint = '/fileUpload'
-        data = {'computerId': comp_id, 'fileCatalogId': file_id, 'priority': '2'}
+        data = {'computerId': comp_id, 'fileCatalogId': file_id,
+                'priority': param.get('priority', '0')}
 
         ret_val, resp_json = self._make_rest_call(endpoint, action_result, data=data, method="post")
 
@@ -461,7 +462,9 @@ class Bit9Connector(BaseConnector):
         connector_id = param['connector_id']
 
         endpoint = '/fileAnalysis'
-        data = {'computerId': comp_id, 'fileCatalogId': file_id, 'connectorId': connector_id, 'priority': '2', 'analysisTarget': target}
+        data = {'computerId': comp_id, 'fileCatalogId': file_id, 'connectorId': connector_id,
+                'priority': param.get('priority', '0'),
+                'analysisTarget': target}
 
         ret_val, resp_json = self._make_rest_call(endpoint, action_result, data=data, method="post")
 

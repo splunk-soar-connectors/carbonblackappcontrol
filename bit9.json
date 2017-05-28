@@ -13,7 +13,7 @@
   "product_version_regex": ".*",
   "min_phantom_version": "1.2.236",
   "logo": "carbonblack.png",
-  "license": "Copyright (c) Phantom Cyber Corporation 2017",
+  "license": "Copyright (c) Phantom Cyber Corporation 2016-2017",
   "configuration": {
     "base_url": {
       "data_type": "string",
@@ -266,6 +266,15 @@
             "contains": ["carbon black computer id"],
             "order": 1,
             "primary": false
+          },
+          "priority": {
+            "data_type": "numeric",
+            "description": "Priority",
+            "required": false,
+            "order": 2,
+            "primary": false,
+            "default": "0",
+            "value_list": ["-2", "-1", "0", "1", "2"]
           }
         },
         "render": {
@@ -349,6 +358,10 @@
             "column_order": 1
           },
           {
+            "data_path": "action_result.parameter.priority",
+            "data_type": "numeric"
+          },
+          {
             "data_path": "summary.total_objects",
             "data_type": "numeric"
           },
@@ -397,9 +410,18 @@
             "description": "Analysis Target",
             "required": true,
             "contains": ["carbon black analysis target"],
-            "order": 2,
+            "order": 3,
             "primary": false,
             "default": "win7x64-sp1"
+          },
+          "priority": {
+            "data_type": "numeric",
+            "description": "Priority",
+            "required": false,
+            "order": 4,
+            "primary": false,
+            "default": "0",
+            "value_list": ["-2", "-1", "0", "1", "2"]
           }
         },
         "render": {
@@ -421,8 +443,12 @@
           },
           {
             "data_path": "action_result.parameter.target_type",
-            "data_type": "numeric",
+            "data_type": "string",
             "contains": ["carbon black analysis target"]
+          },
+          {
+            "data_path": "action_result.parameter.priority",
+            "data_type": "numeric"
           },
           {
             "data_path": "action_result.parameter.connector_id",
