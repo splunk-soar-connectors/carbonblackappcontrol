@@ -24,8 +24,6 @@ from bit9_consts import *
 import json
 import requests
 
-requests.packages.urllib3.disable_warnings()
-
 
 class Bit9Connector(BaseConnector):
 
