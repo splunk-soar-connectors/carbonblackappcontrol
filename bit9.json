@@ -1,7 +1,7 @@
 {
   "appid"    : "9b814caf-a3a2-4e28-8418-04b445d658ad",
   "name"   : "Carbon Black Protection (Bit9)",
-  "description": "This app supports executing various endpoint-based investigative and containment actions like <b>hunt file</b>, <b>block hash</b> and <b>unblock hash</b> on Carbon Black Enterprise Protection product formally known as Bit9.",
+  "description": "This app supports various <b>investigative</b> and <b>containment</b> actions on <b>Carbon Black Enterprise Protection</b> (formerly Bit9)",
   "publisher": "Phantom",
   "type": "endpoint",
   "main_module": "bit9_connector.pyc",
@@ -13,7 +13,7 @@
   "product_version_regex": ".*",
   "min_phantom_version": "3.0.190",
   "logo": "carbonblack.png",
-  "license": "Copyright (c) Phantom Cyber Corporation 2016",
+  "license": "Copyright (c) Phantom Cyber Corporation 2016-2017",
   "configuration": {
     "base_url": {
       "data_type": "string",
