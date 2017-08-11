@@ -5,7 +5,7 @@
   "publisher": "Phantom",
   "type": "endpoint",
   "main_module": "bit9_connector.pyc",
-    "app_version": "1.0.28",
+    "app_version": "1.0.31",
     "utctime_updated": "2016-10-05T00:33:45.000000Z",
   "package_name": "phantom_cbprotect",
   "product_vendor": "Carbon Black",
