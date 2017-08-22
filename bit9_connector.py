@@ -32,6 +32,19 @@ class Bit9Connector(BaseConnector):
     ACTION_ID_HUNT_FILE = "hunt_file"
     ACTION_ID_WHITELIST = "whitelist"
     ACTION_ID_BLACKLIST = "blacklist"
+    ACTION_ID_GET_SYSTEM_INFO = "get_system_info"
+    ACTION_ID_UPLOAD_FILE = "upload_file"
+    ACTION_ID_ANALYZE_FILE = "analyze_file"
+
+    # This could be a list, but easier to read as a dictionary
+    UPLOAD_STATUS_DESCS = {
+            "0": "Queued",
+            "1": "Initiated",
+            "2": "Uploading",
+            "3": "Completed",
+            "4": "Error",
+            "5": "Cancelled",
+            "6": "Deleted"}
 
     def __init__(self):
 
@@ -105,9 +118,18 @@ class Bit9Connector(BaseConnector):
             return (phantom.APP_SUCCESS, resp_json)
 
         # Failure
-        action_result.add_data(resp_json)
 
-        details = json.dumps(resp_json).replace('{', '').replace('}', '')
+        # init the string
+        details = ""
+
+        if (resp_json):
+            action_result.add_data(resp_json)
+            details = json.dumps(resp_json).replace('{', '').replace('}', '')
+
+        if (r.status_code == 401):
+            if (details):
+                details += ". "
+            details += "Please verify the user has been configured with the required permissions as mentioned in the action documentation."
 
         return (action_result.set_status(phantom.APP_ERROR, BIT9_ERR_FROM_SERVER.format(status=r.status_code, detail=details)), resp_json)
 
@@ -364,7 +386,104 @@ class Bit9Connector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
+    def _get_system_info(self, param):
+
+        action_result = self.add_action_result(ActionResult(param))
+
+        ip_hostname = param.get('ip_hostname')
+        comp_id = param.get('id')
+
+        if ((not comp_id) and (not ip_hostname)):
+            return action_result.set_status(phantom.APP_ERROR, "Neither {0} nor {1} specified. Please specify at-least one of them".format('ip_hostname', 'id'))
+
+        endpoint = '/computer'
+        params = None
+
+        if (comp_id):
+            endpoint += '/{0}'.format(comp_id)
+        elif (phantom.is_ip(ip_hostname)):
+            params = { 'q': 'ipAddress:*{0}*'.format(ip_hostname) }
+        else:
+            params = { 'q': 'name:*{0}*'.format(ip_hostname) }
+
+        ret_val, resp_json = self._make_rest_call(endpoint, action_result, params=params)
+
+        if (phantom.is_fail(ret_val)):
+            return action_result.get_status()
+
+        if (type(resp_json) != list):
+            resp_json = [resp_json]
+
+        for curr_endpiont in resp_json:
+            action_result.add_data(curr_endpiont)
+
+        action_result.update_summary({'total_endpoints': len(resp_json)})
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _upload_file(self, param):
+
+        action_result = self.add_action_result(ActionResult(param))
+
+        comp_id = param['computer_id']
+        file_id = param['file_id']
+
+        endpoint = '/fileUpload'
+        data = {'computerId': comp_id, 'fileCatalogId': file_id,
+                'priority': param.get('priority', '0')}
+
+        ret_val, resp_json = self._make_rest_call(endpoint, action_result, data=data, method="post")
+
+        if (phantom.is_fail(ret_val)):
+            return action_result.get_status()
+
+        action_result.add_data(resp_json)
+
+        upload_status = resp_json.get('uploadStatus')
+
+        if (upload_status is not None):
+            summary = action_result.update_summary({'upload_status': upload_status})
+            try:
+                summary['upload_status_desc'] = self.UPLOAD_STATUS_DESCS[str(upload_status)]
+            except:
+                pass
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _analyze_file(self, param):
+
+        action_result = self.add_action_result(ActionResult(param))
+
+        comp_id = param['computer_id']
+        file_id = param['file_id']
+        target = param['target_type']
+        connector_id = param['connector_id']
+
+        endpoint = '/fileAnalysis'
+        data = {'computerId': comp_id, 'fileCatalogId': file_id, 'connectorId': connector_id,
+                'priority': param.get('priority', '0'),
+                'analysisTarget': target}
+
+        ret_val, resp_json = self._make_rest_call(endpoint, action_result, data=data, method="post")
+
+        if (phantom.is_fail(ret_val)):
+            return action_result.get_status()
+
+        if (type(resp_json) != list):
+            resp_json = [resp_json]
+
+        for curr_item in resp_json:
+            action_result.add_data(curr_item)
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
     def handle_action(self, param):
+
+        """
+        self.save_progress("Blocking on a breakpoint")
+        import web_pdb
+        web_pdb.set_trace()
+        """
 
         result = None
         action = self.get_action_identifier()
@@ -380,14 +499,25 @@ class Bit9Connector(BaseConnector):
         elif (action == self.ACTION_ID_HUNT_FILE):
              result = self._hunt_file(param)
 
+        elif (action == self.ACTION_ID_GET_SYSTEM_INFO):
+             result = self._get_system_info(param)
+
+        elif (action == self.ACTION_ID_UPLOAD_FILE):
+             result = self._upload_file(param)
+
+        elif (action == self.ACTION_ID_ANALYZE_FILE):
+             result = self._analyze_file(param)
+
         return result
+
 
 if __name__ == '__main__':
 
     import sys
     import pudb
-
     pudb.set_trace()
+
+    filename = sys._getframe().f_code.co_filename
 
     if (len(sys.argv) < 2):
         print "No test json specified as input"
