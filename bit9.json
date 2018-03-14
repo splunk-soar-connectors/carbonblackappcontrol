@@ -45,6 +45,7 @@
             "identifier": "test_connectivity",
             "read_only": true,
             "parameters": {},
+            "output": [],
             "versions": "EQ(*)"
         },
         {
