@@ -45,16 +45,6 @@
             "identifier": "test_connectivity",
             "read_only": true,
             "parameters": {},
-            "output": [
-                {
-                    "data_path": "action_result.data",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.summary",
-                    "data_type": "string"
-                }
-            ],
             "versions": "EQ(*)"
         },
         {
