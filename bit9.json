@@ -2,19 +2,23 @@
     "appid": "9b814caf-a3a2-4e28-8418-04b445d658ad",
     "name": "Carbon Black Protection (Bit9)",
     "description": "This app supports various <b>investigative</b> and <b>containment</b> actions on <b>Carbon Black Enterprise Protection</b> (formerly Bit9) ",
-    "publisher": "Phantom",
+    "publisher": "Splunk",
     "type": "endpoint",
-    "main_module": "bit9_connector.pyc",
-    "app_version": "1.0.36",
+    "main_module": "bit9_connector.py",
+    "app_version": "2.0.0",
     "utctime_updated": "2018-12-07T01:04:20.000000Z",
     "package_name": "phantom_cbprotect",
     "product_vendor": "Carbon Black",
     "product_name": "Carbon Black Protection",
     "product_version_regex": ".*",
-    "min_phantom_version": "3.0.284",
+    "min_phantom_version": "4.6.19142",
+    "latest_tested_versions": [
+        "On-prem, Version 7.2.2.1119 P2, 2/13/2020"
+    ],
+    "python_version": "3",
     "logo": "logo_carbonblack.svg",
     "logo_dark": "logo_carbonblack_dark.svg",
-    "license": "Copyright (c) Phantom Cyber Corporation, 2016-2018",
+    "license": "Copyright (c) 2016-2020 Splunk Inc.",
     "configuration": {
         "base_url": {
             "data_type": "string",

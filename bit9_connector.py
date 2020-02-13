@@ -1,16 +1,8 @@
-# --
 # File: bit9_connector.py
+# Copyright (c) 2016-2020 Splunk Inc.
 #
-# Copyright (c) Phantom Cyber Corporation, 2016-2018
-#
-# This unpublished material is proprietary to Phantom Cyber.
-# All rights reserved. The methods and
-# techniques described herein are considered trade secrets
-# and/or confidential. Reproduction or distribution, in whole
-# or in part, is forbidden except by express written permission
-# of Phantom Cyber Corporation.
-#
-# --
+# SPLUNK CONFIDENTIAL - Use or disclosure of this material in whole or in part
+# without a valid written license from Splunk Inc. is PROHIBITED.
 
 # Phantom imports
 import phantom.app as phantom
@@ -145,11 +137,11 @@ class Bit9Connector(BaseConnector):
         ret_val, resp_json = self._make_rest_call(FILE_CATALOG_ENDPOINT, action_result, params=params)
 
         if (phantom.is_fail(ret_val)):
-            self.save_progress("Connection failed....")
+            self.save_progress("Test Connectivity Failed")
             return action_result.get_status()
 
-        self.save_progress("Connection successful")
-        return action_result.set_status(phantom.APP_SUCCESS, "Connection successful")
+        self.save_progress("Test Connectivity Passed")
+        return action_result.set_status(phantom.APP_SUCCESS)
 
     def _get_hash_type(self, file_hash):
 
@@ -497,40 +489,81 @@ class Bit9Connector(BaseConnector):
             result = self._block_hash(param)
 
         elif (action == self.ACTION_ID_HUNT_FILE):
-             result = self._hunt_file(param)
+            result = self._hunt_file(param)
 
         elif (action == self.ACTION_ID_GET_SYSTEM_INFO):
-             result = self._get_system_info(param)
+            result = self._get_system_info(param)
 
         elif (action == self.ACTION_ID_UPLOAD_FILE):
-             result = self._upload_file(param)
+            result = self._upload_file(param)
 
         elif (action == self.ACTION_ID_ANALYZE_FILE):
-             result = self._analyze_file(param)
+            result = self._analyze_file(param)
 
         return result
 
 
 if __name__ == '__main__':
 
-    import sys
     import pudb
+    import argparse
+
     pudb.set_trace()
 
-    filename = sys._getframe().f_code.co_filename
+    argparser = argparse.ArgumentParser()
 
-    if (len(sys.argv) < 2):
-        print "No test json specified as input"
-        exit(0)
+    argparser.add_argument('input_test_json', help='Input Test JSON file')
+    argparser.add_argument('-u', '--username', help='username', required=False)
+    argparser.add_argument('-p', '--password', help='password', required=False)
 
-    with open(sys.argv[1]) as f:
+    args = argparser.parse_args()
+    session_id = None
+
+    username = args.username
+    password = args.password
+
+    if (username is not None and password is None):
+
+        # User specified a username but not a password, so ask
+        import getpass
+        password = getpass.getpass("Password: ")
+
+    if (username and password):
+        try:
+            print("Accessing the Login page")
+            login_url = BaseConnector._get_phantom_base_url() + 'login'
+            r = requests.get(login_url, verify=False)
+            csrftoken = r.cookies['csrftoken']
+
+            data = dict()
+            data['username'] = username
+            data['password'] = password
+            data['csrfmiddlewaretoken'] = csrftoken
+
+            headers = dict()
+            headers['Cookie'] = 'csrftoken=' + csrftoken
+            headers['Referer'] = login_url
+
+            print("Logging into Platform to get the session id")
+            r2 = requests.post(login_url, verify=False, data=data, headers=headers)
+            session_id = r2.cookies['sessionid']
+        except Exception as e:
+            print("Unable to get session id from the platfrom. Error: " + str(e))
+            exit(1)
+
+    with open(args.input_test_json) as f:
         in_json = f.read()
         in_json = json.loads(in_json)
         print(json.dumps(in_json, indent=4))
 
         connector = Bit9Connector()
         connector.print_progress_message = True
+
+        if (session_id is not None):
+            in_json['user_session_token'] = session_id
+            connector._set_csrf_info(csrftoken, headers['Referer'])
+
         ret_val = connector._handle_action(json.dumps(in_json), None)
-        print ret_val
+        print(json.dumps(json.loads(ret_val), indent=4))
 
     exit(0)
