@@ -27,7 +27,7 @@
             "required": true
         },
         "api_token": {
-            "data_type": "string",
+            "data_type": "password",
             "order": 1,
             "description": "API Token",
             "required": true
