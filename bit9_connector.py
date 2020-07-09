@@ -38,6 +38,14 @@ class Bit9Connector(BaseConnector):
             "5": "Cancelled",
             "6": "Deleted"}
 
+    ANALYSIS_STATUS_DESCS = {
+            "0": "Scheduled",
+            "1": "Submitted",
+            "2": "Processed",
+            "3": "Analyzed",
+            "4": "Error",
+            "5": "Cancelled"}
+
     def __init__(self):
 
         # Call the BaseConnectors init first
@@ -461,11 +469,20 @@ class Bit9Connector(BaseConnector):
         if (phantom.is_fail(ret_val)):
             return action_result.get_status()
 
+        analysis_status = resp_json.get('analysisStatus')
+
         if (type(resp_json) != list):
             resp_json = [resp_json]
 
         for curr_item in resp_json:
             action_result.add_data(curr_item)
+
+        if (analysis_status is not None):
+            summary = action_result.update_summary({'analysis_status': analysis_status})
+            try:
+                summary['analysis_status_desc'] = self.ANALYSIS_STATUS_DESCS[str(analysis_status)]
+            except:
+                pass
 
         return action_result.set_status(phantom.APP_SUCCESS)
 

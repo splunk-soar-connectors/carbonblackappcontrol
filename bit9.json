@@ -27,7 +27,7 @@
             "required": true
         },
         "api_token": {
-            "data_type": "password",
+            "data_type": "string",
             "order": 1,
             "description": "API Token",
             "required": true
@@ -482,13 +482,21 @@
             "output": [
                 {
                     "data_path": "action_result.status",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "example_values": [
+                        "success"
+                    ]
                 },
                 {
                     "data_path": "action_result.parameter.computer_id",
                     "data_type": "numeric",
+                    "column_name": "Computer ID",
+                    "column_order": 1,
                     "contains": [
                         "carbon black computer id"
+                    ],
+                    "example_values": [
+                        1
                     ]
                 },
                 {
@@ -496,24 +504,38 @@
                     "data_type": "numeric",
                     "contains": [
                         "carbon black connector id"
+                    ],
+                    "example_values": [
+                        1
                     ]
                 },
                 {
                     "data_path": "action_result.parameter.file_id",
                     "data_type": "numeric",
+                    "column_name": "File ID",
+                    "column_order": 0,
                     "contains": [
                         "carbon black file id"
+                    ],
+                    "example_values": [
+                        91
                     ]
                 },
                 {
                     "data_path": "action_result.parameter.priority",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "example_values": [
+                        "0"
+                    ]
                 },
                 {
                     "data_path": "action_result.parameter.target_type",
                     "data_type": "string",
                     "contains": [
                         "carbon black analysis target"
+                    ],
+                    "example_values": [
+                        "win7x64-sp1"
                     ]
                 },
                 {
@@ -526,11 +548,141 @@
                 },
                 {
                     "data_path": "summary.total_objects",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
                 },
                 {
                     "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.computerId",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.connectorId",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.analysisStatus",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.fileName",
+                    "data_type": "string",
+                    "example_values": [
+                        "4b1f58.rbf"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.priority",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.createdByUserId",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.pathName",
+                    "data_type": "string",
+                    "example_values": [
+                        "c:\\config.msi"
+                    ],
+                    "contains": [
+                        "file path"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.fileCatalogId",
+                    "data_type": "numeric",
+                    "example_values": [
+                        91
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.createdBy",
+                    "data_type": "string",
+                    "example_values": [
+                        "admin"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.analysisResult",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "numeric",
+                    "example_values": [
+                        5
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.dateCreated",
+                    "data_type": "string",
+                    "example_values": [
+                        "2020-07-09T21:14:53.937Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.dateModified",
+                    "data_type": "string",
+                    "example_values": [
+                        "2020-07-09T23:13:46.96Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.analysisTarget",
+                    "data_type": "string",
+                    "example_values": [
+                        "win7x64-sp1"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Analysis status: 0, Analysis status desc: Scheduled"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.analysis_status",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.analysis_status_desc",
+                    "data_type": "string",
+                    "column_name": "Analysis Status",
+                    "column_order": 2,
+                    "example_values": [
+                        "Scheduled"
+                    ]
                 }
             ],
             "versions": "EQ(*)"
