@@ -1,7 +1,7 @@
 {
     "appid": "9b814caf-a3a2-4e28-8418-04b445d658ad",
-    "name": "Carbon Black Protection",
-    "description": "This app supports various <b>investigative</b> and <b>containment</b> actions on <b>Carbon Black Enterprise Protection</b> (formerly Bit9) ",
+    "name": "Carbon Black Protection (Bit9)",
+    "description": "This app supports various investigative and containment actions on Carbon Black Enterprise Protection (formerly Bit9)",
     "publisher": "Splunk",
     "type": "endpoint",
     "main_module": "bit9_connector.py",
@@ -27,7 +27,7 @@
             "required": true
         },
         "api_token": {
-            "data_type": "string",
+            "data_type": "password",
             "order": 1,
             "description": "API Token",
             "required": true
@@ -43,7 +43,7 @@
     "actions": [
         {
             "action": "test connectivity",
-            "description": "Validate the API Token by attempting to connect to the Device URL. This action runs a quick query on the device to check the connection and token.",
+            "description": "Validate the API Token by attempting to connect to the Device URL. This action runs a quick query on the device to check the connection and token",
             "verbose": "This action requires the following permission: <ul><li>View files</li></ul>",
             "type": "test",
             "identifier": "test_connectivity",
