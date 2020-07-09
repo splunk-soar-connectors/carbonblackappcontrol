@@ -1,6 +1,6 @@
 {
     "appid": "9b814caf-a3a2-4e28-8418-04b445d658ad",
-    "name": "Carbon Black Protection (Bit9)",
+    "name": "Carbon Black Protection",
     "description": "This app supports various investigative and containment actions on Carbon Black Enterprise Protection (formerly Bit9)",
     "publisher": "Splunk",
     "type": "endpoint",
@@ -1017,8 +1017,8 @@
                     "order": 0,
                     "description": "Hostname/IP address to get info of",
                     "contains": [
-                        "host name",
-                        "ip"
+                        "ip",
+                        "host name"
                     ],
                     "primary": true,
                     "required": false
