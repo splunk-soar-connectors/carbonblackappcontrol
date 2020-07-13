@@ -1,20 +1,24 @@
 {
     "appid": "9b814caf-a3a2-4e28-8418-04b445d658ad",
-    "name": "Carbon Black Protection (Bit9)",
-    "description": "This app supports various <b>investigative</b> and <b>containment</b> actions on <b>Carbon Black Enterprise Protection</b> (formerly Bit9) ",
-    "publisher": "Phantom",
+    "name": "Carbon Black Protection Bit9",
+    "description": "This app supports various investigative and containment actions on Carbon Black Enterprise Protection (formerly Bit9)",
+    "publisher": "Splunk",
     "type": "endpoint",
-    "main_module": "bit9_connector.pyc",
-    "app_version": "1.0.36",
+    "main_module": "bit9_connector.py",
+    "app_version": "2.0.0",
     "utctime_updated": "2018-12-07T01:04:20.000000Z",
     "package_name": "phantom_cbprotect",
     "product_vendor": "Carbon Black",
     "product_name": "Carbon Black Protection",
     "product_version_regex": ".*",
-    "min_phantom_version": "3.0.284",
+    "min_phantom_version": "4.6.19142",
+    "latest_tested_versions": [
+        "On-prem, Version 7.2.2.1119 P2, 2/13/2020"
+    ],
+    "python_version": "3",
     "logo": "logo_carbonblack.svg",
     "logo_dark": "logo_carbonblack_dark.svg",
-    "license": "Copyright (c) Phantom Cyber Corporation, 2016-2018",
+    "license": "Copyright (c) 2016-2020 Splunk Inc.",
     "configuration": {
         "base_url": {
             "data_type": "string",
@@ -23,7 +27,7 @@
             "required": true
         },
         "api_token": {
-            "data_type": "string",
+            "data_type": "password",
             "order": 1,
             "description": "API Token",
             "required": true
@@ -39,7 +43,7 @@
     "actions": [
         {
             "action": "test connectivity",
-            "description": "Validate the API Token by attempting to connect to the Device URL. This action runs a quick query on the device to check the connection and token.",
+            "description": "Validate the API Token by attempting to connect to the Device URL. This action runs a quick query on the device to check the connection and token",
             "verbose": "This action requires the following permission: <ul><li>View files</li></ul>",
             "type": "test",
             "identifier": "test_connectivity",
@@ -478,13 +482,21 @@
             "output": [
                 {
                     "data_path": "action_result.status",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "example_values": [
+                        "success"
+                    ]
                 },
                 {
                     "data_path": "action_result.parameter.computer_id",
                     "data_type": "numeric",
+                    "column_name": "Computer ID",
+                    "column_order": 1,
                     "contains": [
                         "carbon black computer id"
+                    ],
+                    "example_values": [
+                        1
                     ]
                 },
                 {
@@ -492,24 +504,38 @@
                     "data_type": "numeric",
                     "contains": [
                         "carbon black connector id"
+                    ],
+                    "example_values": [
+                        1
                     ]
                 },
                 {
                     "data_path": "action_result.parameter.file_id",
                     "data_type": "numeric",
+                    "column_name": "File ID",
+                    "column_order": 0,
                     "contains": [
                         "carbon black file id"
+                    ],
+                    "example_values": [
+                        91
                     ]
                 },
                 {
                     "data_path": "action_result.parameter.priority",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "example_values": [
+                        "0"
+                    ]
                 },
                 {
                     "data_path": "action_result.parameter.target_type",
                     "data_type": "string",
                     "contains": [
                         "carbon black analysis target"
+                    ],
+                    "example_values": [
+                        "win7x64-sp1"
                     ]
                 },
                 {
@@ -522,11 +548,141 @@
                 },
                 {
                     "data_path": "summary.total_objects",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
                 },
                 {
                     "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.computerId",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.connectorId",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.analysisStatus",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.fileName",
+                    "data_type": "string",
+                    "example_values": [
+                        "4b1f58.rbf"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.priority",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.createdByUserId",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.pathName",
+                    "data_type": "string",
+                    "example_values": [
+                        "c:\\config.msi"
+                    ],
+                    "contains": [
+                        "file path"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.fileCatalogId",
+                    "data_type": "numeric",
+                    "example_values": [
+                        91
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.createdBy",
+                    "data_type": "string",
+                    "example_values": [
+                        "admin"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.analysisResult",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "numeric",
+                    "example_values": [
+                        5
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.dateCreated",
+                    "data_type": "string",
+                    "example_values": [
+                        "2020-07-09T21:14:53.937Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.dateModified",
+                    "data_type": "string",
+                    "example_values": [
+                        "2020-07-09T23:13:46.96Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.analysisTarget",
+                    "data_type": "string",
+                    "example_values": [
+                        "win7x64-sp1"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Analysis status: 0, Analysis status desc: Scheduled"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.analysis_status",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.analysis_status_desc",
+                    "data_type": "string",
+                    "column_name": "Analysis Status",
+                    "column_order": 2,
+                    "example_values": [
+                        "Scheduled"
+                    ]
                 }
             ],
             "versions": "EQ(*)"
@@ -861,8 +1017,8 @@
                     "order": 0,
                     "description": "Hostname/IP address to get info of",
                     "contains": [
-                        "host name",
-                        "ip"
+                        "ip",
+                        "host name"
                     ],
                     "primary": true,
                     "required": false
