@@ -5,20 +5,20 @@
     "publisher": "Splunk",
     "type": "endpoint",
     "main_module": "bit9_connector.py",
-    "app_version": "2.0.7",
+    "app_version": "2.0.8",
     "utctime_updated": "2020-11-23T08:12:21.000000Z",
     "package_name": "phantom_cbprotect",
     "product_vendor": "Carbon Black",
     "product_name": "Carbon Black Protection",
     "product_version_regex": ".*",
-    "min_phantom_version": "4.6.19142",
+    "min_phantom_version": "4.9.39220",
     "latest_tested_versions": [
-        "On-prem, Version 7.2.2.1119 P2, 2/13/2020"
+        "On-prem, Version 7.2.2.1119 P2, 8/10/2021"
     ],
     "python_version": "3",
     "logo": "logo_carbonblack.svg",
     "logo_dark": "logo_carbonblack_dark.svg",
-    "license": "Copyright (c) 2016-2020 Splunk Inc.",
+    "license": "Copyright (c) 2016-2021 Splunk Inc.",
     "configuration": {
         "base_url": {
             "data_type": "string",
@@ -35,7 +35,6 @@
         "verify_server_cert": {
             "data_type": "boolean",
             "description": "Verify server certificate",
-            "required": true,
             "order": 2,
             "default": false
         }
@@ -83,7 +82,11 @@
             "output": [
                 {
                     "data_path": "action_result.status",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
                 },
                 {
                     "data_path": "action_result.parameter.hash",
@@ -288,21 +291,19 @@
                         "carbon black computer id"
                     ],
                     "order": 1,
-                    "primary": false
+                    "primary": true
                 },
                 "priority": {
                     "data_type": "numeric",
                     "description": "Priority",
-                    "required": false,
                     "order": 2,
-                    "primary": false,
-                    "default": "0",
+                    "default": 0,
                     "value_list": [
-                        "-2",
-                        "-1",
-                        "0",
-                        "1",
-                        "2"
+                        -2,
+                        -1,
+                        0,
+                        1,
+                        2
                     ]
                 }
             },
@@ -315,11 +316,15 @@
             "output": [
                 {
                     "data_path": "action_result.status",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
                 },
                 {
                     "data_path": "action_result.parameter.computer_id",
-                    "data_type": "string",
+                    "data_type": "numeric",
                     "contains": [
                         "carbon black computer id"
                     ],
@@ -328,7 +333,7 @@
                 },
                 {
                     "data_path": "action_result.parameter.file_id",
-                    "data_type": "string",
+                    "data_type": "numeric",
                     "contains": [
                         "carbon black file id"
                     ],
@@ -342,6 +347,27 @@
                 {
                     "data_path": "action_result.data.*.computerId",
                     "data_type": "numeric"
+                },
+                {
+                "data_path": "action_result.data.*.uploadPath",
+                "data_type": "string",
+                "example_values": [
+                    ""
+                ]
+                },
+                {
+                    "data_path": "action_result.data.*.dateModified",
+                    "data_type": "string",
+                    "example_values": [
+                        ""
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.uploadedFileSize",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.createdBy",
@@ -433,7 +459,7 @@
                         "carbon black computer id"
                     ],
                     "order": 1,
-                    "primary": false
+                    "primary": true
                 },
                 "connector_id": {
                     "data_type": "numeric",
@@ -443,8 +469,8 @@
                         "carbon black connector id"
                     ],
                     "order": 2,
-                    "primary": false,
-                    "default": "1"
+                    "default": 1,
+                    "primary": true
                 },
                 "target_type": {
                     "data_type": "string",
@@ -454,22 +480,20 @@
                         "carbon black analysis target"
                     ],
                     "order": 3,
-                    "primary": false,
-                    "default": "win7x64-sp1"
+                    "default": "win7x64-sp1",
+                    "primary": true
                 },
                 "priority": {
                     "data_type": "numeric",
                     "description": "Priority",
-                    "required": false,
                     "order": 4,
-                    "primary": false,
-                    "default": "0",
+                    "default": 0,
                     "value_list": [
-                        "-2",
-                        "-1",
-                        "0",
-                        "1",
-                        "2"
+                        -2,
+                        -1,
+                        0,
+                        1,
+                        2
                     ]
                 }
             },
@@ -484,7 +508,8 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "example_values": [
-                        "success"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
@@ -525,7 +550,7 @@
                     "data_path": "action_result.parameter.priority",
                     "data_type": "numeric",
                     "example_values": [
-                        "0"
+                        0
                     ]
                 },
                 {
@@ -536,6 +561,111 @@
                     ],
                     "example_values": [
                         "win7x64-sp1"
+                    ]
+                },
+                {
+                "data_path": "action_result.data.*.id",
+                "data_type": "numeric",
+                "example_values": [
+                    12
+                ]
+                },
+                {
+                    "data_path": "action_result.data.*.fileName",
+                    "data_type": "string",
+                    "example_values": [
+                        "4b1f58.rbf"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.pathName",
+                    "data_type": "string",
+                    "example_values": [
+                        "c:\\config.msi"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.priority",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.createdBy",
+                    "data_type": "string",
+                    "example_values": [
+                        "admin"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.computerId",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.connectorId",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.dateCreated",
+                    "data_type": "string",
+                    "example_values": [
+                        "2021-08-10T07:16:35.177Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.dateModified",
+                    "data_type": "string",
+                    "example_values": [
+                        "2021-08-10T07:16:35.19Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.fileCatalogId",
+                    "data_type": "numeric",
+                    "example_values": [
+                        91
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.analysisResult",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.analysisStatus",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.analysisTarget",
+                    "data_type": "string",
+                    "example_values": [
+                        "win7x64-sp1"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.createdByUserId",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        ""
                     ]
                 },
                 {
@@ -713,7 +843,6 @@
                     "data_type": "string",
                     "description": "File state to set",
                     "order": 1,
-                    "required": false,
                     "value_list": [
                         "unapproved",
                         "approved"
@@ -729,7 +858,11 @@
             "output": [
                 {
                     "data_path": "action_result.status",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
                 },
                 {
                     "data_path": "action_result.parameter.file_state",
@@ -764,6 +897,13 @@
                 {
                     "data_path": "action_result.data.*.dateModified",
                     "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.platformFlags",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.description",
@@ -869,8 +1009,7 @@
                 "comment": {
                     "data_type": "string",
                     "description": "Description to add to the block rule",
-                    "order": 1,
-                    "required": false
+                    "order": 1
                 }
             },
             "render": {
@@ -881,7 +1020,11 @@
             "output": [
                 {
                     "data_path": "action_result.status",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
                 },
                 {
                     "data_path": "action_result.parameter.comment",
@@ -895,6 +1038,13 @@
                         "sha256",
                         "sha1",
                         "md5"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.platformFlags",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
                     ]
                 },
                 {
@@ -1020,8 +1170,7 @@
                         "ip",
                         "host name"
                     ],
-                    "primary": true,
-                    "required": false
+                    "primary": true
                 },
                 "id": {
                     "data_type": "numeric",
@@ -1030,7 +1179,6 @@
                     "contains": [
                         "carbon black computer id"
                     ],
-                    "required": false,
                     "primary": true
                 }
             },
@@ -1043,11 +1191,15 @@
             "output": [
                 {
                     "data_path": "action_result.status",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
                 },
                 {
                     "data_path": "action_result.parameter.id",
-                    "data_type": "string",
+                    "data_type": "numeric",
                     "contains": [
                         "carbon black computer id"
                     ]
@@ -1091,6 +1243,69 @@
                 {
                     "data_path": "action_result.data.*.agentQueueSize",
                     "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.computerTag",
+                    "data_type": "string",
+                    "example_values": [
+                        ""
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.description",
+                    "data_type": "string",
+                    "example_values": [
+                        ""
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.templateDate",
+                    "data_type": "string",
+                    "example_values": [
+                        ""
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.upgradeError",
+                    "data_type": "string",
+                    "example_values": [
+                        ""
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.cbSensorVersion",
+                    "data_type": "string",
+                    "example_values": [
+                        "5.1.1.60603"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.upgradeErrorTime",
+                    "data_type": "string",
+                    "example_values": [
+                        ""
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.templateCloneCleanupMode",
+                    "data_type": "string",
+                    "example_values": [
+                        ""
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.templateCloneCleanupTime",
+                    "data_type": "string",
+                    "example_values": [
+                        ""
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.templateCloneCleanupTimeScale",
+                    "data_type": "string",
+                    "example_values": [
+                        ""
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.agentVersion",
@@ -1194,7 +1409,7 @@
                 {
                     "data_path": "action_result.data.*.isActive",
                     "data_type": "boolean",
-                    "column_name": "IS Active",
+                    "column_name": "Is Active",
                     "column_order": 4
                 },
                 {
