@@ -1,5 +1,5 @@
 # File: bit9_view.py
-# Copyright (c) 2016-2020 Splunk Inc.
+# Copyright (c) 2016-2021 Splunk Inc.
 #
 # SPLUNK CONFIDENTIAL - Use or disclosure of this material in whole or in part
 # without a valid written license from Splunk Inc. is PROHIBITED.
@@ -30,7 +30,7 @@ def get_ctx_result(result):
 
     param = result.get_param()
 
-    if ('hash' in param):
+    if 'hash' in param:
         hash_val = param.get('hash')
         ret_val, param['hash_type'] = _get_hash_type(hash_val)
 
@@ -44,12 +44,12 @@ def get_ctx_result(result):
 
     data = result.get_data()
 
-    if (not data):
+    if not data:
         return ctx_result
 
     data = data[0]
 
-    if (not data):
+    if not data:
         return ctx_result
 
     ctx_result['data'] = data
@@ -64,7 +64,7 @@ def hash_view(provides, all_app_runs, context):
         for result in action_results:
 
             ctx_result = get_ctx_result(result)
-            if (not ctx_result):
+            if not ctx_result:
                 continue
             results.append(ctx_result)
     # print context
