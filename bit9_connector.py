@@ -476,7 +476,7 @@ class Bit9Connector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, "File ID not found. Please provide a correct file ID")
 
         analysis_status = resp_json.get('analysisStatus')
-       
+
         if type(resp_json) != list:
             resp_json = [resp_json]
 
