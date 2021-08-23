@@ -438,7 +438,7 @@ class Bit9Connector(BaseConnector):
             return action_result.get_status()
 
         if resp_json is None:
-            return action_result.set_status(phantom.APP_ERROR, "File ID not found. Please provide a correct file ID.")
+            return action_result.set_status(phantom.APP_ERROR, "File ID not found. Please provide a correct file ID")
 
         action_result.add_data(resp_json)
 
@@ -473,7 +473,7 @@ class Bit9Connector(BaseConnector):
             return action_result.get_status()
 
         if resp_json is None:
-             return action_result.set_status(phantom.APP_ERROR, "File ID not found. Please provide a correct file ID.")
+            return action_result.set_status(phantom.APP_ERROR, "File ID not found. Please provide a correct file ID")
 
         analysis_status = resp_json.get('analysisStatus')
        
