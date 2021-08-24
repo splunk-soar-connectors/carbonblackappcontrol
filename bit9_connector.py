@@ -437,6 +437,9 @@ class Bit9Connector(BaseConnector):
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
+        if resp_json is None:
+            return action_result.set_status(phantom.APP_ERROR, "File ID not found. Please provide a correct file ID")
+
         action_result.add_data(resp_json)
 
         upload_status = resp_json.get('uploadStatus')
@@ -468,6 +471,9 @@ class Bit9Connector(BaseConnector):
 
         if phantom.is_fail(ret_val):
             return action_result.get_status()
+
+        if resp_json is None:
+            return action_result.set_status(phantom.APP_ERROR, "File ID not found. Please provide a correct file ID")
 
         analysis_status = resp_json.get('analysisStatus')
 
