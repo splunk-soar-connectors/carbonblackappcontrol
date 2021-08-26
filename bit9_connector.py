@@ -1,16 +1,8 @@
-# --
 # File: bit9_connector.py
+# Copyright (c) 2016-2021 Splunk Inc.
 #
-# Copyright (c) Phantom Cyber Corporation, 2016-2018
-#
-# This unpublished material is proprietary to Phantom Cyber.
-# All rights reserved. The methods and
-# techniques described herein are considered trade secrets
-# and/or confidential. Reproduction or distribution, in whole
-# or in part, is forbidden except by express written permission
-# of Phantom Cyber Corporation.
-#
-# --
+# SPLUNK CONFIDENTIAL - Use or disclosure of this material in whole or in part
+# without a valid written license from Splunk Inc. is PROHIBITED.
 
 # Phantom imports
 import phantom.app as phantom
@@ -45,6 +37,14 @@ class Bit9Connector(BaseConnector):
             "4": "Error",
             "5": "Cancelled",
             "6": "Deleted"}
+
+    ANALYSIS_STATUS_DESCS = {
+            "0": "Scheduled",
+            "1": "Submitted",
+            "2": "Processed",
+            "3": "Analyzed",
+            "4": "Error",
+            "5": "Cancelled"}
 
     def __init__(self):
 
@@ -83,7 +83,7 @@ class Bit9Connector(BaseConnector):
         request_func = getattr(requests, method)
 
         # handle the error in case the caller specified a non-existant method
-        if (not request_func):
+        if not request_func:
             action_result.set_status(phantom.APP_ERROR, BIT9_ERR_API_UNSUPPORTED_METHOD, method=method)
 
         # Make the call
@@ -98,7 +98,7 @@ class Bit9Connector(BaseConnector):
 
         content_type = r.headers.get('content-type')
 
-        if ((content_type) and ('application/json' in content_type)):
+        if (content_type) and ('application/json' in content_type):
             # Try a json parse, since most REST API's give back the data in json, if the device does not return JSONs, then need to implement parsing them some other manner
             try:
                 resp_json = r.json()
@@ -113,7 +113,7 @@ class Bit9Connector(BaseConnector):
         #     return (phantom.APP_SUCCESS, resp_json)
 
         # Handle/process any errors that we get back from the device
-        if (200 <= r.status_code <= 399):
+        if 200 <= r.status_code <= 399:
             # Success
             return (phantom.APP_SUCCESS, resp_json)
 
@@ -122,12 +122,12 @@ class Bit9Connector(BaseConnector):
         # init the string
         details = ""
 
-        if (resp_json):
+        if resp_json:
             action_result.add_data(resp_json)
             details = json.dumps(resp_json).replace('{', '').replace('}', '')
 
-        if (r.status_code == 401):
-            if (details):
+        if r.status_code == 401:
+            if details:
                 details += ". "
             details += "Please verify the user has been configured with the required permissions as mentioned in the action documentation."
 
@@ -144,22 +144,22 @@ class Bit9Connector(BaseConnector):
 
         ret_val, resp_json = self._make_rest_call(FILE_CATALOG_ENDPOINT, action_result, params=params)
 
-        if (phantom.is_fail(ret_val)):
-            self.save_progress("Connection failed....")
+        if phantom.is_fail(ret_val):
+            self.save_progress("Test Connectivity Failed")
             return action_result.get_status()
 
-        self.save_progress("Connection successful")
-        return action_result.set_status(phantom.APP_SUCCESS, "Connection successful")
+        self.save_progress("Test Connectivity Passed")
+        return action_result.set_status(phantom.APP_SUCCESS)
 
     def _get_hash_type(self, file_hash):
 
-        if (phantom.is_md5(file_hash)):
+        if phantom.is_md5(file_hash):
             return "md5"
 
-        if (phantom.is_sha1(file_hash)):
+        if phantom.is_sha1(file_hash):
             return "sha1"
 
-        if (phantom.is_sha256(file_hash)):
+        if phantom.is_sha256(file_hash):
             return "sha256"
 
         return None
@@ -168,7 +168,7 @@ class Bit9Connector(BaseConnector):
 
         hash_type = self._get_hash_type(file_hash)
 
-        if (not hash_type):
+        if not hash_type:
             return action_result.set_status(phantom.APP_ERROR, "Unable to detect hash type")
 
         query = '{0}:{1}'.format(hash_type.upper(), file_hash)
@@ -177,10 +177,10 @@ class Bit9Connector(BaseConnector):
 
         ret_val, resp_json = self._make_rest_call(FILE_CATALOG_ENDPOINT, action_result, params=params)
 
-        if (not ret_val):
+        if not ret_val:
             return (action_result.get_status(), None)
 
-        if (not resp_json):
+        if not resp_json:
             return (phantom.APP_SUCCESS, None)
 
         return (phantom.APP_SUCCESS, resp_json[0])
@@ -196,23 +196,23 @@ class Bit9Connector(BaseConnector):
         # get rules for this hash
         ret_val, rules = self._get_rules_for_hash(file_hash, action_result, catalog_found)
 
-        if (phantom.is_fail(ret_val)):
+        if phantom.is_fail(ret_val):
             return action_result.get_status()
 
-        if (not rules):
+        if not rules:
             return action_result.set_status(phantom.APP_ERROR, "No matching rules for the hash were found.")
 
-        if (len(rules) > 1):
+        if len(rules) > 1:
             return action_result.set_status(phantom.APP_ERROR, "More than one rule matched for the hash. This is treated as an Error.")
 
         file_rule = rules[0]
 
         description = file_rule.get('description')
 
-        if (not description):
+        if not description:
             return action_result.set_status(phantom.APP_ERROR, "Did not find a rule with Phantom tagged description to unblock")
 
-        if (self._comment.lower() not in description.lower()):
+        if self._comment.lower() not in description.lower():
             return action_result.set_status(phantom.APP_ERROR, "The rule for the given hash was not created by Phantom, cannot unblock the hash.")
 
         # check if the state of the file is what we wanted
@@ -220,18 +220,18 @@ class Bit9Connector(BaseConnector):
 
         unblock_state = BIT9_UNBLOCK_STATE_MAP[param.get(BIT9_JSON_UNBLOCK_STATE, BIT9_DEFAULT_UNBLOCK_STATE)]
 
-        if (str(file_state) == unblock_state):
+        if str(file_state) == unblock_state:
             action_result.add_data(file_rule)
             return action_result.set_status(phantom.APP_SUCCESS, "State of file same as required")
 
         if (catalog_found) and ('id' in catalog_found):
-            if (file_rule.get('fileCatalogId', 0) == 0):
+            if file_rule.get('fileCatalogId', 0) == 0:
                 file_rule['fileCatalogId'] = catalog_found['id']
 
         # set the file status to unblock
         file_rule['hash'] = file_hash
 
-        if ('fileCatalogId' not in file_rule):
+        if 'fileCatalogId' not in file_rule:
             file_rule['fileCatalogId'] = 0
         file_rule['policyIds'] = 0  # 0 for global rule
         file_rule['description'] = description
@@ -240,10 +240,10 @@ class Bit9Connector(BaseConnector):
 
         ret_val, resp_json = self._make_rest_call(FILE_RULE_ENDPOINT, action_result, data=file_rule, method="post")
 
-        if (phantom.is_fail(ret_val)):
+        if phantom.is_fail(ret_val):
             return action_result.get_status()
 
-        if (resp_json):
+        if resp_json:
             action_result.add_data(resp_json)
 
         return action_result.set_status(phantom.APP_SUCCESS, "Updated rule successfully")
@@ -253,34 +253,34 @@ class Bit9Connector(BaseConnector):
         # Check if we can get a catalog id for this file
         ret_val, catalog = self._get_file_catalog(file_hash, action_result)
 
-        if (phantom.is_fail(ret_val)):
+        if phantom.is_fail(ret_val):
             return (action_result.get_status(), None)
 
-        if (catalog):
-            if (catalog_found is not None):
+        if catalog:
+            if catalog_found is not None:
                 catalog_found.update(catalog)
 
         # Try to find if there is already a rule with this specific hash
         params = {'q': 'hash:{0}'.format(file_hash)}
         ret_val, resp_json = self._make_rest_call(FILE_RULE_ENDPOINT, action_result, params=params)
 
-        if (phantom.is_fail(ret_val)):
+        if phantom.is_fail(ret_val):
             return (action_result.get_status(), None)
 
-        if (resp_json):
+        if resp_json:
             self.save_progress("Found rule configured for Hash")
             # return it
             return (phantom.APP_SUCCESS, resp_json)
 
         # No rules for this hash, go the catalog way
-        if (not catalog):
+        if not catalog:
             # No catalog, so no more rule finding catalog
             self.save_progress("File not found in Catalog")
             return (phantom.APP_SUCCESS, [])
 
         catalog_id = catalog.get('id')
 
-        if (not catalog_id):
+        if not catalog_id:
             # No catalog, so no more rule finding catalog
             self.save_progress("File found in Catalog, but no ID")
             return (phantom.APP_SUCCESS, [])
@@ -291,7 +291,7 @@ class Bit9Connector(BaseConnector):
 
         ret_val, resp_json = self._make_rest_call(FILE_RULE_ENDPOINT, action_result, params=params)
 
-        if (phantom.is_fail(ret_val)):
+        if phantom.is_fail(ret_val):
             return (action_result.get_status(), None)
 
         return (phantom.APP_SUCCESS, resp_json)
@@ -307,39 +307,39 @@ class Bit9Connector(BaseConnector):
         # get rules for this hash
         ret_val, rules = self._get_rules_for_hash(file_hash, action_result, catalog_found)
 
-        if (phantom.is_fail(ret_val)):
+        if phantom.is_fail(ret_val):
             return action_result.get_status()
 
-        if (len(rules) > 1):
+        if len(rules) > 1:
             return action_result.set_status(phantom.APP_ERROR, "More than one rule matched for the hash. This is treated as an Error.")
 
         file_rule = {}
 
-        if (rules):
+        if rules:
             self.save_progress("Got Rule for file")
             file_rule = rules[0]
 
         if (catalog_found) and ('id' in catalog_found):
-            if (file_rule.get('fileCatalogId', 0) == 0):
+            if file_rule.get('fileCatalogId', 0) == 0:
                 file_rule['fileCatalogId'] = catalog_found['id']
 
         # check if the state of the file is what we wanted
         file_state = file_rule.get('fileState', BIT9_FILE_STATE_UNAPPROVED)
 
-        if (str(file_state) == BIT9_FILE_STATE_BANNED):
+        if str(file_state) == BIT9_FILE_STATE_BANNED:
             action_result.add_data(file_rule)
             return action_result.set_status(phantom.APP_SUCCESS, "State of file same as required")
 
         # set the file status to Banned
         file_rule['hash'] = file_hash
 
-        if ('fileCatalogId' not in file_rule):
+        if 'fileCatalogId' not in file_rule:
             file_rule['fileCatalogId'] = 0
         file_rule['policyIds'] = 0  # 0 for global rule
 
         description = param.get(BIT9_JSON_DESCRIPTION)
 
-        if (description):
+        if description:
             description = "{0} - ".format(description)
 
         file_rule['description'] = "{0}{1}".format(description if description else '', self._comment)
@@ -348,10 +348,10 @@ class Bit9Connector(BaseConnector):
 
         ret_val, resp_json = self._make_rest_call(FILE_RULE_ENDPOINT, action_result, data=file_rule, method="post")
 
-        if (phantom.is_fail(ret_val)):
+        if phantom.is_fail(ret_val):
             return action_result.get_status()
 
-        if (resp_json):
+        if resp_json:
             action_result.add_data(resp_json)
 
         return action_result.set_status(phantom.APP_SUCCESS, "Created/Updated rule successfully")
@@ -367,16 +367,16 @@ class Bit9Connector(BaseConnector):
 
         summary = action_result.update_summary({'prevalence': 0})
 
-        if (phantom.is_fail(ret_val)):
+        if phantom.is_fail(ret_val):
             return action_result.get_status()
 
-        if (not catalog):
+        if not catalog:
             # No catalog, so no more rule finding catalog
             return action_result.set_status(phantom.APP_SUCCESS, "File not present in the catalog. Possibly not present in Enterprise.")
 
         catalog_id = catalog.get('id')
 
-        if (not catalog_id):
+        if not catalog_id:
             # No catalog, so no more rule finding catalog
             return (phantom.APP_SUCCESS, [])
 
@@ -393,25 +393,25 @@ class Bit9Connector(BaseConnector):
         ip_hostname = param.get('ip_hostname')
         comp_id = param.get('id')
 
-        if ((not comp_id) and (not ip_hostname)):
+        if (not comp_id) and (not ip_hostname):
             return action_result.set_status(phantom.APP_ERROR, "Neither {0} nor {1} specified. Please specify at-least one of them".format('ip_hostname', 'id'))
 
         endpoint = '/computer'
         params = None
 
-        if (comp_id):
+        if comp_id:
             endpoint += '/{0}'.format(comp_id)
-        elif (phantom.is_ip(ip_hostname)):
+        elif phantom.is_ip(ip_hostname):
             params = { 'q': 'ipAddress:*{0}*'.format(ip_hostname) }
         else:
             params = { 'q': 'name:*{0}*'.format(ip_hostname) }
 
         ret_val, resp_json = self._make_rest_call(endpoint, action_result, params=params)
 
-        if (phantom.is_fail(ret_val)):
+        if phantom.is_fail(ret_val):
             return action_result.get_status()
 
-        if (type(resp_json) != list):
+        if type(resp_json) != list:
             resp_json = [resp_json]
 
         for curr_endpiont in resp_json:
@@ -434,14 +434,17 @@ class Bit9Connector(BaseConnector):
 
         ret_val, resp_json = self._make_rest_call(endpoint, action_result, data=data, method="post")
 
-        if (phantom.is_fail(ret_val)):
+        if phantom.is_fail(ret_val):
             return action_result.get_status()
+
+        if resp_json is None:
+            return action_result.set_status(phantom.APP_ERROR, "File ID not found. Please provide a correct file ID")
 
         action_result.add_data(resp_json)
 
         upload_status = resp_json.get('uploadStatus')
 
-        if (upload_status is not None):
+        if upload_status is not None:
             summary = action_result.update_summary({'upload_status': upload_status})
             try:
                 summary['upload_status_desc'] = self.UPLOAD_STATUS_DESCS[str(upload_status)]
@@ -466,14 +469,26 @@ class Bit9Connector(BaseConnector):
 
         ret_val, resp_json = self._make_rest_call(endpoint, action_result, data=data, method="post")
 
-        if (phantom.is_fail(ret_val)):
+        if phantom.is_fail(ret_val):
             return action_result.get_status()
 
-        if (type(resp_json) != list):
+        if resp_json is None:
+            return action_result.set_status(phantom.APP_ERROR, "File ID not found. Please provide a correct file ID")
+
+        analysis_status = resp_json.get('analysisStatus')
+
+        if type(resp_json) != list:
             resp_json = [resp_json]
 
         for curr_item in resp_json:
             action_result.add_data(curr_item)
+
+        if analysis_status is not None:
+            summary = action_result.update_summary({'analysis_status': analysis_status})
+            try:
+                summary['analysis_status_desc'] = self.ANALYSIS_STATUS_DESCS[str(analysis_status)]
+            except:
+                pass
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
@@ -487,50 +502,91 @@ class Bit9Connector(BaseConnector):
 
         result = None
         action = self.get_action_identifier()
-        if (action == self.ACTION_ID_WHITELIST):
+        if action == self.ACTION_ID_WHITELIST:
             result = self._unblock_hash(param)
 
-        elif (action == self.ACTION_ID_TEST_CONNECTIVITY):
+        elif action == self.ACTION_ID_TEST_CONNECTIVITY:
             result = self._test_connectivity(param)
 
-        elif (action == self.ACTION_ID_BLACKLIST):
+        elif action == self.ACTION_ID_BLACKLIST:
             result = self._block_hash(param)
 
-        elif (action == self.ACTION_ID_HUNT_FILE):
-             result = self._hunt_file(param)
+        elif action == self.ACTION_ID_HUNT_FILE:
+            result = self._hunt_file(param)
 
-        elif (action == self.ACTION_ID_GET_SYSTEM_INFO):
-             result = self._get_system_info(param)
+        elif action == self.ACTION_ID_GET_SYSTEM_INFO:
+            result = self._get_system_info(param)
 
-        elif (action == self.ACTION_ID_UPLOAD_FILE):
-             result = self._upload_file(param)
+        elif action == self.ACTION_ID_UPLOAD_FILE:
+            result = self._upload_file(param)
 
-        elif (action == self.ACTION_ID_ANALYZE_FILE):
-             result = self._analyze_file(param)
+        elif action == self.ACTION_ID_ANALYZE_FILE:
+            result = self._analyze_file(param)
 
         return result
 
 
 if __name__ == '__main__':
 
-    import sys
     import pudb
+    import argparse
+
     pudb.set_trace()
 
-    filename = sys._getframe().f_code.co_filename
+    argparser = argparse.ArgumentParser()
 
-    if (len(sys.argv) < 2):
-        print "No test json specified as input"
-        exit(0)
+    argparser.add_argument('input_test_json', help='Input Test JSON file')
+    argparser.add_argument('-u', '--username', help='username', required=False)
+    argparser.add_argument('-p', '--password', help='password', required=False)
 
-    with open(sys.argv[1]) as f:
+    args = argparser.parse_args()
+    session_id = None
+
+    username = args.username
+    password = args.password
+
+    if username is not None and password is None:
+
+        # User specified a username but not a password, so ask
+        import getpass
+        password = getpass.getpass("Password: ")
+
+    if username and password:
+        try:
+            print("Accessing the Login page")
+            login_url = BaseConnector._get_phantom_base_url() + 'login'
+            r = requests.get(login_url, verify=False)
+            csrftoken = r.cookies['csrftoken']
+
+            data = dict()
+            data['username'] = username
+            data['password'] = password
+            data['csrfmiddlewaretoken'] = csrftoken
+
+            headers = dict()
+            headers['Cookie'] = 'csrftoken=' + csrftoken
+            headers['Referer'] = login_url
+
+            print("Logging into Platform to get the session id")
+            r2 = requests.post(login_url, verify=False, data=data, headers=headers)
+            session_id = r2.cookies['sessionid']
+        except Exception as e:
+            print("Unable to get session id from the platfrom. Error: " + str(e))
+            exit(1)
+
+    with open(args.input_test_json) as f:
         in_json = f.read()
         in_json = json.loads(in_json)
         print(json.dumps(in_json, indent=4))
 
         connector = Bit9Connector()
         connector.print_progress_message = True
+
+        if session_id is not None:
+            in_json['user_session_token'] = session_id
+            connector._set_csrf_info(csrftoken, headers['Referer'])
+
         ret_val = connector._handle_action(json.dumps(in_json), None)
-        print ret_val
+        print(json.dumps(json.loads(ret_val), indent=4))
 
     exit(0)
