@@ -1,20 +1,24 @@
 {
     "appid": "9b814caf-a3a2-4e28-8418-04b445d658ad",
-    "name": "Carbon Black Protection (Bit9)",
-    "description": "This app supports various <b>investigative</b> and <b>containment</b> actions on <b>Carbon Black Enterprise Protection</b> (formerly Bit9)",
-    "publisher": "Phantom",
+    "name": "Carbon Black Protection Bit9",
+    "description": "This app supports various investigative and containment actions on Carbon Black Enterprise Protection (formerly Bit9)",
+    "publisher": "Splunk",
     "type": "endpoint",
-    "main_module": "bit9_connector.pyc",
-    "app_version": "1.0.33",
-    "utctime_updated": "2018-01-26T00:47:31.000000Z",
+    "main_module": "bit9_connector.py",
+    "app_version": "2.0.9",
+    "utctime_updated": "2021-08-24T00:05:07.000000Z",
     "package_name": "phantom_cbprotect",
     "product_vendor": "Carbon Black",
     "product_name": "Carbon Black Protection",
     "product_version_regex": ".*",
-    "min_phantom_version": "3.0.190",
+    "min_phantom_version": "4.9.39220",
+    "latest_tested_versions": [
+        "On-prem, Version 7.2.2.1119 P2, August 10, 2021"
+    ],
+    "python_version": "3",
     "logo": "logo_carbonblack.svg",
     "logo_dark": "logo_carbonblack_dark.svg",
-    "license": "Copyright (c) Phantom Cyber Corporation, 2016-2018",
+    "license": "Copyright (c) 2016-2021 Splunk Inc.",
     "configuration": {
         "base_url": {
             "data_type": "string",
@@ -23,7 +27,7 @@
             "required": true
         },
         "api_token": {
-            "data_type": "string",
+            "data_type": "password",
             "order": 1,
             "description": "API Token",
             "required": true
@@ -31,16 +35,16 @@
         "verify_server_cert": {
             "data_type": "boolean",
             "description": "Verify server certificate",
-            "required": true,
             "order": 2,
-            "default": false
+            "default": false,
+            "required": true
         }
     },
     "actions": [
         {
             "action": "test connectivity",
-            "description": "Validate the API Token by attempting to connect to the Device URL. This action runs a quick query on the device to check the connection and token.",
-            "verbose": "This action requires the following permission: <ul><li>View files</li></ul>",
+            "description": "Validate the API Token by attempting to connect to the Device URL. This action runs a quick query on the device to check the connection and token",
+            "verbose": "This action requires the following permission: <ul><li>View files</li></ul>.",
             "type": "test",
             "identifier": "test_connectivity",
             "read_only": true,
@@ -51,14 +55,14 @@
         {
             "action": "hunt file",
             "description": "Searches for a particular file across all the endpoints",
-            "verbose": "This action requires the following permission: <ul><li>View files</li></ul>",
+            "verbose": "This action requires the following permission: <ul><li>View files</li></ul>.",
             "type": "investigate",
             "identifier": "hunt_file",
             "read_only": true,
             "parameters": {
                 "hash": {
                     "data_type": "string",
-                    "description": "hash value of the file",
+                    "description": "Hash value of the file",
                     "required": true,
                     "contains": [
                         "hash",
@@ -78,21 +82,44 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.data.*.id",
-                    "data_type": "numeric",
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.hash",
+                    "data_type": "string",
                     "contains": [
-                        "carbon black file id"
-                    ],
-                    "column_name": "ID",
-                    "column_order": 0
+                        "hash",
+                        "sha256",
+                        "sha1",
+                        "md5"
+                    ]
                 },
                 {
-                    "data_path": "action_result.data.*.md5",
+                    "data_path": "action_result.data.*.approvedByReputation",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.data.*.category",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.sha1",
-                    "data_type": "string"
+                    "data_path": "action_result.data.*.certificateId",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.certificateState",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.company",
+                    "data_type": "string",
+                    "column_name": "Company",
+                    "column_order": 4
                 },
                 {
                     "data_path": "action_result.data.*.computerId",
@@ -104,26 +131,20 @@
                     "column_order": 2
                 },
                 {
-                    "data_path": "action_result.data.*.trust",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.sha256",
+                    "data_path": "action_result.data.*.dateCreated",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.threat",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.company",
-                    "data_type": "string",
-                    "column_name": "Company",
-                    "column_order": 4
-                },
-                {
-                    "data_path": "action_result.data.*.category",
+                    "data_path": "action_result.data.*.effectiveState",
                     "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.fileExtension",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.fileFlags",
+                    "data_type": "numeric"
                 },
                 {
                     "data_path": "action_result.data.*.fileName",
@@ -136,23 +157,32 @@
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "action_result.data.*.fileType",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.pathName",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.fileFlags",
-                    "data_type": "numeric"
-                },
-                {
                     "data_path": "action_result.data.*.fileState",
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "action_result.data.*.publisher",
+                    "data_path": "action_result.data.*.fileType",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "numeric",
+                    "contains": [
+                        "carbon black file id"
+                    ],
+                    "column_name": "ID",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.installedProgramName",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.md5",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.pathName",
                     "data_type": "string"
                 },
                 {
@@ -162,31 +192,7 @@
                     "column_order": 1
                 },
                 {
-                    "data_path": "action_result.data.*.dateCreated",
-                    "data_type": "string"
-                },
-                {
                     "data_path": "action_result.data.*.productName",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.publisherId",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.certificateId",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.fileExtension",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.trustMessages",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.effectiveState",
                     "data_type": "string"
                 },
                 {
@@ -194,43 +200,51 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.publisherState",
-                    "data_type": "numeric"
+                    "data_path": "action_result.data.*.publisher",
+                    "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.sha256HashType",
+                    "data_path": "action_result.data.*.publisherId",
                     "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.certificateState",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.reputationEnabled",
-                    "data_type": "boolean"
                 },
                 {
                     "data_path": "action_result.data.*.publisherOrCompany",
                     "data_type": "string"
                 },
                 {
+                    "data_path": "action_result.data.*.publisherState",
+                    "data_type": "numeric"
+                },
+                {
                     "data_path": "action_result.data.*.reputationAvailable",
                     "data_type": "boolean"
                 },
                 {
-                    "data_path": "action_result.data.*.approvedByReputation",
+                    "data_path": "action_result.data.*.reputationEnabled",
                     "data_type": "boolean"
                 },
                 {
-                    "data_path": "action_result.data.*.installedProgramName",
+                    "data_path": "action_result.data.*.sha1",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.status",
+                    "data_path": "action_result.data.*.sha256",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.message",
+                    "data_path": "action_result.data.*.sha256HashType",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.threat",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.trust",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.trustMessages",
                     "data_type": "string"
                 },
                 {
@@ -238,14 +252,8 @@
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "action_result.parameter.hash",
-                    "data_type": "string",
-                    "contains": [
-                        "hash",
-                        "sha256",
-                        "sha1",
-                        "md5"
-                    ]
+                    "data_path": "action_result.message",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "summary.total_objects",
@@ -284,21 +292,19 @@
                         "carbon black computer id"
                     ],
                     "order": 1,
-                    "primary": false
+                    "primary": true
                 },
                 "priority": {
                     "data_type": "numeric",
                     "description": "Priority",
-                    "required": false,
                     "order": 2,
-                    "primary": false,
-                    "default": "0",
+                    "default": 0,
                     "value_list": [
-                        "-2",
-                        "-1",
-                        "0",
-                        "1",
-                        "2"
+                        -2,
+                        -1,
+                        0,
+                        1,
+                        2
                     ]
                 }
             },
@@ -310,12 +316,80 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.data.*.id",
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.computer_id",
+                    "data_type": "numeric",
+                    "contains": [
+                        "carbon black computer id"
+                    ],
+                    "column_name": "Computer ID",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.parameter.file_id",
+                    "data_type": "numeric",
+                    "contains": [
+                        "carbon black file id"
+                    ],
+                    "column_name": "File ID",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.parameter.priority",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.computerId",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.uploadPath",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.dateModified",
+                    "data_type": "string",
+                    "example_values": [
+                        null
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.uploadedFileSize",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.createdBy",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.createdByUserId",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.dateCreated",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.fileCatalogId",
                     "data_type": "numeric"
                 },
                 {
                     "data_path": "action_result.data.*.fileName",
                     "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "numeric"
                 },
                 {
                     "data_path": "action_result.data.*.pathName",
@@ -329,27 +403,7 @@
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "action_result.data.*.createdBy",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.computerId",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.dateCreated",
-                    "data_type": "string"
-                },
-                {
                     "data_path": "action_result.data.*.uploadStatus",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.fileCatalogId",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.createdByUserId",
                     "data_type": "numeric"
                 },
                 {
@@ -363,34 +417,8 @@
                     "column_order": 2
                 },
                 {
-                    "data_path": "action_result.status",
-                    "data_type": "string"
-                },
-                {
                     "data_path": "action_result.message",
                     "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.file_id",
-                    "data_type": "string",
-                    "contains": [
-                        "carbon black file id"
-                    ],
-                    "column_name": "File ID",
-                    "column_order": 0
-                },
-                {
-                    "data_path": "action_result.parameter.computer_id",
-                    "data_type": "string",
-                    "contains": [
-                        "carbon black computer id"
-                    ],
-                    "column_name": "Computer ID",
-                    "column_order": 1
-                },
-                {
-                    "data_path": "action_result.parameter.priority",
-                    "data_type": "numeric"
                 },
                 {
                     "data_path": "summary.total_objects",
@@ -429,7 +457,7 @@
                         "carbon black computer id"
                     ],
                     "order": 1,
-                    "primary": false
+                    "primary": true
                 },
                 "connector_id": {
                     "data_type": "numeric",
@@ -439,8 +467,8 @@
                         "carbon black connector id"
                     ],
                     "order": 2,
-                    "primary": false,
-                    "default": "1"
+                    "default": 1,
+                    "primary": true
                 },
                 "target_type": {
                     "data_type": "string",
@@ -450,22 +478,20 @@
                         "carbon black analysis target"
                     ],
                     "order": 3,
-                    "primary": false,
-                    "default": "win7x64-sp1"
+                    "default": "win7x64-sp1",
+                    "primary": true
                 },
                 "priority": {
                     "data_type": "numeric",
                     "description": "Priority",
-                    "required": false,
                     "order": 4,
-                    "primary": false,
-                    "default": "0",
+                    "default": 0,
                     "value_list": [
-                        "-2",
-                        "-1",
-                        "0",
-                        "1",
-                        "2"
+                        -2,
+                        -1,
+                        0,
+                        1,
+                        2
                     ]
                 }
             },
@@ -477,17 +503,52 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.parameter.file_id",
-                    "data_type": "numeric",
-                    "contains": [
-                        "carbon black file id"
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
                     ]
                 },
                 {
                     "data_path": "action_result.parameter.computer_id",
                     "data_type": "numeric",
+                    "column_name": "Computer ID",
+                    "column_order": 1,
                     "contains": [
                         "carbon black computer id"
+                    ],
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.connector_id",
+                    "data_type": "numeric",
+                    "contains": [
+                        "carbon black connector id"
+                    ],
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.file_id",
+                    "data_type": "numeric",
+                    "column_name": "File ID",
+                    "column_order": 0,
+                    "contains": [
+                        "carbon black file id"
+                    ],
+                    "example_values": [
+                        91
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.priority",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
                     ]
                 },
                 {
@@ -495,30 +556,261 @@
                     "data_type": "string",
                     "contains": [
                         "carbon black analysis target"
+                    ],
+                    "example_values": [
+                        "win7x64-sp1"
                     ]
                 },
                 {
-                    "data_path": "action_result.parameter.priority",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.parameter.connector_id",
+                    "data_path": "action_result.data.*.id",
                     "data_type": "numeric",
-                    "contains": [
-                        "carbon black connector id"
+                    "example_values": [
+                        12
                     ]
                 },
                 {
-                    "data_path": "action_result.status",
+                    "data_path": "action_result.data.*.fileName",
+                    "data_type": "string",
+                    "example_values": [
+                        "4b1f58.rbf"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.pathName",
+                    "data_type": "string",
+                    "example_values": [
+                        "c:\\config.msi"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.priority",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.createdBy",
+                    "data_type": "string",
+                    "example_values": [
+                        "admin"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.computerId",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.connectorId",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.dateCreated",
+                    "data_type": "string",
+                    "example_values": [
+                        "2021-08-10T07:16:35.177Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.dateModified",
+                    "data_type": "string",
+                    "example_values": [
+                        "2021-08-10T07:16:35.19Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.fileCatalogId",
+                    "data_type": "numeric",
+                    "example_values": [
+                        91
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.analysisResult",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.analysisStatus",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.analysisTarget",
+                    "data_type": "string",
+                    "example_values": [
+                        "win7x64-sp1"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.createdByUserId",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        ""
+                    ]
+                },
+                {
+                    "data_path": "action_result.data",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary",
                     "data_type": "string"
                 },
                 {
                     "data_path": "summary.total_objects",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
                 },
                 {
                     "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.computerId",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.connectorId",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.analysisStatus",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.fileName",
+                    "data_type": "string",
+                    "example_values": [
+                        "4b1f58.rbf"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.priority",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.createdByUserId",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.pathName",
+                    "data_type": "string",
+                    "example_values": [
+                        "c:\\config.msi"
+                    ],
+                    "contains": [
+                        "file path"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.fileCatalogId",
+                    "data_type": "numeric",
+                    "example_values": [
+                        91
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.createdBy",
+                    "data_type": "string",
+                    "example_values": [
+                        "admin"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.analysisResult",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "numeric",
+                    "example_values": [
+                        5
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.dateCreated",
+                    "data_type": "string",
+                    "example_values": [
+                        "2020-07-09T21:14:53.937Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.dateModified",
+                    "data_type": "string",
+                    "example_values": [
+                        "2020-07-09T23:13:46.96Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.analysisTarget",
+                    "data_type": "string",
+                    "example_values": [
+                        "win7x64-sp1"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Analysis status: 0, Analysis status desc: Scheduled"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.analysis_status",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.analysis_status_desc",
+                    "data_type": "string",
+                    "column_name": "Analysis Status",
+                    "column_order": 2,
+                    "example_values": [
+                        "Scheduled"
+                    ]
                 }
             ],
             "versions": "EQ(*)"
@@ -549,7 +841,6 @@
                     "data_type": "string",
                     "description": "File state to set",
                     "order": 1,
-                    "required": false,
                     "value_list": [
                         "unapproved",
                         "approved"
@@ -564,6 +855,18 @@
             },
             "output": [
                 {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.file_state",
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.parameter.hash",
                     "data_type": "string",
                     "contains": [
@@ -574,30 +877,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.message",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.file_state",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.name",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.id",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.hash",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.sourceId",
-                    "data_type": "numeric"
-                },
-                {
                     "data_path": "action_result.data.*.clVersion",
                     "data_type": "numeric"
                 },
@@ -606,23 +885,7 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.fileState",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.policyIds",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.modifiedBy",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.reportOnly",
-                    "data_type": "boolean"
-                },
-                {
-                    "data_path": "action_result.data.*.sourceType",
+                    "data_path": "action_result.data.*.createdByUserId",
                     "data_type": "numeric"
                 },
                 {
@@ -630,11 +893,18 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.description",
+                    "data_path": "action_result.data.*.dateModified",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.dateModified",
+                    "data_path": "action_result.data.*.platformFlags",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.description",
                     "data_type": "string"
                 },
                 {
@@ -642,19 +912,43 @@
                     "data_type": "numeric"
                 },
                 {
+                    "data_path": "action_result.data.*.fileState",
+                    "data_type": "numeric"
+                },
+                {
                     "data_path": "action_result.data.*.forceInstaller",
                     "data_type": "boolean"
                 },
                 {
-                    "data_path": "action_result.data.*.createdByUserId",
+                    "data_path": "action_result.data.*.forceNotInstaller",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.data.*.hash",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.id",
                     "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.modifiedBy",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.modifiedByUserId",
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "action_result.data.*.forceNotInstaller",
+                    "data_path": "action_result.data.*.name",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.policyIds",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.reportOnly",
                     "data_type": "boolean"
                 },
                 {
@@ -662,7 +956,19 @@
                     "data_type": "boolean"
                 },
                 {
-                    "data_path": "action_result.status",
+                    "data_path": "action_result.data.*.sourceId",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.sourceType",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
                     "data_type": "string"
                 },
                 {
@@ -701,8 +1007,7 @@
                 "comment": {
                     "data_type": "string",
                     "description": "Description to add to the block rule",
-                    "order": 1,
-                    "required": false
+                    "order": 1
                 }
             },
             "render": {
@@ -711,6 +1016,18 @@
                 "title": "Banned Hash"
             },
             "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.comment",
+                    "data_type": "string"
+                },
                 {
                     "data_path": "action_result.parameter.hash",
                     "data_type": "string",
@@ -722,7 +1039,70 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.message",
+                    "data_path": "action_result.data.*.platformFlags",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.clVersion",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.createdBy",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.createdByUserId",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.dateCreated",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.dateModified",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.description",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.fileCatalogId",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.fileState",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.forceInstaller",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.data.*.forceNotInstaller",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.data.*.hash",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.modifiedBy",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.modifiedByUserId",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.name",
                     "data_type": "string"
                 },
                 {
@@ -734,39 +1114,7 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.name",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.id",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.hash",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.sourceId",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.clVersion",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.createdBy",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.fileState",
-                    "data_type": "numeric"
-                },
-                {
                     "data_path": "action_result.data.*.policyIds",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.modifiedBy",
                     "data_type": "string"
                 },
                 {
@@ -774,51 +1122,23 @@
                     "data_type": "boolean"
                 },
                 {
-                    "data_path": "action_result.data.*.sourceType",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.dateCreated",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.description",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.dateModified",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.fileCatalogId",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.forceInstaller",
-                    "data_type": "boolean"
-                },
-                {
-                    "data_path": "action_result.data.*.createdByUserId",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.modifiedByUserId",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.forceNotInstaller",
-                    "data_type": "boolean"
-                },
-                {
                     "data_path": "action_result.data.*.reputationApprovalsEnabled",
                     "data_type": "boolean"
                 },
                 {
-                    "data_path": "action_result.status",
+                    "data_path": "action_result.data.*.sourceId",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.sourceType",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.summary",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.parameter.comment",
+                    "data_path": "action_result.message",
                     "data_type": "string"
                 },
                 {
@@ -835,7 +1155,7 @@
         {
             "action": "get system info",
             "description": "Get information about an endpoint",
-            "verbose": "This action requires the following permission: <ul><li>View computers</li></ul>",
+            "verbose": "This action requires the following permission: <ul><li>View computers</li></ul>.",
             "type": "investigate",
             "identifier": "get_system_info",
             "read_only": true,
@@ -845,11 +1165,10 @@
                     "order": 0,
                     "description": "Hostname/IP address to get info of",
                     "contains": [
-                        "host name",
-                        "ip"
+                        "ip",
+                        "host name"
                     ],
-                    "primary": true,
-                    "required": false
+                    "primary": true
                 },
                 "id": {
                     "data_type": "numeric",
@@ -858,7 +1177,6 @@
                     "contains": [
                         "carbon black computer id"
                     ],
-                    "required": false,
                     "primary": true
                 }
             },
@@ -870,26 +1188,138 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.data.*.id",
-                    "data_type": "numeric",
-                    "column_name": "ID",
-                    "column_order": 0
-                },
-                {
-                    "data_path": "action_result.data.*.name",
+                    "data_path": "action_result.status",
                     "data_type": "string",
-                    "column_name": "Name",
-                    "column_order": 1
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
                 },
                 {
-                    "data_path": "action_result.data.*.users",
+                    "data_path": "action_result.parameter.id",
+                    "data_type": "numeric",
+                    "contains": [
+                        "carbon black computer id"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.ip_hostname",
+                    "data_type": "string",
+                    "contains": [
+                        "ip",
+                        "host name"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.CLIPassword",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.osName",
+                    "data_path": "action_result.data.*.SCEPStatus",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.activeDebugFlags",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.activeDebugLevel",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.activeKernelDebugLevel",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.agentCacheSize",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.agentMemoryDumps",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.agentQueueSize",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.computerTag",
                     "data_type": "string",
-                    "column_name": "OS Name",
-                    "column_order": 5
+                    "example_values": [
+                        ""
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.description",
+                    "data_type": "string",
+                    "example_values": [
+                        ""
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.templateDate",
+                    "data_type": "string",
+                    "example_values": [
+                        ""
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.upgradeError",
+                    "data_type": "string",
+                    "example_values": [
+                        ""
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.cbSensorVersion",
+                    "data_type": "string",
+                    "example_values": [
+                        "5.1.1.60603"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.upgradeErrorTime",
+                    "data_type": "string",
+                    "example_values": [
+                        ""
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.templateCloneCleanupMode",
+                    "data_type": "string",
+                    "example_values": [
+                        ""
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.templateCloneCleanupTime",
+                    "data_type": "string",
+                    "example_values": [
+                        ""
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.templateCloneCleanupTimeScale",
+                    "data_type": "string",
+                    "example_values": [
+                        ""
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.agentVersion",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.automaticPolicy",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.data.*.cbSensorFlags",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.cbSensorId",
+                    "data_type": "numeric"
                 },
                 {
                     "data_path": "action_result.data.*.ccFlags",
@@ -900,33 +1330,69 @@
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "action_result.data.*.deleted",
-                    "data_type": "boolean"
-                },
-                {
-                    "data_path": "action_result.data.*.tdCount",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.isActive",
-                    "data_type": "boolean",
-                    "column_name": "IS Active",
-                    "column_order": 4
-                },
-                {
-                    "data_path": "action_result.data.*.policyId",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.template",
-                    "data_type": "boolean"
-                },
-                {
                     "data_path": "action_result.data.*.clVersion",
                     "data_type": "numeric"
                 },
                 {
                     "data_path": "action_result.data.*.connected",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.data.*.dateCreated",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.daysOffline",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.debugDuration",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.debugFlags",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.debugLevel",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.deleted",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.data.*.disconnectedEnforcementLevel",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.enforcementLevel",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.forceUpgrade",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.data.*.hasDuplicates",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.data.*.hasHealthCheckErrors",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "numeric",
+                    "column_name": "ID",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.initPercent",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.initializing",
                     "data_type": "boolean"
                 },
                 {
@@ -939,24 +1405,26 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.syncFlags",
+                    "data_path": "action_result.data.*.isActive",
+                    "data_type": "boolean",
+                    "column_name": "Is Active",
+                    "column_order": 4
+                },
+                {
+                    "data_path": "action_result.data.*.kernelDebugLevel",
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "action_result.data.*.SCEPStatus",
-                    "data_type": "numeric"
+                    "data_path": "action_result.data.*.lastPollDate",
+                    "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.cbSensorId",
-                    "data_type": "numeric"
+                    "data_path": "action_result.data.*.lastRegisterDate",
+                    "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.debugFlags",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.debugLevel",
-                    "data_type": "numeric"
+                    "data_path": "action_result.data.*.localApproval",
+                    "data_type": "boolean"
                 },
                 {
                     "data_path": "action_result.data.*.macAddress",
@@ -965,11 +1433,35 @@
                     "column_order": 3
                 },
                 {
+                    "data_path": "action_result.data.*.machineModel",
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.data.*.memorySize",
                     "data_type": "numeric"
                 },
                 {
+                    "data_path": "action_result.data.*.name",
+                    "data_type": "string",
+                    "column_name": "Name",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.osName",
+                    "data_type": "string",
+                    "column_name": "OS Name",
+                    "column_order": 5
+                },
+                {
+                    "data_path": "action_result.data.*.osShortName",
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.data.*.platformId",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.policyId",
                     "data_type": "numeric"
                 },
                 {
@@ -977,96 +1469,20 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.CLIPassword",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.dateCreated",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.daysOffline",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.initPercent",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.osShortName",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.prioritized",
-                    "data_type": "boolean"
-                },
-                {
-                    "data_path": "action_result.data.*.syncPercent",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.uninstalled",
-                    "data_type": "boolean"
-                },
-                {
-                    "data_path": "action_result.data.*.virtualized",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.agentVersion",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.forceUpgrade",
-                    "data_type": "boolean"
-                },
-                {
-                    "data_path": "action_result.data.*.initializing",
-                    "data_type": "boolean"
-                },
-                {
-                    "data_path": "action_result.data.*.lastPollDate",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.machineModel",
-                    "data_type": "string"
-                },
-                {
                     "data_path": "action_result.data.*.policyStatus",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.refreshFlags",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.cbSensorFlags",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.debugDuration",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.hasDuplicates",
-                    "data_type": "boolean"
-                },
-                {
-                    "data_path": "action_result.data.*.localApproval",
-                    "data_type": "boolean"
-                },
-                {
-                    "data_path": "action_result.data.*.upgradeStatus",
+                    "data_path": "action_result.data.*.policyStatusDetails",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.agentCacheSize",
+                    "data_path": "action_result.data.*.previousPolicyId",
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "action_result.data.*.agentQueueSize",
-                    "data_type": "numeric"
+                    "data_path": "action_result.data.*.prioritized",
+                    "data_type": "boolean"
                 },
                 {
                     "data_path": "action_result.data.*.processorCount",
@@ -1081,43 +1497,19 @@
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "action_result.data.*.automaticPolicy",
-                    "data_type": "boolean"
+                    "data_path": "action_result.data.*.refreshFlags",
+                    "data_type": "numeric"
                 },
                 {
                     "data_path": "action_result.data.*.supportedKernel",
                     "data_type": "boolean"
                 },
                 {
-                    "data_path": "action_result.data.*.virtualPlatform",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.activeDebugFlags",
+                    "data_path": "action_result.data.*.syncFlags",
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "action_result.data.*.activeDebugLevel",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.agentMemoryDumps",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.enforcementLevel",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.kernelDebugLevel",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.lastRegisterDate",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.previousPolicyId",
+                    "data_path": "action_result.data.*.syncPercent",
                     "data_type": "numeric"
                 },
                 {
@@ -1125,43 +1517,47 @@
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "action_result.data.*.upgradeErrorCount",
+                    "data_path": "action_result.data.*.tamperProtectionActive",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.data.*.tdCount",
                     "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.template",
+                    "data_type": "boolean"
                 },
                 {
                     "data_path": "action_result.data.*.templateComputerId",
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "action_result.data.*.policyStatusDetails",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.hasHealthCheckErrors",
-                    "data_type": "boolean"
-                },
-                {
                     "data_path": "action_result.data.*.templateTrackModsOnly",
                     "data_type": "boolean"
                 },
                 {
-                    "data_path": "action_result.data.*.activeKernelDebugLevel",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.tamperProtectionActive",
+                    "data_path": "action_result.data.*.uninstalled",
                     "data_type": "boolean"
                 },
                 {
-                    "data_path": "action_result.data.*.disconnectedEnforcementLevel",
+                    "data_path": "action_result.data.*.upgradeErrorCount",
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "action_result.status",
+                    "data_path": "action_result.data.*.upgradeStatus",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.message",
+                    "data_path": "action_result.data.*.users",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.virtualPlatform",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.virtualized",
                     "data_type": "string"
                 },
                 {
@@ -1169,19 +1565,8 @@
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "action_result.parameter.ip_hostname",
-                    "data_type": "string",
-                    "contains": [
-                        "ip",
-                        "host name"
-                    ]
-                },
-                {
-                    "data_path": "action_result.parameter.id",
-                    "data_type": "string",
-                    "contains": [
-                        "carbon black computer id"
-                    ]
+                    "data_path": "action_result.message",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "summary.total_objects",
