@@ -73,7 +73,7 @@ class Bit9Connector(BaseConnector):
 
         return phantom.APP_SUCCESS
 
-    def _make_rest_call(self, endpoint, action_result, headers={}, params=None, data=None, method="get"):
+    def _make_rest_call(self, endpoint, action_result, if headers is None: headers={}, params=None, data=None, method="get"):
         """ Function that makes the REST call to the device, generic function that can be called from various action handlers"""
 
         # Get the config
