@@ -5,13 +5,14 @@
     "publisher": "Splunk",
     "type": "endpoint",
     "main_module": "bit9_connector.py",
-    "app_version": "2.0.9",
+    "app_version": "2.1.0",
     "utctime_updated": "2021-08-24T00:05:07.000000Z",
     "package_name": "phantom_cbprotect",
     "product_vendor": "Carbon Black",
     "product_name": "Carbon Black Protection",
     "product_version_regex": ".*",
-    "min_phantom_version": "4.9.39220",
+    "min_phantom_version": "4.10.0.40961",
+    "fips_compliant": true,
     "latest_tested_versions": [
         "On-prem, Version 7.2.2.1119 P2, August 10, 2021"
     ],
