@@ -15,16 +15,16 @@
 #
 #
 # Phantom imports
+# Other imports used by this connector
+import json
+
 import phantom.app as phantom
-from phantom.base_connector import BaseConnector
+import requests
 from phantom.action_result import ActionResult
+from phantom.base_connector import BaseConnector
 
 # THIS Connector imports
 from bit9_consts import *
-
-# Other imports used by this connector
-import json
-import requests
 
 
 class Bit9Connector(BaseConnector):
@@ -73,8 +73,10 @@ class Bit9Connector(BaseConnector):
 
         return phantom.APP_SUCCESS
 
-    def _make_rest_call(self, endpoint, action_result, headers={}, params=None, data=None, method="get"):
+    def _make_rest_call(self, endpoint, action_result, headers=None, params=None, data=None, method="get"):
         """ Function that makes the REST call to the device, generic function that can be called from various action handlers"""
+        if headers is None:
+            headers = {}
 
         # Get the config
         config = self.get_config()
@@ -109,7 +111,8 @@ class Bit9Connector(BaseConnector):
         content_type = r.headers.get('content-type')
 
         if (content_type) and ('application/json' in content_type):
-            # Try a json parse, since most REST API's give back the data in json, if the device does not return JSONs, then need to implement parsing them some other manner
+            # Try a json parse, since most REST API's give back the data in json, if the device does not return JSONs,
+            # then need to implement parsing them some other manner
             try:
                 resp_json = r.json()
             except Exception as e:
@@ -223,7 +226,8 @@ class Bit9Connector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, "Did not find a rule with Phantom tagged description to unblock")
 
         if self._comment.lower() not in description.lower():
-            return action_result.set_status(phantom.APP_ERROR, "The rule for the given hash was not created by Phantom, cannot unblock the hash.")
+            return action_result.set_status(phantom.APP_ERROR,
+                                            "The rule for the given hash was not created by Phantom, cannot unblock the hash.")
 
         # check if the state of the file is what we wanted
         file_state = file_rule.get('fileState', BIT9_FILE_STATE_BANNED)
@@ -404,7 +408,8 @@ class Bit9Connector(BaseConnector):
         comp_id = param.get('id')
 
         if (not comp_id) and (not ip_hostname):
-            return action_result.set_status(phantom.APP_ERROR, "Neither {0} nor {1} specified. Please specify at-least one of them".format('ip_hostname', 'id'))
+            return action_result.set_status(phantom.APP_ERROR,
+                                            "Neither {0} nor {1} specified. Please specify at-least one of them".format('ip_hostname', 'id'))
 
         endpoint = '/computer'
         params = None
@@ -538,8 +543,9 @@ class Bit9Connector(BaseConnector):
 
 if __name__ == '__main__':
 
-    import pudb
     import argparse
+
+    import pudb
 
     pudb.set_trace()
 
