@@ -566,7 +566,6 @@ if __name__ == '__main__':
         import getpass
         password = getpass.getpass("Password: ")
 
-
     if username and password:
         try:
             print("Accessing the Login page")
