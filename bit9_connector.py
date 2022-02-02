@@ -36,6 +36,8 @@ class Bit9Connector(BaseConnector):
     ACTION_ID_GET_SYSTEM_INFO = "get_system_info"
     ACTION_ID_UPLOAD_FILE = "upload_file"
     ACTION_ID_ANALYZE_FILE = "analyze_file"
+    ACTION_ID_LIST_FILES = "list_files"
+    ACTION_ID_GET_FILE = "get_file"
 
     # This could be a list, but easier to read as a dictionary
     UPLOAD_STATUS_DESCS = {
@@ -467,6 +469,27 @@ class Bit9Connector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
+    def _list_files(self, param):
+        action_result = self.add_action_result(ActionResult(param))
+
+        limit = param.get('limit', 1000)
+        offset = param.get('offset', 0)
+        params = {
+            'limit': limit,
+            'offset': offset
+        }
+
+        endpoint = '/fileUpload'
+
+        ret_val, resp_json = self._make_rest_call(endpoint, action_result, method="get", params=params)
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        action_result.add_data(resp_json)
+
+        return action_result.set_status(phantom.APP_SUCCESS, "Successfully fetched available files")
+
     def _analyze_file(self, param):
 
         action_result = self.add_action_result(ActionResult(param))
@@ -536,6 +559,9 @@ class Bit9Connector(BaseConnector):
 
         elif action == self.ACTION_ID_ANALYZE_FILE:
             result = self._analyze_file(param)
+
+        elif action == self.ACTION_ID_LIST_FILES:
+            result = self._list_files(param)
 
         return result
 
