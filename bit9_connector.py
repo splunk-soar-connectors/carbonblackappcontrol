@@ -145,11 +145,13 @@ class Bit9Connector(BaseConnector):
 
         # Make the call
         try:
-            r = request_func(self._base_url + endpoint,  # The url is made up of the base_url, the api url and the endpoint
-                             data=json.dumps(data) if data else None,   # the data converted to json string if present
-                             headers=headers,  # The headers to send in the HTTP call
-                             verify=config[phantom.APP_JSON_VERIFY],  # should cert verification be carried out?
-                             params=params)  # uri parameters if any
+            r = request_func(   # nosemgrep
+                self._base_url + endpoint,  # The url is made up of the base_url, the api url and the endpoint
+                data=json.dumps(data) if data else None,  # the data converted to json string if present
+                headers=headers,  # The headers to send in the HTTP call
+                verify=config[phantom.APP_JSON_VERIFY],  # should cert verification be carried out?
+                params=params,
+            )  # uri parameters if any
         except Exception as e:
             return action_result.set_status(phantom.APP_ERROR, BIT9_ERR_SERVER_CONNECTION,
                                             self._get_error_message_from_exception(e)), resp_json
@@ -500,7 +502,7 @@ class Bit9Connector(BaseConnector):
         comp_id = param['computer_id']
         file_id = param['file_id']
 
-        endpoint = '/fileUpload'
+        endpoint = FILE_UPLOAD_ENDPOINT
         data = {'computerId': comp_id, 'fileCatalogId': file_id,
                 'priority': param.get('priority', '0')}
 
@@ -535,7 +537,7 @@ class Bit9Connector(BaseConnector):
             'limit': limit
         }
 
-        endpoint = '/fileUpload'
+        endpoint = FILE_UPLOAD_ENDPOINT
 
         ret_val, resp_json = self._make_rest_call(endpoint, action_result, method="get", params=params)
 
@@ -543,6 +545,7 @@ class Bit9Connector(BaseConnector):
             return action_result.get_status()
 
         action_result.add_data(resp_json)
+        action_result.update_summary({'total': len(resp_json)})
 
         return action_result.set_status(phantom.APP_SUCCESS, "Successfully fetched available files")
 
@@ -557,7 +560,7 @@ class Bit9Connector(BaseConnector):
             'downloadFile': True
         }
 
-        endpoint = '/fileUpload/' + str(file_id)
+        endpoint = FILE_UPLOAD_ENDPOINT + '/' + str(file_id)
 
         ret_val, resp_json = self._make_rest_call(endpoint, action_result, method="get")
 
@@ -580,18 +583,19 @@ class Bit9Connector(BaseConnector):
         with open(file_loc, 'w') as file:
             file.write(resp.text)
 
-        vault_ret_dict = phantomrules.vault_add(container=self.get_container_id(),
-                                                file_location=file_loc,
-                                                file_name=filename)
-        if vault_ret_dict[0]:
+        success, message, vault_id = phantomrules.vault_add(container=self.get_container_id(),
+                                                            file_location=file_loc,
+                                                            file_name=filename)
+        if success:
             vault_details = {
-                phantom.APP_JSON_VAULT_ID: vault_ret_dict[2],
+                phantom.APP_JSON_VAULT_ID: vault_id,
                 'file_name': filename
             }
             action_result.add_data(vault_details)
+            action_result.update_summary(vault_details)
             return action_result.set_status(phantom.APP_SUCCESS, "Successfully added file to vault")
 
-        return action_result.set_status(phantom.APP_ERROR, 'Error adding file to vault: {0}'.format(vault_ret_dict))
+        return action_result.set_status(phantom.APP_ERROR, 'Error adding file to vault: {0}'.format(message))
 
     def _analyze_file(self, param):
 
@@ -685,12 +689,14 @@ if __name__ == '__main__':
     argparser.add_argument('input_test_json', help='Input Test JSON file')
     argparser.add_argument('-u', '--username', help='username', required=False)
     argparser.add_argument('-p', '--password', help='password', required=False)
+    argparser.add_argument('-v', '--verify', action='store_true', help='verify', required=False, default=False)
 
     args = argparser.parse_args()
     session_id = None
 
     username = args.username
     password = args.password
+    verify = args.verify
 
     if username is not None and password is None:
 
@@ -702,7 +708,7 @@ if __name__ == '__main__':
         try:
             print("Accessing the Login page")
             login_url = BaseConnector._get_phantom_base_url() + 'login'
-            r = requests.get(login_url, verify=False)
+            r = requests.get(login_url, verify=verify, timeout=10)  # nosemgrep
             csrftoken = r.cookies['csrftoken']
 
             data = dict()
@@ -715,11 +721,11 @@ if __name__ == '__main__':
             headers['Referer'] = login_url
 
             print("Logging into Platform to get the session id")
-            r2 = requests.post(login_url, verify=False, data=data, headers=headers)
+            r2 = requests.post(login_url, verify=verify, data=data, headers=headers, timeout=10)  # nosemgrep
             session_id = r2.cookies['sessionid']
         except Exception as e:
             print("Unable to get session id from the platfrom. Error: " + str(e))
-            exit(1)
+            sys.exit(1)
 
     with open(args.input_test_json) as f:
         in_json = f.read()

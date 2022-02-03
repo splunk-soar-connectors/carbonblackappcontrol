@@ -434,11 +434,11 @@
         },
         {
             "action": "list files",
-            "description": "List the files available",
-            "verbose": "When provided -1 in limit parameter, It will return the count of the number of files available.",
-            "type": "generic",
+            "description": "List the files available on the controller",
+            "verbose": "When provided -1 in limit parameter, it will return the count of the number of files available.",
+            "type": "investigate",
             "identifier": "list_files",
-            "read_only": false,
+            "read_only": true,
             "parameters": {
                 "limit": {
                     "data_type": "numeric",
@@ -529,6 +529,9 @@
                     "example_values": [
                         61
                     ],
+                    "contains": [
+                        "carbon black file id"
+                    ],
                     "column_name": "File ID",
                     "column_order": 0
                 },
@@ -599,11 +602,11 @@
         },
         {
             "action": "get file",
-            "description": "Get the file added to vault",
+            "description": "Get the file from the controller and add it to the vault",
             "verbose": "This will only add the file in vault, whose <b>uploadStatus</b> is 3 (Completed).",
-            "type": "generic",
+            "type": "investigate",
             "identifier": "get_file",
-            "read_only": false,
+            "read_only": true,
             "parameters": {
                 "file_id": {
                     "data_type": "numeric",
@@ -1527,10 +1530,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.computerTag",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.connected",
@@ -1562,10 +1562,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.description",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.disconnectedEnforcementLevel",
@@ -1590,6 +1587,9 @@
                 {
                     "data_path": "action_result.data.*.id",
                     "data_type": "numeric",
+                    "contains": [
+                        "carbon black computer id"
+                    ],
                     "column_name": "ID",
                     "column_order": 0
                 },
@@ -1736,24 +1736,15 @@
                 },
                 {
                     "data_path": "action_result.data.*.templateCloneCleanupMode",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.templateCloneCleanupTime",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.templateCloneCleanupTimeScale",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.templateComputerId",
@@ -1761,10 +1752,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.templateDate",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.templateTrackModsOnly",
@@ -1776,10 +1764,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.upgradeError",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.upgradeErrorCount",
@@ -1787,10 +1772,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.upgradeErrorTime",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.upgradeStatus",

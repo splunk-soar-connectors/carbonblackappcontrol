@@ -20,6 +20,7 @@ BIT9_JSON_UNBLOCK_STATE = "file_state"
 VERIFY_CERT = "verify_server_cert"
 FILE_CATALOG_ENDPOINT = "/filecatalog"
 FILE_RULE_ENDPOINT = "/fileRule"
+FILE_UPLOAD_ENDPOINT = "/fileUpload"
 CAT_ID_DATA = "fileCatalogId:%s"
 APPEND_HASHES = "%s:%s"
 LISTDECISION_MAP = {"white": "2", "black": "3"}
