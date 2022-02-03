@@ -41,3 +41,10 @@ BIT9_FILE_STATE_BANNED = "3"
 BIT9_UNBLOCK_STATE_MAP = {"approved": BIT9_FILE_STATE_APPROVED, "unapproved": BIT9_FILE_STATE_UNAPPROVED}
 BIT9_DEFAULT_UNBLOCK_STATE = "unapproved"
 BIT9_ADDED_BY_PHANTOM = "Added by Phantom Installation ID: {0}"
+
+BIT9_INVALID_INT = "Please provide a valid integer value in the {param}"
+BIT9_ERR_NEGATIVE_INT_PARAM = "Please provide a valid non-negative integer value in the {param}"
+BIT9_ERR_INVALID_PARAM = "Please provide a non-zero positive integer in the {param}"
+
+ERR_CODE_UNAVAILABLE = "Error code unavailable"
+ERR_MSG_UNAVAILABLE = "Unknown error occurred. Please check the action parameters."
