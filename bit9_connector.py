@@ -592,7 +592,7 @@ class Bit9Connector(BaseConnector):
                 'file_name': filename
             }
             action_result.add_data(vault_details)
-            action_result.update_summary(vault_details)
+            action_result.update_summary({'vault_id': vault_id})
             return action_result.set_status(phantom.APP_SUCCESS, "Successfully added file to vault")
 
         return action_result.set_status(phantom.APP_ERROR, 'Error adding file to vault: {0}'.format(message))
