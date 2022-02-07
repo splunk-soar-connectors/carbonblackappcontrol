@@ -545,9 +545,10 @@ class Bit9Connector(BaseConnector):
             return action_result.get_status()
 
         action_result.add_data(resp_json)
-        action_result.update_summary({'total': len(resp_json)})
+        total = len(resp_json)
+        action_result.update_summary({'total': total})
 
-        return action_result.set_status(phantom.APP_SUCCESS, "Successfully fetched available files")
+        return action_result.set_status(phantom.APP_SUCCESS, BIT9_LIST_FILES_SUCC.format(total))
 
     def _get_file(self, param):
         action_result = self.add_action_result(ActionResult(param))
@@ -593,7 +594,7 @@ class Bit9Connector(BaseConnector):
             }
             action_result.add_data(vault_details)
             action_result.update_summary({'vault_id': vault_id})
-            return action_result.set_status(phantom.APP_SUCCESS, "Successfully added file to vault")
+            return action_result.set_status(phantom.APP_SUCCESS, BIT9_GET_FILE_SUCC.format(vault_id))
 
         return action_result.set_status(phantom.APP_ERROR, 'Error adding file to vault: {0}'.format(message))
 
