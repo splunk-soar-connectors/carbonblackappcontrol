@@ -587,7 +587,7 @@
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        "Successfully fetched available files"
+                        "Number of files returned: 10"
                     ]
                 },
                 {
@@ -662,6 +662,10 @@
                 {
                     "data_path": "action_result.data.*.vault_id",
                     "data_type": "string",
+                    "contains": [
+                        "sha1",
+                        "vault id"
+                    ],
                     "example_values": [
                         "d23959171fbf8e5ff48d8eff7c0f456345d2444"
                     ],
@@ -675,6 +679,10 @@
                 {
                     "data_path": "action_result.summary.vault_id",
                     "data_type": "string",
+                    "contains": [
+                        "sha1",
+                        "vault id"
+                    ],
                     "example_values": [
                         "d23959171fbf8e5ff48d8eff7c0f456345d2444"
                     ]
@@ -683,7 +691,7 @@
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        "Successfully added file to vault"
+                        "Successfully added file to vault. Vault ID: d239545456fbf8e5ff48d8eff7c0f456345d2444"
                     ]
                 },
                 {

@@ -545,10 +545,10 @@ class Bit9Connector(BaseConnector):
             return action_result.get_status()
 
         action_result.add_data(resp_json)
-        total = len(resp_json)
-        action_result.update_summary({'total': total})
+        num_files = len(resp_json)
+        action_result.update_summary({'num_files': num_files})
 
-        return action_result.set_status(phantom.APP_SUCCESS, BIT9_LIST_FILES_SUCC.format(total))
+        return action_result.set_status(phantom.APP_SUCCESS, BIT9_LIST_FILES_SUCC.format(num_files))
 
     def _get_file(self, param):
         action_result = self.add_action_result(ActionResult(param))

@@ -28,11 +28,10 @@ APPEND_NOT_POLICY = "%s%s"
 B9FID = "id"
 DECISION_MAP = {"local_approval": "localState", "global_approval": "fileState"}
 BIT9_API_URI = "/api/bit9platform/v1"
-BIT9_LIST_FILES_SUCC = "Successfully fetched available files. Total: {}"
+BIT9_LIST_FILES_SUCC = "Number of files returned: {0}"
 BIT9_GET_FILE_SUCC = "Successfully added file to vault. Vault ID: {0}"
 
 BIT9_ERR_FROM_SERVER = "API failed, Status code: {status}, Detail: {detail}"
-BIT9_ERR_JSON_PARSE = "Unable to parse reply as a Json, raw string reply: '{raw_text}'"
 BIT9_ERR_JSON_PARSE = "Unable to parse reply as a Json, raw string reply: '{raw_text}'"
 BIT9_ERR_API_UNSUPPORTED_METHOD = "Unsupported method"
 BIT9_ERR_SERVER_CONNECTION = "Connection failed"
