@@ -21,9 +21,34 @@ import phantom.app as phantom
 import requests
 from phantom.action_result import ActionResult
 from phantom.base_connector import BaseConnector
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.ssl_ import create_urllib3_context
 
 # THIS Connector imports
 from bit9_consts import *
+
+# This is the 2.11 Requests cipher string, containing 3DES.
+CIPHERS = (
+    'ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+HIGH:'
+    'DH+HIGH:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+HIGH:RSA+3DES:!aNULL:'
+    '!eNULL:!MD5'
+)
+
+
+class DESAdapter(HTTPAdapter):
+    """
+    A TransportAdapter that re-enables 3DES support in Requests.
+    """
+
+    def init_poolmanager(self, *args, **kwargs):
+        context = create_urllib3_context(ciphers=CIPHERS)
+        kwargs['ssl_context'] = context
+        return super(DESAdapter, self).init_poolmanager(*args, **kwargs)
+
+    def proxy_manager_for(self, *args, **kwargs):
+        context = create_urllib3_context(ciphers=CIPHERS)
+        kwargs['ssl_context'] = context
+        return super(DESAdapter, self).proxy_manager_for(*args, **kwargs)
 
 
 class Bit9Connector(BaseConnector):
@@ -70,6 +95,17 @@ class Bit9Connector(BaseConnector):
         self._base_url = "{0}{1}".format(config[BIT9_JSON_BASE_URL], BIT9_API_URI)
         self._comment = BIT9_ADDED_BY_PHANTOM.format(self.get_product_installation_id())
 
+        self.save_progress('paul: _base_url: %s' % self._base_url)
+
+        self._sess_obj = requests.Session()
+        self.save_progress('paul: Created session: %s' % self._sess_obj)
+
+        self._sess_obj.mount(self._base_url, DESAdapter())
+        self.save_progress('paul: Done session mount')
+
+        self._sess_obj.headers.update(self._headers)
+        self.save_progress('paul: Updated session headers')
+
         return phantom.APP_SUCCESS
 
     def _make_rest_call(self, endpoint, action_result, headers=None, params=None, data=None, method="get"):
@@ -91,7 +127,7 @@ class Bit9Connector(BaseConnector):
         resp_json = None
 
         # get or post or put, whatever the caller asked us to use, if not specified the default will be 'get'
-        request_func = getattr(requests, method)
+        request_func = getattr(self._sess_obj, method)
 
         # handle the error in case the caller specified a non-existant method
         if not request_func:
