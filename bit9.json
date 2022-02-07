@@ -577,6 +577,13 @@
                     "data_type": "string"
                 },
                 {
+                    "data_path": "action_result.summary.num_files",
+                    "data_type": "numeric",
+                    "example_values": [
+                        10
+                    ]
+                },
+                {
                     "data_path": "action_result.summary.total",
                     "data_type": "numeric",
                     "example_values": [
