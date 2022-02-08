@@ -2,11 +2,11 @@
 # Carbon Black Protection Bit9
 
 Publisher: Splunk  
-Connector Version: 2\.1\.2  
+Connector Version: 2\.1\.3  
 Product Vendor: Carbon Black  
 Product Name: Carbon Black Protection  
 Product Version Supported (regex): "\.\*"  
-Minimum Product Version: 4\.10\.0\.40961  
+Minimum Product Version: 5\.1\.0  
 
 This app supports various investigative and containment actions on Carbon Black Enterprise Protection \(formerly Bit9\)
 
