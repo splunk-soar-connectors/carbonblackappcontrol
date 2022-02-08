@@ -50,3 +50,5 @@ BIT9_ERR_INVALID_PARAM = "Please provide a non-zero positive integer in the {par
 
 ERR_CODE_UNAVAILABLE = "Error code unavailable"
 ERR_MSG_UNAVAILABLE = "Unknown error occurred. Please check the action parameters."
+
+BIT9_DEFAULT_TIMEOUT = 30
