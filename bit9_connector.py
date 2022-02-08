@@ -29,9 +29,19 @@ from bit9_consts import *
 
 # This is the 2.11 Requests cipher string, containing 3DES.
 CIPHERS = (
-    'ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+HIGH:'
-    'DH+HIGH:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+HIGH:RSA+3DES:!aNULL:'
-    '!eNULL:!MD5'
+    'TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256:'
+    'ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:'
+    'DHE-DSS-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:'
+    'ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:'
+    'DHE-DSS-AES128-GCM-SHA256:DHE-RSA-AES128-GCM-SHA256:'
+    'ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:'
+    'DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:'
+    'DHE-RSA-AES128-SHA256:DHE-DSS-AES128-SHA256:RSA-PSK-AES256-GCM-SHA384:'
+    'DHE-PSK-AES256-GCM-SHA384:AES256-GCM-SHA384:PSK-AES256-GCM-SHA384:'
+    'RSA-PSK-AES128-GCM-SHA256:DHE-PSK-AES128-GCM-SHA256:AES128-GCM-SHA256:'
+    'PSK-AES128-GCM-SHA256:AES256-SHA256:AES128-SHA256:ECDHE-PSK-AES256-CBC-SHA384:RSA-PSK-AES256-CBC-SHA384:'
+    'DHE-PSK-AES256-CBC-SHA384:PSK-AES256-CBC-SHA384:ECDHE-PSK-AES128-CBC-SHA256:RSA-PSK-AES128-CBC-SHA256:'
+    'DHE-PSK-AES128-CBC-SHA256:PSK-AES128-CBC-SHA256'
 )
 
 
@@ -135,6 +145,8 @@ class Bit9Connector(BaseConnector):
 
         # Make the call
         try:
+            self.save_progress('paul: request verify: %s' % config[phantom.APP_JSON_VERIFY])
+
             r = request_func(self._base_url + endpoint,  # The complete url is made up of the base_url, the api url and the endpiont
                     data=json.dumps(data) if data else None,  # the data, converted to json string format if present, else just set to None
                     headers=headers,  # The headers to send in the HTTP call
