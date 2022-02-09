@@ -2,11 +2,11 @@
 # Carbon Black Protection Bit9
 
 Publisher: Splunk  
-Connector Version: 2\.1\.2  
+Connector Version: 2\.2\.0  
 Product Vendor: Carbon Black  
 Product Name: Carbon Black Protection  
 Product Version Supported (regex): "\.\*"  
-Minimum Product Version: 4\.10\.0\.40961  
+Minimum Product Version: 5\.1\.0  
 
 This app supports various investigative and containment actions on Carbon Black Enterprise Protection \(formerly Bit9\)
 
@@ -23,6 +23,8 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [test connectivity](#action-test-connectivity) - Validate the API Token by attempting to connect to the Device URL\. This action runs a quick query on the device to check the connection and token  
 [hunt file](#action-hunt-file) - Searches for a particular file across all the endpoints  
 [upload file](#action-upload-file) - Upload a file to a computer  
+[list files](#action-list-files) - List the files available on the controller  
+[get file](#action-get-file) - Get the file from the controller and add it to the vault  
 [analyze file](#action-analyze-file) - Analyze a file on a computer  
 [unblock hash](#action-unblock-hash) - Unblocks a particular hash  
 [block hash](#action-block-hash) - Ban the file hash  
@@ -121,20 +123,85 @@ action\_result\.parameter\.computer\_id | numeric |  `carbon black computer id`
 action\_result\.parameter\.file\_id | numeric |  `carbon black file id` 
 action\_result\.parameter\.priority | numeric | 
 action\_result\.data\.\*\.computerId | numeric | 
-action\_result\.data\.\*\.uploadPath | string | 
-action\_result\.data\.\*\.dateModified | string | 
-action\_result\.data\.\*\.uploadedFileSize | numeric | 
 action\_result\.data\.\*\.createdBy | string | 
 action\_result\.data\.\*\.createdByUserId | numeric | 
 action\_result\.data\.\*\.dateCreated | string | 
+action\_result\.data\.\*\.dateModified | string | 
 action\_result\.data\.\*\.fileCatalogId | numeric | 
 action\_result\.data\.\*\.fileName | string | 
 action\_result\.data\.\*\.id | numeric | 
 action\_result\.data\.\*\.pathName | string |  `file path` 
 action\_result\.data\.\*\.priority | numeric | 
+action\_result\.data\.\*\.uploadPath | string | 
 action\_result\.data\.\*\.uploadStatus | numeric | 
+action\_result\.data\.\*\.uploadedFileSize | numeric | 
 action\_result\.summary\.upload\_status | numeric | 
 action\_result\.summary\.upload\_status\_desc | string | 
+action\_result\.message | string | 
+summary\.total\_objects | numeric | 
+summary\.total\_objects\_successful | numeric |   
+
+## action: 'list files'
+List the files available on the controller
+
+Type: **investigate**  
+Read only: **True**
+
+When provided \-1 in limit parameter, it will return the count of the number of files available\.
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**limit** |  optional  | Number of records to fetch in each response | numeric | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS
+--------- | ---- | --------
+action\_result\.status | string | 
+action\_result\.parameter\.limit | numeric | 
+action\_result\.data\.\*\.\*\.computerId | numeric | 
+action\_result\.data\.\*\.\*\.count | numeric | 
+action\_result\.data\.\*\.\*\.createdBy | string | 
+action\_result\.data\.\*\.\*\.createdByUserId | numeric | 
+action\_result\.data\.\*\.\*\.dateCreated | string | 
+action\_result\.data\.\*\.\*\.dateModified | string | 
+action\_result\.data\.\*\.\*\.fileCatalogId | numeric | 
+action\_result\.data\.\*\.\*\.fileName | string | 
+action\_result\.data\.\*\.\*\.id | numeric |  `carbon black file id` 
+action\_result\.data\.\*\.\*\.pathName | string | 
+action\_result\.data\.\*\.\*\.priority | numeric | 
+action\_result\.data\.\*\.\*\.uploadPath | string | 
+action\_result\.data\.\*\.\*\.uploadStatus | numeric | 
+action\_result\.data\.\*\.\*\.uploadedFileSize | numeric | 
+action\_result\.summary | string | 
+action\_result\.summary\.num\_files | numeric | 
+action\_result\.summary\.total | numeric | 
+action\_result\.message | string | 
+summary\.total\_objects | numeric | 
+summary\.total\_objects\_successful | numeric |   
+
+## action: 'get file'
+Get the file from the controller and add it to the vault
+
+Type: **investigate**  
+Read only: **True**
+
+This will only add the file in vault, whose <b>uploadStatus</b> is 3 \(Completed\)\.
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**file\_id** |  required  | File ID | numeric |  `carbon black file id` 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS
+--------- | ---- | --------
+action\_result\.status | string | 
+action\_result\.parameter\.file\_id | numeric |  `carbon black file id` 
+action\_result\.data\.\*\.file\_name | string | 
+action\_result\.data\.\*\.vault\_id | string |  `sha1`  `vault id` 
+action\_result\.summary | string | 
+action\_result\.summary\.vault\_id | string |  `sha1`  `vault id` 
 action\_result\.message | string | 
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric |   
@@ -165,42 +232,41 @@ action\_result\.parameter\.connector\_id | numeric |  `carbon black connector id
 action\_result\.parameter\.file\_id | numeric |  `carbon black file id` 
 action\_result\.parameter\.priority | numeric | 
 action\_result\.parameter\.target\_type | string |  `carbon black analysis target` 
-action\_result\.data\.\*\.id | numeric | 
-action\_result\.data\.\*\.fileName | string | 
-action\_result\.data\.\*\.pathName | string | 
-action\_result\.data\.\*\.priority | numeric | 
-action\_result\.data\.\*\.createdBy | string | 
-action\_result\.data\.\*\.computerId | numeric | 
-action\_result\.data\.\*\.connectorId | numeric | 
-action\_result\.data\.\*\.dateCreated | string | 
-action\_result\.data\.\*\.dateModified | string | 
-action\_result\.data\.\*\.fileCatalogId | numeric | 
-action\_result\.data\.\*\.analysisResult | numeric | 
-action\_result\.data\.\*\.analysisStatus | numeric | 
-action\_result\.data\.\*\.analysisTarget | string | 
-action\_result\.data\.\*\.createdByUserId | numeric | 
-action\_result\.message | string | 
 action\_result\.data | string | 
-action\_result\.summary | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric | 
+action\_result\.data\.\*\.analysisResult | numeric | 
+action\_result\.data\.\*\.analysisResult | numeric | 
+action\_result\.data\.\*\.analysisStatus | numeric | 
+action\_result\.data\.\*\.analysisStatus | numeric | 
+action\_result\.data\.\*\.analysisTarget | string | 
+action\_result\.data\.\*\.analysisTarget | string | 
+action\_result\.data\.\*\.computerId | numeric | 
 action\_result\.data\.\*\.computerId | numeric | 
 action\_result\.data\.\*\.connectorId | numeric | 
-action\_result\.data\.\*\.analysisStatus | numeric | 
-action\_result\.data\.\*\.fileName | string | 
-action\_result\.data\.\*\.priority | numeric | 
-action\_result\.data\.\*\.createdByUserId | numeric | 
-action\_result\.data\.\*\.pathName | string |  `file path` 
-action\_result\.data\.\*\.fileCatalogId | numeric | 
+action\_result\.data\.\*\.connectorId | numeric | 
 action\_result\.data\.\*\.createdBy | string | 
-action\_result\.data\.\*\.analysisResult | numeric | 
-action\_result\.data\.\*\.id | numeric | 
+action\_result\.data\.\*\.createdBy | string | 
+action\_result\.data\.\*\.createdByUserId | numeric | 
+action\_result\.data\.\*\.createdByUserId | numeric | 
+action\_result\.data\.\*\.dateCreated | string | 
 action\_result\.data\.\*\.dateCreated | string | 
 action\_result\.data\.\*\.dateModified | string | 
-action\_result\.data\.\*\.analysisTarget | string | 
-action\_result\.message | string | 
+action\_result\.data\.\*\.dateModified | string | 
+action\_result\.data\.\*\.fileCatalogId | numeric | 
+action\_result\.data\.\*\.fileCatalogId | numeric | 
+action\_result\.data\.\*\.fileName | string | 
+action\_result\.data\.\*\.fileName | string | 
+action\_result\.data\.\*\.id | numeric | 
+action\_result\.data\.\*\.id | numeric | 
+action\_result\.data\.\*\.pathName | string | 
+action\_result\.data\.\*\.pathName | string |  `file path` 
+action\_result\.data\.\*\.priority | numeric | 
+action\_result\.data\.\*\.priority | numeric | 
+action\_result\.summary | string | 
 action\_result\.summary\.analysis\_status | numeric | 
-action\_result\.summary\.analysis\_status\_desc | string |   
+action\_result\.summary\.analysis\_status\_desc | string | 
+action\_result\.message | string | 
+summary\.total\_objects | numeric | 
+summary\.total\_objects\_successful | numeric |   
 
 ## action: 'unblock hash'
 Unblocks a particular hash
@@ -227,7 +293,6 @@ action\_result\.data\.\*\.createdBy | string |
 action\_result\.data\.\*\.createdByUserId | numeric | 
 action\_result\.data\.\*\.dateCreated | string | 
 action\_result\.data\.\*\.dateModified | string | 
-action\_result\.data\.\*\.platformFlags | numeric | 
 action\_result\.data\.\*\.description | string | 
 action\_result\.data\.\*\.fileCatalogId | numeric | 
 action\_result\.data\.\*\.fileState | numeric | 
@@ -238,6 +303,7 @@ action\_result\.data\.\*\.id | numeric |
 action\_result\.data\.\*\.modifiedBy | string | 
 action\_result\.data\.\*\.modifiedByUserId | numeric | 
 action\_result\.data\.\*\.name | string | 
+action\_result\.data\.\*\.platformFlags | numeric | 
 action\_result\.data\.\*\.policyIds | string | 
 action\_result\.data\.\*\.reportOnly | boolean | 
 action\_result\.data\.\*\.reputationApprovalsEnabled | boolean | 
@@ -268,7 +334,6 @@ DATA PATH | TYPE | CONTAINS
 action\_result\.status | string | 
 action\_result\.parameter\.comment | string | 
 action\_result\.parameter\.hash | string |  `hash`  `sha256`  `sha1`  `md5` 
-action\_result\.data\.\*\.platformFlags | numeric | 
 action\_result\.data\.\*\.clVersion | numeric | 
 action\_result\.data\.\*\.createdBy | string | 
 action\_result\.data\.\*\.createdByUserId | numeric | 
@@ -284,6 +349,7 @@ action\_result\.data\.\*\.id | numeric |
 action\_result\.data\.\*\.modifiedBy | string | 
 action\_result\.data\.\*\.modifiedByUserId | numeric | 
 action\_result\.data\.\*\.name | string | 
+action\_result\.data\.\*\.platformFlags | numeric | 
 action\_result\.data\.\*\.policyFlags | string | 
 action\_result\.data\.\*\.policyIds | string | 
 action\_result\.data\.\*\.policyIds | string | 
@@ -324,22 +390,15 @@ action\_result\.data\.\*\.activeKernelDebugLevel | numeric |
 action\_result\.data\.\*\.agentCacheSize | numeric | 
 action\_result\.data\.\*\.agentMemoryDumps | numeric | 
 action\_result\.data\.\*\.agentQueueSize | numeric | 
-action\_result\.data\.\*\.computerTag | string | 
-action\_result\.data\.\*\.description | string | 
-action\_result\.data\.\*\.templateDate | string | 
-action\_result\.data\.\*\.upgradeError | string | 
-action\_result\.data\.\*\.cbSensorVersion | string | 
-action\_result\.data\.\*\.upgradeErrorTime | string | 
-action\_result\.data\.\*\.templateCloneCleanupMode | string | 
-action\_result\.data\.\*\.templateCloneCleanupTime | string | 
-action\_result\.data\.\*\.templateCloneCleanupTimeScale | string | 
 action\_result\.data\.\*\.agentVersion | string | 
 action\_result\.data\.\*\.automaticPolicy | boolean | 
 action\_result\.data\.\*\.cbSensorFlags | numeric | 
 action\_result\.data\.\*\.cbSensorId | numeric | 
+action\_result\.data\.\*\.cbSensorVersion | string | 
 action\_result\.data\.\*\.ccFlags | numeric | 
 action\_result\.data\.\*\.ccLevel | numeric | 
 action\_result\.data\.\*\.clVersion | numeric | 
+action\_result\.data\.\*\.computerTag | string | 
 action\_result\.data\.\*\.connected | boolean | 
 action\_result\.data\.\*\.dateCreated | string | 
 action\_result\.data\.\*\.daysOffline | numeric | 
@@ -347,12 +406,13 @@ action\_result\.data\.\*\.debugDuration | numeric |
 action\_result\.data\.\*\.debugFlags | numeric | 
 action\_result\.data\.\*\.debugLevel | numeric | 
 action\_result\.data\.\*\.deleted | boolean | 
+action\_result\.data\.\*\.description | string | 
 action\_result\.data\.\*\.disconnectedEnforcementLevel | numeric | 
 action\_result\.data\.\*\.enforcementLevel | numeric | 
 action\_result\.data\.\*\.forceUpgrade | boolean | 
 action\_result\.data\.\*\.hasDuplicates | boolean | 
 action\_result\.data\.\*\.hasHealthCheckErrors | boolean | 
-action\_result\.data\.\*\.id | numeric | 
+action\_result\.data\.\*\.id | numeric |  `carbon black computer id` 
 action\_result\.data\.\*\.initPercent | numeric | 
 action\_result\.data\.\*\.initializing | boolean | 
 action\_result\.data\.\*\.ipAddress | string |  `ip` 
@@ -385,10 +445,16 @@ action\_result\.data\.\*\.systemMemoryDumps | numeric |
 action\_result\.data\.\*\.tamperProtectionActive | boolean | 
 action\_result\.data\.\*\.tdCount | numeric | 
 action\_result\.data\.\*\.template | boolean | 
+action\_result\.data\.\*\.templateCloneCleanupMode | string | 
+action\_result\.data\.\*\.templateCloneCleanupTime | string | 
+action\_result\.data\.\*\.templateCloneCleanupTimeScale | string | 
 action\_result\.data\.\*\.templateComputerId | numeric | 
+action\_result\.data\.\*\.templateDate | string | 
 action\_result\.data\.\*\.templateTrackModsOnly | boolean | 
 action\_result\.data\.\*\.uninstalled | boolean | 
+action\_result\.data\.\*\.upgradeError | string | 
 action\_result\.data\.\*\.upgradeErrorCount | numeric | 
+action\_result\.data\.\*\.upgradeErrorTime | string | 
 action\_result\.data\.\*\.upgradeStatus | string | 
 action\_result\.data\.\*\.users | string | 
 action\_result\.data\.\*\.virtualPlatform | string | 
