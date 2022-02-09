@@ -16,11 +16,14 @@
 # Phantom imports
 # Other imports used by this connector
 import json
+import sys
 
 import phantom.app as phantom
+import phantom.rules as phantomrules
 import requests
 from phantom.action_result import ActionResult
 from phantom.base_connector import BaseConnector
+from phantom.vault import Vault
 
 # THIS Connector imports
 from bit9_consts import *
@@ -36,6 +39,8 @@ class Bit9Connector(BaseConnector):
     ACTION_ID_GET_SYSTEM_INFO = "get_system_info"
     ACTION_ID_UPLOAD_FILE = "upload_file"
     ACTION_ID_ANALYZE_FILE = "analyze_file"
+    ACTION_ID_LIST_FILES = "list_files"
+    ACTION_ID_GET_FILE = "get_file"
 
     # This could be a list, but easier to read as a dictionary
     UPLOAD_STATUS_DESCS = {
@@ -61,6 +66,8 @@ class Bit9Connector(BaseConnector):
         super(Bit9Connector, self).__init__()
 
         self._base_url = None
+        self._headers = None
+        self._comment = None
 
     def initialize(self):
 
@@ -71,6 +78,45 @@ class Bit9Connector(BaseConnector):
         self._comment = BIT9_ADDED_BY_PHANTOM.format(self.get_product_installation_id())
 
         return phantom.APP_SUCCESS
+
+    def _validate_integer(self, action_result, parameter, key, allow_zero=False):
+        if parameter is not None:
+            try:
+                if not float(parameter).is_integer():
+                    return action_result.set_status(phantom.APP_ERROR, BIT9_INVALID_INT.format(param=key)), None
+
+                parameter = int(parameter)
+            except Exception:
+                return action_result.set_status(phantom.APP_ERROR, BIT9_INVALID_INT.format(param=key)), None
+
+            if key == 'Limit' and parameter == -1:
+                return phantom.APP_SUCCESS, parameter
+            if parameter < 0:
+                return action_result.set_status(phantom.APP_ERROR, BIT9_ERR_NEGATIVE_INT_PARAM.format(param=key)), None
+            if not allow_zero and parameter == 0:
+                return action_result.set_status(phantom.APP_ERROR, BIT9_ERR_INVALID_PARAM.format(param=key)), None
+
+        return phantom.APP_SUCCESS, parameter
+
+    def _get_error_message_from_exception(self, e):
+        """ This method is used to get appropriate error message from the exception.
+        :param e: Exception object
+        :return: error message
+        """
+
+        error_code = ERR_CODE_UNAVAILABLE
+        error_msg = ERR_MSG_UNAVAILABLE
+        try:
+            if hasattr(e, 'args'):
+                if len(e.args) > 1:
+                    error_code = e.args[0]
+                    error_msg = e.args[1]
+                elif len(e.args) == 1:
+                    error_msg = e.args[0]
+        except Exception:
+            pass
+
+        return "Error Code: {0}. Error Message: {1}".format(error_code, error_msg)
 
     def _make_rest_call(self, endpoint, action_result, headers=None, params=None, data=None, method="get"):
         """ Function that makes the REST call to the device, generic function that can be called from various action handlers"""
@@ -93,23 +139,26 @@ class Bit9Connector(BaseConnector):
         # get or post or put, whatever the caller asked us to use, if not specified the default will be 'get'
         request_func = getattr(requests, method)
 
-        # handle the error in case the caller specified a non-existant method
+        # handle the error in case the caller specified a non-existent method
         if not request_func:
             action_result.set_status(phantom.APP_ERROR, BIT9_ERR_API_UNSUPPORTED_METHOD, method=method)
 
         # Make the call
         try:
-            r = request_func(self._base_url + endpoint,  # The complete url is made up of the base_url, the api url and the endpiont
-                    data=json.dumps(data) if data else None,  # the data, converted to json string format if present, else just set to None
-                    headers=headers,  # The headers to send in the HTTP call
-                    verify=config[phantom.APP_JSON_VERIFY],  # should cert verification be carried out?
-                    params=params)  # uri parameters if any
+            r = request_func(   # nosemgrep
+                self._base_url + endpoint,  # The url is made up of the base_url, the api url and the endpoint
+                data=json.dumps(data) if data else None,  # the data converted to json string if present
+                headers=headers,  # The headers to send in the HTTP call
+                verify=config[phantom.APP_JSON_VERIFY],  # should cert verification be carried out?
+                params=params,
+            )  # uri parameters if any
         except Exception as e:
-            return (action_result.set_status(phantom.APP_ERROR, BIT9_ERR_SERVER_CONNECTION, e), resp_json)
+            return action_result.set_status(phantom.APP_ERROR, BIT9_ERR_SERVER_CONNECTION,
+                                            self._get_error_message_from_exception(e)), resp_json
 
         content_type = r.headers.get('content-type')
 
-        if (content_type) and ('application/json' in content_type):
+        if content_type and ('application/json' in content_type):
             # Try a json parse, since most REST API's give back the data in json, if the device does not return JSONs,
             # then need to implement parsing them some other manner
             try:
@@ -117,17 +166,22 @@ class Bit9Connector(BaseConnector):
             except Exception as e:
                 # r.text is guaranteed to be NON None, it will be empty, but not None
                 msg_string = BIT9_ERR_JSON_PARSE.format(raw_text=r.text)
-                return (action_result.set_status(phantom.APP_ERROR, msg_string, e), resp_json)
+                return action_result.set_status(phantom.APP_ERROR, msg_string,
+                                                self._get_error_message_from_exception(e)), resp_json
 
-        # Handle any special HTTP error codes here, many devices return an HTTP error code like 204. The requests module treats these as error,
+        # Handle any special HTTP error codes here, many devices return an HTTP error code like 204.
+        # The requests module treats these as error,
         # so handle them here before anything else, uncomment the following lines in such cases
         # if (r.status_code == 201):
         #     return (phantom.APP_SUCCESS, resp_json)
 
+        if content_type and ('application/octet-stream' in content_type):
+            resp_json = r
+
         # Handle/process any errors that we get back from the device
         if 200 <= r.status_code <= 399:
             # Success
-            return (phantom.APP_SUCCESS, resp_json)
+            return phantom.APP_SUCCESS, resp_json
 
         # Failure
 
@@ -141,9 +195,11 @@ class Bit9Connector(BaseConnector):
         if r.status_code == 401:
             if details:
                 details += ". "
-            details += "Please verify the user has been configured with the required permissions as mentioned in the action documentation."
+            details += "Please verify the user has been configured with the required permissions " \
+                       "as mentioned in the action documentation."
 
-        return (action_result.set_status(phantom.APP_ERROR, BIT9_ERR_FROM_SERVER.format(status=r.status_code, detail=details)), resp_json)
+        return action_result.set_status(phantom.APP_ERROR,
+                                        BIT9_ERR_FROM_SERVER.format(status=r.status_code, detail=details)), resp_json
 
     def _test_connectivity(self, param):
 
@@ -190,12 +246,12 @@ class Bit9Connector(BaseConnector):
         ret_val, resp_json = self._make_rest_call(FILE_CATALOG_ENDPOINT, action_result, params=params)
 
         if not ret_val:
-            return (action_result.get_status(), None)
+            return action_result.get_status(), None
 
         if not resp_json:
-            return (phantom.APP_SUCCESS, None)
+            return phantom.APP_SUCCESS, None
 
-        return (phantom.APP_SUCCESS, resp_json[0])
+        return phantom.APP_SUCCESS, resp_json[0]
 
     def _unblock_hash(self, param):
 
@@ -215,7 +271,8 @@ class Bit9Connector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, "No matching rules for the hash were found.")
 
         if len(rules) > 1:
-            return action_result.set_status(phantom.APP_ERROR, "More than one rule matched for the hash. This is treated as an Error.")
+            return action_result.set_status(phantom.APP_ERROR,
+                                            "More than one rule matched for the hash. This is treated as an Error.")
 
         file_rule = rules[0]
 
@@ -237,7 +294,7 @@ class Bit9Connector(BaseConnector):
             action_result.add_data(file_rule)
             return action_result.set_status(phantom.APP_SUCCESS, "State of file same as required")
 
-        if (catalog_found) and ('id' in catalog_found):
+        if catalog_found and ('id' in catalog_found):
             if file_rule.get('fileCatalogId', 0) == 0:
                 file_rule['fileCatalogId'] = catalog_found['id']
 
@@ -267,7 +324,7 @@ class Bit9Connector(BaseConnector):
         ret_val, catalog = self._get_file_catalog(file_hash, action_result)
 
         if phantom.is_fail(ret_val):
-            return (action_result.get_status(), None)
+            return action_result.get_status(), None
 
         if catalog:
             if catalog_found is not None:
@@ -278,25 +335,25 @@ class Bit9Connector(BaseConnector):
         ret_val, resp_json = self._make_rest_call(FILE_RULE_ENDPOINT, action_result, params=params)
 
         if phantom.is_fail(ret_val):
-            return (action_result.get_status(), None)
+            return action_result.get_status(), None
 
         if resp_json:
             self.save_progress("Found rule configured for Hash")
             # return it
-            return (phantom.APP_SUCCESS, resp_json)
+            return phantom.APP_SUCCESS, resp_json
 
         # No rules for this hash, go the catalog way
         if not catalog:
             # No catalog, so no more rule finding catalog
             self.save_progress("File not found in Catalog")
-            return (phantom.APP_SUCCESS, [])
+            return phantom.APP_SUCCESS, []
 
         catalog_id = catalog.get('id')
 
         if not catalog_id:
             # No catalog, so no more rule finding catalog
             self.save_progress("File found in Catalog, but no ID")
-            return (phantom.APP_SUCCESS, [])
+            return phantom.APP_SUCCESS, []
 
         self.save_progress("Got Catalog ID: {0} for file".format(catalog_id))
         # got the catalog, now try to find the rules for this catalog
@@ -305,9 +362,9 @@ class Bit9Connector(BaseConnector):
         ret_val, resp_json = self._make_rest_call(FILE_RULE_ENDPOINT, action_result, params=params)
 
         if phantom.is_fail(ret_val):
-            return (action_result.get_status(), None)
+            return action_result.get_status(), None
 
-        return (phantom.APP_SUCCESS, resp_json)
+        return phantom.APP_SUCCESS, resp_json
 
     def _block_hash(self, param):
 
@@ -324,7 +381,8 @@ class Bit9Connector(BaseConnector):
             return action_result.get_status()
 
         if len(rules) > 1:
-            return action_result.set_status(phantom.APP_ERROR, "More than one rule matched for the hash. This is treated as an Error.")
+            return action_result.set_status(phantom.APP_ERROR,
+                                            "More than one rule matched for the hash. This is treated as an Error.")
 
         file_rule = {}
 
@@ -332,7 +390,7 @@ class Bit9Connector(BaseConnector):
             self.save_progress("Got Rule for file")
             file_rule = rules[0]
 
-        if (catalog_found) and ('id' in catalog_found):
+        if catalog_found and ('id' in catalog_found):
             if file_rule.get('fileCatalogId', 0) == 0:
                 file_rule['fileCatalogId'] = catalog_found['id']
 
@@ -385,13 +443,14 @@ class Bit9Connector(BaseConnector):
 
         if not catalog:
             # No catalog, so no more rule finding catalog
-            return action_result.set_status(phantom.APP_SUCCESS, "File not present in the catalog. Possibly not present in Enterprise.")
+            return action_result.set_status(phantom.APP_SUCCESS,
+                                            "File not present in the catalog. Possibly not present in Enterprise.")
 
         catalog_id = catalog.get('id')
 
         if not catalog_id:
             # No catalog, so no more rule finding catalog
-            return (phantom.APP_SUCCESS, [])
+            return phantom.APP_SUCCESS, []
 
         summary['prevalence'] = catalog.get('prevalence', '0')
 
@@ -408,7 +467,8 @@ class Bit9Connector(BaseConnector):
 
         if (not comp_id) and (not ip_hostname):
             return action_result.set_status(phantom.APP_ERROR,
-                                            "Neither {0} nor {1} specified. Please specify at-least one of them".format('ip_hostname', 'id'))
+                                            "Neither {0} nor {1} specified. Please specify at-least one of them".format(
+                                                'ip_hostname', 'id'))
 
         endpoint = '/computer'
         params = None
@@ -442,7 +502,7 @@ class Bit9Connector(BaseConnector):
         comp_id = param['computer_id']
         file_id = param['file_id']
 
-        endpoint = '/fileUpload'
+        endpoint = FILE_UPLOAD_ENDPOINT
         data = {'computerId': comp_id, 'fileCatalogId': file_id,
                 'priority': param.get('priority', '0')}
 
@@ -462,10 +522,89 @@ class Bit9Connector(BaseConnector):
             summary = action_result.update_summary({'upload_status': upload_status})
             try:
                 summary['upload_status_desc'] = self.UPLOAD_STATUS_DESCS[str(upload_status)]
-            except:
+            except Exception:
                 pass
 
         return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _list_files(self, param):
+        action_result = self.add_action_result(ActionResult(param))
+        ret_val, limit = self._validate_integer(action_result, param.get('limit', 100), 'Limit', False)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        params = {
+            'limit': limit
+        }
+
+        endpoint = FILE_UPLOAD_ENDPOINT
+
+        ret_val, resp_json = self._make_rest_call(endpoint, action_result, method="get", params=params)
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        action_result.add_data(resp_json)
+        if limit == -1:
+            total = resp_json['count']
+            action_result.update_summary({'total': total})
+            return action_result.set_status(phantom.APP_SUCCESS, "Total: {}".format(total))
+
+        num_files = len(resp_json)
+        action_result.update_summary({'num_files': num_files})
+        return action_result.set_status(phantom.APP_SUCCESS, BIT9_LIST_FILES_SUCC.format(num_files))
+
+    def _get_file_and_save_to_vault(self, param):
+        """
+        This method is used to get the file content from controller
+        and save it to vault
+        """
+        action_result = self.add_action_result(ActionResult(param))
+
+        ret_val, file_id = self._validate_integer(action_result, param["file_id"], 'File ID', False)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        params = {
+            'downloadFile': True
+        }
+
+        endpoint = FILE_UPLOAD_ENDPOINT + '/' + str(file_id)
+
+        ret_val, resp_json = self._make_rest_call(endpoint, action_result, method="get")
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        filename = resp_json.get('fileName')
+
+        ret_val, resp = self._make_rest_call(endpoint, action_result, method="get", params=params)
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        if hasattr(Vault, 'get_vault_tmp_dir'):
+            vault_tmp_dir = Vault.get_vault_tmp_dir()
+        else:
+            vault_tmp_dir = '/opt/phantom/vault/tmp'
+
+        file_loc = vault_tmp_dir + '/' + filename
+        with open(file_loc, 'w') as file:
+            file.write(resp.text)
+
+        success, message, vault_id = phantomrules.vault_add(container=self.get_container_id(),
+                                                            file_location=file_loc,
+                                                            file_name=filename)
+        if success:
+            vault_details = {
+                phantom.APP_JSON_VAULT_ID: vault_id,
+                'file_name': filename
+            }
+            action_result.add_data(vault_details)
+            action_result.update_summary({'vault_id': vault_id})
+            return action_result.set_status(phantom.APP_SUCCESS, BIT9_GET_FILE_SUCC.format(vault_id))
+
+        return action_result.set_status(phantom.APP_ERROR, 'Error adding file to vault: {0}'.format(message))
 
     def _analyze_file(self, param):
 
@@ -501,7 +640,7 @@ class Bit9Connector(BaseConnector):
             summary = action_result.update_summary({'analysis_status': analysis_status})
             try:
                 summary['analysis_status_desc'] = self.ANALYSIS_STATUS_DESCS[str(analysis_status)]
-            except:
+            except Exception:
                 pass
 
         return action_result.set_status(phantom.APP_SUCCESS)
@@ -536,6 +675,12 @@ class Bit9Connector(BaseConnector):
 
         elif action == self.ACTION_ID_ANALYZE_FILE:
             result = self._analyze_file(param)
+
+        elif action == self.ACTION_ID_LIST_FILES:
+            result = self._list_files(param)
+
+        elif action == self.ACTION_ID_GET_FILE:
+            result = self._get_file_and_save_to_vault(param)
 
         return result
 

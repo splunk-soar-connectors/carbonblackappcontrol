@@ -21,15 +21,15 @@ import phantom.utils as util
 def _get_hash_type(hash_value):
 
     if util.is_md5(hash_value):
-        return (phantom.APP_SUCCESS, "md5")
+        return phantom.APP_SUCCESS, "md5"
 
     if util.is_sha1(hash_value):
-        return (phantom.APP_SUCCESS, "sha1")
+        return phantom.APP_SUCCESS, "sha1"
 
     if util.is_sha256(hash_value):
-        return (phantom.APP_SUCCESS, "sha256")
+        return phantom.APP_SUCCESS, "sha256"
 
-    return (phantom.APP_ERROR, None)
+    return phantom.APP_ERROR, None
 
 
 def get_ctx_result(result):
