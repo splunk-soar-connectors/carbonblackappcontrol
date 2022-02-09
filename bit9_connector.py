@@ -549,12 +549,16 @@ class Bit9Connector(BaseConnector):
             total = resp_json['count']
             action_result.update_summary({'total': total})
             return action_result.set_status(phantom.APP_SUCCESS, "Total: {}".format(total))
-        else:
-            num_files = len(resp_json)
-            action_result.update_summary({'num_files': num_files})
-            return action_result.set_status(phantom.APP_SUCCESS, BIT9_LIST_FILES_SUCC.format(num_files))
 
-    def _get_file(self, param):
+        num_files = len(resp_json)
+        action_result.update_summary({'num_files': num_files})
+        return action_result.set_status(phantom.APP_SUCCESS, BIT9_LIST_FILES_SUCC.format(num_files))
+
+    def _get_file_and_save_to_vault(self, param):
+        """
+        This method is used to get the file content from controller
+        and save it to vault
+        """
         action_result = self.add_action_result(ActionResult(param))
 
         ret_val, file_id = self._validate_integer(action_result, param["file_id"], 'File ID', False)
@@ -676,7 +680,7 @@ class Bit9Connector(BaseConnector):
             result = self._list_files(param)
 
         elif action == self.ACTION_ID_GET_FILE:
-            result = self._get_file(param)
+            result = self._get_file_and_save_to_vault(param)
 
         return result
 
