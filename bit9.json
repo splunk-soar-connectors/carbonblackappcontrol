@@ -1837,6 +1837,243 @@
                 }
             ],
             "versions": "EQ(*)"
+        },
+        {
+            "action": "get file instance",
+            "description": "Searches for file instances",
+            "verbose": "This action requires the following permission: <ul><li>View files</li></ul>.",
+            "type": "generic",
+            "identifier": "get_fileinstance",
+            "read_only": true,
+            "parameters": {
+                "filecatalog_id": {
+                    "data_type": "numeric",
+                    "description": "Id of fileCatalog associated with this file instance",
+                    "required": true,
+                    "contains": [
+                        "carbon black filecatalog id"
+                    ],
+                    "order": 0,
+                    "primary": true
+                },
+                "computer_id": {
+                    "data_type": "numeric",
+                    "description": "Id of computer associated with this file instance",
+                    "required": true,
+                    "contains": [
+                        "carbon black computer id"
+                    ],
+                    "order": 1,
+                    "primary": true
+                }
+            },
+            "render": {
+                "type": "table",
+                "width": 10,
+                "height": 5,
+                "title": "Get File Instance"
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.filecatalog_id",
+                    "data_type": "numeric",
+                    "contains": [
+                        "carbon black filecatalog id"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.computer_id",
+                    "data_type": "numeric",
+                    "contains": [
+                        "carbon black computer id"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "numeric",
+                    "contains": [
+                        "carbon black fileinstance id"
+                    ],
+                    "column_name": "FileInstance ID",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.fileCatalogId",
+                    "data_type": "numeric",
+                    "contains": [
+                        "carbon black filecatalog id"
+                    ],
+                    "column_name": "FileCatalog ID",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.computerId",
+                    "data_type": "numeric",
+                    "contains": [
+                        "carbon black computer id"
+                    ],
+                    "column_name": "Computer ID",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.fileName",
+                    "data_type": "string",
+                    "column_name": "File Name",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.*.pathName",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.localState",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "update file instance",
+            "description": "Change local file instance state",
+            "verbose": "This action requires the following permission: <ul><li>View files</li><li>Change local state</li></ul>.",
+            "type": "correct",
+            "identifier": "update_fileinstance",
+            "read_only": true,
+            "parameters": {
+                "instance_id": {
+                    "data_type": "numeric",
+                    "description": "FileInstance Id",
+                    "required": true,
+                    "contains": [
+                        "carbon black fileinstance id"
+                    ],
+                    "order": 0,
+                    "primary": true
+                },
+                "local_state": {
+                    "data_type": "string",
+                    "description": "Local state to set",
+                    "order": 1,
+                    "value_list": [
+                        "unapproved",
+                        "approved"
+                    ],
+                    "default": "unapproved"
+                }
+            },
+            "render": {
+                "type": "table",
+                "width": 10,
+                "height": 5,
+                "title": "Update File Instance"
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.instance_id",
+                    "data_type": "numeric",
+                    "contains": [
+                        "carbon black fileinstance id"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.local_state",
+                    "data_type": "string",
+                    "example_values": [
+                        "approved",
+                        "unapproved"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "numeric",
+                    "contains": [
+                        "carbon black fileinstance id"
+                    ],
+                    "column_name": "FileInstance ID",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.fileCatalogId",
+                    "data_type": "numeric",
+                    "contains": [
+                        "carbon black filecatalog id"
+                    ],
+                    "column_name": "FileCatalog ID",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.computerId",
+                    "data_type": "numeric",
+                    "contains": [
+                        "carbon black computer id"
+                    ],
+                    "column_name": "Computer ID",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.fileName",
+                    "data_type": "string",
+                    "column_name": "File Name",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.*.pathName",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.localState",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "versions": "EQ(*)"
         }
     ],
     "pip_dependencies": {

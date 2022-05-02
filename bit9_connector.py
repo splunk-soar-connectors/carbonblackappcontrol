@@ -41,6 +41,8 @@ class Bit9Connector(BaseConnector):
     ACTION_ID_ANALYZE_FILE = "analyze_file"
     ACTION_ID_LIST_FILES = "list_files"
     ACTION_ID_GET_FILE = "get_file"
+    ACTION_ID_GET_FILE_INSTANCE = "get_fileinstance"
+    ACTION_ID_UPDATE_FILE_INSTANCE = "update_fileinstance"
 
     # This could be a list, but easier to read as a dictionary
     UPLOAD_STATUS_DESCS = {
@@ -645,6 +647,81 @@ class Bit9Connector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
+    def _get_fileinstance(self, param):
+
+        action_result = self.add_action_result(ActionResult(param))
+
+        ret_val, catalog_id = self._validate_integer(action_result, param["filecatalog_id"], 'FileCatalog ID', False)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        ret_val, computer_id = self._validate_integer(action_result, param["computer_id"], 'Computer ID', False)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        params = {
+            'q': [
+                'computerId:{0}'.format(computer_id),
+                'fileCatalogId:{0}'.format(catalog_id)
+            ]
+        }
+
+        ret_val, resp_json = self._make_rest_call(FILE_INSTANCE_ENDPOINT, action_result, method="get", params=params)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        if resp_json:
+            action_result.add_data(resp_json)
+
+        return action_result.set_status(phantom.APP_SUCCESS, "Fetched File Instance successfully")
+
+    def _update_fileinstance(self, param):
+
+        action_result = self.add_action_result(ActionResult(param))
+
+        ret_val, instance_id = self._validate_integer(action_result, param["instance_id"], 'FileInstance ID', False)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        endpoint = FILE_INSTANCE_ENDPOINT + '/{0}'.format(instance_id)
+
+        # get instance for this id
+        ret_val, resp_json = self._make_rest_call(endpoint, action_result, method="get")
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        if not resp_json:
+            return action_result.set_status(phantom.APP_ERROR, "No matching instance for the ID were found.")
+
+        if len(resp_json) > 1:
+            return action_result.set_status(phantom.APP_ERROR,
+                "More than one file instance matched for the id. This is treated as an Error.")
+
+        self.save_progress("Got FileInstance for ID '{0}'".format(instance_id))
+        instance = resp_json[0]
+
+        # check if the state of the file is what we wanted
+        local_state = instance.get('localState', BIT9_LOCAL_STATE_UNAPPROVED)
+
+        unblock_state = BIT9_UNBLOCK_LOCAL_STATE_MAP[param['local_state']]
+
+        if str(local_state) == unblock_state:
+            action_result.add_data(instance)
+            return action_result.set_status(phantom.APP_SUCCESS, "Local state of FileInstance same as required")
+
+        instance['localState'] = unblock_state
+
+        ret_val, resp_json = self._make_rest_call(endpoint, action_result, data=instance, method="put")
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        if resp_json:
+            action_result.add_data(resp_json)
+
+        return action_result.set_status(phantom.APP_SUCCESS, "Updated local state of FileInstance successfully")
+
     def handle_action(self, param):
 
         """
@@ -681,6 +758,12 @@ class Bit9Connector(BaseConnector):
 
         elif action == self.ACTION_ID_GET_FILE:
             result = self._get_file_and_save_to_vault(param)
+
+        elif action == self.ACTION_ID_GET_FILE_INSTANCE:
+            result = self._get_fileinstance(param)
+
+        elif action == self.ACTION_ID_UPDATE_FILE_INSTANCE:
+            result = self._update_fileinstance(param)
 
         return result
 
