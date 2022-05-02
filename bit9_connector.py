@@ -651,6 +651,8 @@ class Bit9Connector(BaseConnector):
 
         action_result = self.add_action_result(ActionResult(param))
 
+        self.save_progress("Validating given parameters")
+
         ret_val, catalog_id = self._validate_integer(action_result, param["filecatalog_id"], 'FileCatalog ID', False)
         if phantom.is_fail(ret_val):
             return action_result.get_status()
@@ -673,7 +675,9 @@ class Bit9Connector(BaseConnector):
         if resp_json:
             action_result.add_data(resp_json)
 
-        return action_result.set_status(phantom.APP_SUCCESS, "Fetched File Instance successfully")
+        self.debug_print("Fetched FileInstance successfully")
+
+        return action_result.set_status(phantom.APP_SUCCESS, "Fetched FileInstance successfully")
 
     def _update_fileinstance(self, param):
 
@@ -709,6 +713,8 @@ class Bit9Connector(BaseConnector):
         if str(local_state) == unblock_state:
             action_result.add_data(instance)
             return action_result.set_status(phantom.APP_SUCCESS, "Local state of FileInstance same as required")
+
+        self.save_progress("Setting new state '{0}'".format(unblock_state))
 
         instance['localState'] = unblock_state
 
