@@ -52,7 +52,8 @@ class Bit9Connector(BaseConnector):
             "3": "Completed",
             "4": "Error",
             "5": "Cancelled",
-            "6": "Deleted"}
+            "6": "Deleted"
+    }
 
     ANALYSIS_STATUS_DESCS = {
             "0": "Scheduled",
@@ -60,7 +61,8 @@ class Bit9Connector(BaseConnector):
             "2": "Processed",
             "3": "Analyzed",
             "4": "Error",
-            "5": "Cancelled"}
+            "5": "Cancelled"
+    }
 
     def __init__(self):
 
@@ -255,7 +257,7 @@ class Bit9Connector(BaseConnector):
 
         return phantom.APP_SUCCESS, resp_json[0]
 
-    def _unblock_hash(self, param):
+    def _handle_whitelist(self, param):
 
         action_result = self.add_action_result(ActionResult(param))
 
@@ -368,7 +370,7 @@ class Bit9Connector(BaseConnector):
 
         return phantom.APP_SUCCESS, resp_json
 
-    def _block_hash(self, param):
+    def _handle_blacklist(self, param):
 
         action_result = self.add_action_result(ActionResult(param))
 
@@ -441,6 +443,7 @@ class Bit9Connector(BaseConnector):
         summary = action_result.update_summary({'prevalence': 0})
 
         if phantom.is_fail(ret_val):
+            self.debug_print("Enable to get catalog")
             return action_result.get_status()
 
         if not catalog:
@@ -468,6 +471,7 @@ class Bit9Connector(BaseConnector):
         comp_id = param.get('id')
 
         if (not comp_id) and (not ip_hostname):
+            self.debug_print("Required details are not provided.")
             return action_result.set_status(phantom.APP_ERROR,
                                             "Neither {0} nor {1} specified. Please specify at-least one of them".format(
                                                 'ip_hostname', 'id'))
@@ -476,10 +480,13 @@ class Bit9Connector(BaseConnector):
         params = None
 
         if comp_id:
+            self.debug_print("Getting info using id")
             endpoint += '/{0}'.format(comp_id)
         elif phantom.is_ip(ip_hostname):
+            self.debug_print("Getting info using ip")
             params = { 'q': 'ipAddress:*{0}*'.format(ip_hostname) }
         else:
+            self.debug_print("Getting info using hostname")
             params = { 'q': 'name:*{0}*'.format(ip_hostname) }
 
         ret_val, resp_json = self._make_rest_call(endpoint, action_result, params=params)
@@ -511,6 +518,7 @@ class Bit9Connector(BaseConnector):
         ret_val, resp_json = self._make_rest_call(endpoint, action_result, data=data, method="post")
 
         if phantom.is_fail(ret_val):
+            self.debug_print("Unable to upload file")
             return action_result.get_status()
 
         if resp_json is None:
@@ -524,8 +532,8 @@ class Bit9Connector(BaseConnector):
             summary = action_result.update_summary({'upload_status': upload_status})
             try:
                 summary['upload_status_desc'] = self.UPLOAD_STATUS_DESCS[str(upload_status)]
-            except Exception:
-                pass
+            except Exception as ex:
+                return action_result.set_status(phantom.APP_ERROR, "Error:{}".format(str(ex)))
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
@@ -533,6 +541,7 @@ class Bit9Connector(BaseConnector):
         action_result = self.add_action_result(ActionResult(param))
         ret_val, limit = self._validate_integer(action_result, param.get('limit', 100), 'Limit', False)
         if phantom.is_fail(ret_val):
+            self.debug_print("Invalid Integer taken")
             return action_result.get_status()
 
         params = {
@@ -544,6 +553,7 @@ class Bit9Connector(BaseConnector):
         ret_val, resp_json = self._make_rest_call(endpoint, action_result, method="get", params=params)
 
         if phantom.is_fail(ret_val):
+            self.debug_print("Unable to list files")
             return action_result.get_status()
 
         action_result.add_data(resp_json)
@@ -556,7 +566,7 @@ class Bit9Connector(BaseConnector):
         action_result.update_summary({'num_files': num_files})
         return action_result.set_status(phantom.APP_SUCCESS, BIT9_LIST_FILES_SUCC.format(num_files))
 
-    def _get_file_and_save_to_vault(self, param):
+    def _get_file(self, param):
         """
         This method is used to get the file content from controller
         and save it to vault
@@ -625,11 +635,13 @@ class Bit9Connector(BaseConnector):
         ret_val, resp_json = self._make_rest_call(endpoint, action_result, data=data, method="post")
 
         if phantom.is_fail(ret_val):
+            self.debug_print("Unable to make file analysis")
             return action_result.get_status()
 
         if resp_json is None:
             return action_result.set_status(phantom.APP_ERROR, "File ID not found. Please provide a correct file ID")
 
+        self.debug_print("Getting filestatus")
         analysis_status = resp_json.get('analysisStatus')
 
         if type(resp_json) != list:
@@ -642,8 +654,8 @@ class Bit9Connector(BaseConnector):
             summary = action_result.update_summary({'analysis_status': analysis_status})
             try:
                 summary['analysis_status_desc'] = self.ANALYSIS_STATUS_DESCS[str(analysis_status)]
-            except Exception:
-                pass
+            except Exception as ex:
+                action_result.set_status(phantom.APP_ERROR, "Error:{}".format(ex))
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
@@ -739,13 +751,13 @@ class Bit9Connector(BaseConnector):
         result = None
         action = self.get_action_identifier()
         if action == self.ACTION_ID_WHITELIST:
-            result = self._unblock_hash(param)
+            result = self._handle_whitelist(param)
 
         elif action == self.ACTION_ID_TEST_CONNECTIVITY:
             result = self._test_connectivity(param)
 
         elif action == self.ACTION_ID_BLACKLIST:
-            result = self._block_hash(param)
+            result = self._handle_blacklist(param)
 
         elif action == self.ACTION_ID_HUNT_FILE:
             result = self._hunt_file(param)
@@ -763,7 +775,7 @@ class Bit9Connector(BaseConnector):
             result = self._list_files(param)
 
         elif action == self.ACTION_ID_GET_FILE:
-            result = self._get_file_and_save_to_vault(param)
+            result = self._get_file(param)
 
         elif action == self.ACTION_ID_GET_FILE_INSTANCE:
             result = self._get_fileinstance(param)
