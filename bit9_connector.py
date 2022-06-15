@@ -450,7 +450,7 @@ class Bit9Connector(BaseConnector):
             # No catalog, so no more rule finding catalog
             return action_result.set_status(phantom.APP_SUCCESS,
                                             "File not present in the catalog. Possibly not present in Enterprise.")
-
+        self.debug_print("Getting Catalog id")
         catalog_id = catalog.get('id')
 
         if not catalog_id:
@@ -525,7 +525,7 @@ class Bit9Connector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, "File ID not found. Please provide a correct file ID")
 
         action_result.add_data(resp_json)
-
+        self.debug_print("Getting file upload status")
         upload_status = resp_json.get('uploadStatus')
 
         if upload_status is not None:
@@ -586,6 +586,7 @@ class Bit9Connector(BaseConnector):
         ret_val, resp_json = self._make_rest_call(endpoint, action_result, method="get")
 
         if phantom.is_fail(ret_val):
+            self.debug_print("Unable to find file with given id")
             return action_result.get_status()
 
         filename = resp_json.get('fileName')
@@ -593,6 +594,7 @@ class Bit9Connector(BaseConnector):
         ret_val, resp = self._make_rest_call(endpoint, action_result, method="get", params=params)
 
         if phantom.is_fail(ret_val):
+            self.debug_print("Unable to download file")
             return action_result.get_status()
 
         if hasattr(Vault, 'get_vault_tmp_dir'):
