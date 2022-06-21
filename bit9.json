@@ -5,7 +5,7 @@
     "publisher": "Splunk",
     "type": "endpoint",
     "main_module": "bit9_connector.py",
-    "app_version": "2.2.0",
+    "app_version": "2.3.0",
     "utctime_updated": "2022-02-08T01:45:48.000000Z",
     "package_name": "phantom_cbprotect",
     "product_vendor": "Carbon Black",
@@ -1101,7 +1101,7 @@
             "verbose": "This action requires the following permissions: <ul><li>View files</li><li>Manage files</li></ul>Sets the global state of the hash to either <b>approved</b> or <b>unapproved</b> by updating the file rule. If the action does not find a rule for the hash, it will return an error. If the hash rule found by the action does not contain a description containing a matching Phantom Identification ID, it will return an error status without changing the state of the rule. This is to make sure the app only modifies rules that have been created or updated by itself.",
             "type": "correct",
             "undo": "block hash",
-            "identifier": "whitelist",
+            "identifier": "_unblock_hash",
             "read_only": false,
             "parameters": {
                 "hash": {
@@ -1267,7 +1267,7 @@
             "description": "Ban the file hash",
             "verbose": "This action requires the following permissions: <ul><li>View files</li><li>Manage files</li></ul>Sets the global state of the file hash to <b>ban</b> by adding or updating a <i>file rule</i>. If a file is found in the catalog, the action will use the catalog id in the rule. The action also appends the Phantom Installation ID to the description of the rule. This is the action's way of tagging rules that are created by the app. If the action finds the current state of the file as <i>banned</i> it does not attempt to set the state, this also results in the description of the rule remaining unchanged.",
             "type": "contain",
-            "identifier": "blacklist",
+            "identifier": "_block_hash",
             "read_only": false,
             "undo": "unblock hash",
             "parameters": {
@@ -1959,7 +1959,7 @@
         {
             "action": "update file instance",
             "description": "Change local file instance state",
-            "verbose": "This action requires the following permission: <ul><li>View files</li><li>Change local state</li></ul>.",
+            "verbose": "This action requires the following permission:<ul><li>View files</li><li>Change local state</li></ul>.<p>Note that changed local state might not be reflected in the object immediately, but only after agent reports new state.</p>",
             "type": "correct",
             "identifier": "update_fileinstance",
             "read_only": true,

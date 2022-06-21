@@ -34,8 +34,8 @@ class Bit9Connector(BaseConnector):
     # The actions supported by this connector
     ACTION_ID_TEST_CONNECTIVITY = "test_connectivity"
     ACTION_ID_HUNT_FILE = "hunt_file"
-    ACTION_ID_WHITELIST = "whitelist"
-    ACTION_ID_BLACKLIST = "blacklist"
+    ACTION_ID_WHITELIST = "_unblock_hash"
+    ACTION_ID_BLACKLIST = "_block_hash"
     ACTION_ID_GET_SYSTEM_INFO = "get_system_info"
     ACTION_ID_UPLOAD_FILE = "upload_file"
     ACTION_ID_ANALYZE_FILE = "analyze_file"
@@ -257,7 +257,7 @@ class Bit9Connector(BaseConnector):
 
         return phantom.APP_SUCCESS, resp_json[0]
 
-    def _handle_whitelist(self, param):
+    def _unblock_hash(self, param):
 
         action_result = self.add_action_result(ActionResult(param))
 
@@ -370,7 +370,7 @@ class Bit9Connector(BaseConnector):
 
         return phantom.APP_SUCCESS, resp_json
 
-    def _handle_blacklist(self, param):
+    def _block_hash(self, param):
 
         action_result = self.add_action_result(ActionResult(param))
 
@@ -687,7 +687,7 @@ class Bit9Connector(BaseConnector):
             return action_result.get_status()
 
         if resp_json:
-            action_result.add_data(resp_json)
+            [action_result.add_data(instance) for instance in resp_json]
 
         self.debug_print("Fetched FileInstance successfully")
 
@@ -712,12 +712,13 @@ class Bit9Connector(BaseConnector):
         if not resp_json:
             return action_result.set_status(phantom.APP_ERROR, "No matching instance for the ID were found.")
 
-        if len(resp_json) > 1:
+        if isinstance(resp_json, list) and len(resp_json) > 1:
             return action_result.set_status(phantom.APP_ERROR,
-                "More than one file instance matched for the id. This is treated as an Error.")
+                                            "More than one file instance matched for the id. This is treated as an Error.")
 
         self.save_progress("Got FileInstance for ID '{0}'".format(instance_id))
-        instance = resp_json[0]
+        instance = resp_json
+        self.debug_print("STATE: {}".format(param['local_state']))
 
         # check if the state of the file is what we wanted
         local_state = instance.get('localState', BIT9_LOCAL_STATE_UNAPPROVED)
@@ -753,13 +754,13 @@ class Bit9Connector(BaseConnector):
         result = None
         action = self.get_action_identifier()
         if action == self.ACTION_ID_WHITELIST:
-            result = self._handle_whitelist(param)
+            result = self._unblock_hash(param)
 
         elif action == self.ACTION_ID_TEST_CONNECTIVITY:
             result = self._test_connectivity(param)
 
         elif action == self.ACTION_ID_BLACKLIST:
-            result = self._handle_blacklist(param)
+            result = self._block_hash(param)
 
         elif action == self.ACTION_ID_HUNT_FILE:
             result = self._hunt_file(param)
