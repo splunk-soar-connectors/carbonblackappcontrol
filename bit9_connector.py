@@ -34,13 +34,15 @@ class Bit9Connector(BaseConnector):
     # The actions supported by this connector
     ACTION_ID_TEST_CONNECTIVITY = "test_connectivity"
     ACTION_ID_HUNT_FILE = "hunt_file"
-    ACTION_ID_WHITELIST = "whitelist"
-    ACTION_ID_BLACKLIST = "blacklist"
+    ACTION_ID_WHITELIST = "_unblock_hash"
+    ACTION_ID_BLACKLIST = "_block_hash"
     ACTION_ID_GET_SYSTEM_INFO = "get_system_info"
     ACTION_ID_UPLOAD_FILE = "upload_file"
     ACTION_ID_ANALYZE_FILE = "analyze_file"
     ACTION_ID_LIST_FILES = "list_files"
     ACTION_ID_GET_FILE = "get_file"
+    ACTION_ID_GET_FILE_INSTANCE = "get_fileinstance"
+    ACTION_ID_UPDATE_FILE_INSTANCE = "update_fileinstance"
 
     # This could be a list, but easier to read as a dictionary
     UPLOAD_STATUS_DESCS = {
@@ -50,7 +52,8 @@ class Bit9Connector(BaseConnector):
             "3": "Completed",
             "4": "Error",
             "5": "Cancelled",
-            "6": "Deleted"}
+            "6": "Deleted"
+    }
 
     ANALYSIS_STATUS_DESCS = {
             "0": "Scheduled",
@@ -58,7 +61,8 @@ class Bit9Connector(BaseConnector):
             "2": "Processed",
             "3": "Analyzed",
             "4": "Error",
-            "5": "Cancelled"}
+            "5": "Cancelled"
+    }
 
     def __init__(self):
 
@@ -439,13 +443,14 @@ class Bit9Connector(BaseConnector):
         summary = action_result.update_summary({'prevalence': 0})
 
         if phantom.is_fail(ret_val):
+            self.debug_print("Enable to get catalog")
             return action_result.get_status()
 
         if not catalog:
             # No catalog, so no more rule finding catalog
             return action_result.set_status(phantom.APP_SUCCESS,
                                             "File not present in the catalog. Possibly not present in Enterprise.")
-
+        self.debug_print("Getting Catalog id")
         catalog_id = catalog.get('id')
 
         if not catalog_id:
@@ -466,6 +471,7 @@ class Bit9Connector(BaseConnector):
         comp_id = param.get('id')
 
         if (not comp_id) and (not ip_hostname):
+            self.debug_print("Required details are not provided.")
             return action_result.set_status(phantom.APP_ERROR,
                                             "Neither {0} nor {1} specified. Please specify at-least one of them".format(
                                                 'ip_hostname', 'id'))
@@ -474,10 +480,13 @@ class Bit9Connector(BaseConnector):
         params = None
 
         if comp_id:
+            self.debug_print("Getting info using id")
             endpoint += '/{0}'.format(comp_id)
         elif phantom.is_ip(ip_hostname):
+            self.debug_print("Getting info using ip")
             params = { 'q': 'ipAddress:*{0}*'.format(ip_hostname) }
         else:
+            self.debug_print("Getting info using hostname")
             params = { 'q': 'name:*{0}*'.format(ip_hostname) }
 
         ret_val, resp_json = self._make_rest_call(endpoint, action_result, params=params)
@@ -509,21 +518,22 @@ class Bit9Connector(BaseConnector):
         ret_val, resp_json = self._make_rest_call(endpoint, action_result, data=data, method="post")
 
         if phantom.is_fail(ret_val):
+            self.debug_print("Unable to upload file")
             return action_result.get_status()
 
         if resp_json is None:
             return action_result.set_status(phantom.APP_ERROR, "File ID not found. Please provide a correct file ID")
 
         action_result.add_data(resp_json)
-
+        self.debug_print("Getting file upload status")
         upload_status = resp_json.get('uploadStatus')
 
         if upload_status is not None:
             summary = action_result.update_summary({'upload_status': upload_status})
             try:
                 summary['upload_status_desc'] = self.UPLOAD_STATUS_DESCS[str(upload_status)]
-            except Exception:
-                pass
+            except Exception as ex:
+                return action_result.set_status(phantom.APP_ERROR, "Error:{}".format(str(ex)))
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
@@ -531,6 +541,7 @@ class Bit9Connector(BaseConnector):
         action_result = self.add_action_result(ActionResult(param))
         ret_val, limit = self._validate_integer(action_result, param.get('limit', 100), 'Limit', False)
         if phantom.is_fail(ret_val):
+            self.debug_print("Invalid Integer taken")
             return action_result.get_status()
 
         params = {
@@ -542,6 +553,7 @@ class Bit9Connector(BaseConnector):
         ret_val, resp_json = self._make_rest_call(endpoint, action_result, method="get", params=params)
 
         if phantom.is_fail(ret_val):
+            self.debug_print("Unable to list files")
             return action_result.get_status()
 
         action_result.add_data(resp_json)
@@ -554,7 +566,7 @@ class Bit9Connector(BaseConnector):
         action_result.update_summary({'num_files': num_files})
         return action_result.set_status(phantom.APP_SUCCESS, BIT9_LIST_FILES_SUCC.format(num_files))
 
-    def _get_file_and_save_to_vault(self, param):
+    def _get_file(self, param):
         """
         This method is used to get the file content from controller
         and save it to vault
@@ -574,6 +586,7 @@ class Bit9Connector(BaseConnector):
         ret_val, resp_json = self._make_rest_call(endpoint, action_result, method="get")
 
         if phantom.is_fail(ret_val):
+            self.debug_print("Unable to find file with given id")
             return action_result.get_status()
 
         filename = resp_json.get('fileName')
@@ -581,6 +594,7 @@ class Bit9Connector(BaseConnector):
         ret_val, resp = self._make_rest_call(endpoint, action_result, method="get", params=params)
 
         if phantom.is_fail(ret_val):
+            self.debug_print("Unable to download file")
             return action_result.get_status()
 
         if hasattr(Vault, 'get_vault_tmp_dir'):
@@ -623,11 +637,13 @@ class Bit9Connector(BaseConnector):
         ret_val, resp_json = self._make_rest_call(endpoint, action_result, data=data, method="post")
 
         if phantom.is_fail(ret_val):
+            self.debug_print("Unable to make file analysis")
             return action_result.get_status()
 
         if resp_json is None:
             return action_result.set_status(phantom.APP_ERROR, "File ID not found. Please provide a correct file ID")
 
+        self.debug_print("Getting filestatus")
         analysis_status = resp_json.get('analysisStatus')
 
         if type(resp_json) != list:
@@ -640,10 +656,92 @@ class Bit9Connector(BaseConnector):
             summary = action_result.update_summary({'analysis_status': analysis_status})
             try:
                 summary['analysis_status_desc'] = self.ANALYSIS_STATUS_DESCS[str(analysis_status)]
-            except Exception:
-                pass
+            except Exception as ex:
+                action_result.set_status(phantom.APP_ERROR, "Error:{}".format(ex))
 
         return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _get_fileinstance(self, param):
+
+        action_result = self.add_action_result(ActionResult(param))
+
+        self.save_progress("Validating given parameters")
+
+        ret_val, catalog_id = self._validate_integer(action_result, param["filecatalog_id"], 'FileCatalog ID', False)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        ret_val, computer_id = self._validate_integer(action_result, param["computer_id"], 'Computer ID', False)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        params = {
+            'q': [
+                'computerId:{0}'.format(computer_id),
+                'fileCatalogId:{0}'.format(catalog_id)
+            ]
+        }
+
+        ret_val, resp_json = self._make_rest_call(FILE_INSTANCE_ENDPOINT, action_result, method="get", params=params)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        if resp_json:
+            [action_result.add_data(instance) for instance in resp_json]
+
+        self.debug_print("Fetched FileInstance successfully")
+
+        return action_result.set_status(phantom.APP_SUCCESS, "Fetched FileInstance successfully")
+
+    def _update_fileinstance(self, param):
+
+        action_result = self.add_action_result(ActionResult(param))
+
+        ret_val, instance_id = self._validate_integer(action_result, param["instance_id"], 'FileInstance ID', False)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        endpoint = FILE_INSTANCE_ENDPOINT + '/{0}'.format(instance_id)
+
+        # get instance for this id
+        ret_val, resp_json = self._make_rest_call(endpoint, action_result, method="get")
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        if not resp_json:
+            return action_result.set_status(phantom.APP_ERROR, "No matching instance for the ID were found.")
+
+        if isinstance(resp_json, list) and len(resp_json) > 1:
+            return action_result.set_status(phantom.APP_ERROR,
+                                            "More than one file instance matched for the id. This is treated as an Error.")
+
+        self.save_progress("Got FileInstance for ID '{0}'".format(instance_id))
+        instance = resp_json
+        self.debug_print("STATE: {}".format(param['local_state']))
+
+        # check if the state of the file is what we wanted
+        local_state = instance.get('localState', BIT9_LOCAL_STATE_UNAPPROVED)
+
+        unblock_state = BIT9_UNBLOCK_LOCAL_STATE_MAP[param['local_state']]
+
+        if str(local_state) == unblock_state:
+            action_result.add_data(instance)
+            return action_result.set_status(phantom.APP_SUCCESS, "Local state of FileInstance same as required")
+
+        self.save_progress("Setting new state '{0}'".format(unblock_state))
+
+        instance['localState'] = unblock_state
+
+        ret_val, resp_json = self._make_rest_call(endpoint, action_result, data=instance, method="put")
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        if resp_json:
+            action_result.add_data(resp_json)
+
+        return action_result.set_status(phantom.APP_SUCCESS, "Updated local state of FileInstance successfully")
 
     def handle_action(self, param):
 
@@ -680,7 +778,13 @@ class Bit9Connector(BaseConnector):
             result = self._list_files(param)
 
         elif action == self.ACTION_ID_GET_FILE:
-            result = self._get_file_and_save_to_vault(param)
+            result = self._get_file(param)
+
+        elif action == self.ACTION_ID_GET_FILE_INSTANCE:
+            result = self._get_fileinstance(param)
+
+        elif action == self.ACTION_ID_UPDATE_FILE_INSTANCE:
+            result = self._update_fileinstance(param)
 
         return result
 
