@@ -1,15 +1,15 @@
 {
     "appid": "9b814caf-a3a2-4e28-8418-04b445d658ad",
-    "name": "Carbon Black Protection Bit9",
+    "name": "Carbon Black App Control",
     "description": "This app supports various investigative and containment actions on Carbon Black Enterprise Protection (formerly Bit9)",
     "publisher": "Splunk",
     "type": "endpoint",
-    "main_module": "bit9_connector.py",
+    "main_module": "cbappcontrol_connector.py",
     "app_version": "2.3.0",
     "utctime_updated": "2022-02-08T01:45:48.000000Z",
     "package_name": "phantom_cbprotect",
     "product_vendor": "Carbon Black",
-    "product_name": "Carbon Black Protection",
+    "product_name": "Carbon Black App Control",
     "product_version_regex": ".*",
     "min_phantom_version": "5.2.0",
     "fips_compliant": false,
@@ -674,7 +674,7 @@
                         "vault id"
                     ],
                     "example_values": [
-                        "d23959171fbf8e5ff48d8eff7c0f456345d2444"
+                        "g23959171fbf8e5ff48d8eff7c0f456345d2444"
                     ],
                     "column_name": "Vault ID",
                     "column_order": 1
@@ -691,7 +691,7 @@
                         "vault id"
                     ],
                     "example_values": [
-                        "d23959171fbf8e5ff48d8eff7c0f456345d2444"
+                        "g23959171fbf8e5ff48d8eff7c0f456345d2444"
                     ]
                 },
                 {
@@ -2073,6 +2073,124 @@
                     "data_path": "summary.total_objects_successful",
                     "data_type": "numeric"
                 }
+            ],
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "update computer object",
+            "description": "Change computer object details",
+            "verbose": "This action requires the following permission:<ul><li>View Computers</li><li>Manage Computers</li></ul>",
+            "type": "correct",
+            "identifier": "update_computer",
+            "read_only": true,
+            "parameters": {
+                "computer_id": {
+                    "data_type": "numeric",
+                    "description": "Compouter Object Id",
+                    "required": true,
+                    "order": 0,
+                    "primary": true
+                },
+                "prioritized": {
+                    "data_type": "boolean",
+                    "description": "Priority of computer",
+                    "order": 1,
+                    "required": false,
+                    "default": "false"
+                },
+                "description": {
+                    "data_type": "string",
+                    "description": "Description about computer",
+                    "order": 2,
+                    "required": false
+                },
+                "name": {
+                    "data_type": "string",
+                    "description": "Name of computer",
+                    "order": 3,
+                    "required": false
+                }
+            },
+            "render": {
+                "type": "table",
+                "width": 10,
+                "height": 5,
+                "title": "Update Computer"
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.computer_id",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.parameter.prioritized",
+                    "data_type": "boolean",
+                    "example_values": [
+                        "true",
+                        "false"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.name",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.description",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "numeric",
+                    "contains": [
+                        "carbon black computer id"
+                    ],
+                    "column_name": "Computer ID",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.name",
+                    "data_type": "string",
+                    "contains": [
+                        "carbon black computer name"
+                    ],
+                    "column_name": "Computer name",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.prioritized",
+                    "data_type": "boolean",
+                    "column_name": "Prioritized",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.description",
+                    "data_type": "string",
+                    "column_name": "Description",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.*.enforcementLevel",
+                    "data_type": "numeric",
+                    "column_name": "enforcementlevel",
+                    "column_order": 4
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                }
+
             ],
             "versions": "EQ(*)"
         }
