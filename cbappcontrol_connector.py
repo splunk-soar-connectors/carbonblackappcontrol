@@ -287,6 +287,7 @@ class Bit9Connector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, "Did not find a rule with Phantom tagged description to unblock")
 
         if self._comment.lower() not in description.lower():
+            # self.debug_print("comment: {}  and des: {}".format(self._comment.lower(),description.lower()))
             return action_result.set_status(phantom.APP_ERROR,
                                             "The rule for the given hash was not created by Phantom, cannot unblock the hash.")
 
@@ -702,6 +703,9 @@ class Bit9Connector(BaseConnector):
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
+        if param["local_state"] not in ["unapproved", "approved"]:
+            return action_result.set_status(phantom.APP_ERROR, "Invalid Local state Provided")
+
         endpoint = FILE_INSTANCE_ENDPOINT + '/{0}'.format(instance_id)
 
         # get instance for this id
@@ -719,7 +723,6 @@ class Bit9Connector(BaseConnector):
 
         self.save_progress("Got FileInstance for ID '{0}'".format(instance_id))
         instance = resp_json
-        self.debug_print("STATE: {}".format(param['local_state']))
 
         # check if the state of the file is what we wanted
         local_state = instance.get('localState', CBAPPCONTROL_LOCAL_STATE_UNAPPROVED)
@@ -754,14 +757,17 @@ class Bit9Connector(BaseConnector):
         endpoint = COMPUTER_OBJECT_ENDPONIT + '/{0}'.format(computer_id)
 
         # get computer object for this id
+        self.debug_print("Getting computer object")
         ret_val, resp_json = self._make_rest_call(endpoint, action_result, method="get")
 
         if phantom.is_fail(ret_val):
+            self.save_progress("Computer with given id {} not available".format(computer_id))
             return action_result.set_status(phantom.APP_ERROR, "Unable to find Computer Object with id {}".format(computer_id))
 
         computer_obj = resp_json
+        self.save_progress("changing computer object")
         computer_obj["prioritized"] = param.get("prioritized", computer_obj["prioritized"])
-        computer_obj["name"] = param.get("name", computer_obj["name"])
+        computer_obj["computerTag"] = param.get("computer_tag", computer_obj["computerTag"])
         computer_obj["description"] = param.get("description", computer_obj["description"])
 
         ret_val, resp_json = self._make_rest_call(endpoint, action_result, data=computer_obj, method="put")
@@ -772,7 +778,7 @@ class Bit9Connector(BaseConnector):
         if resp_json:
             action_result.add_data(resp_json)
 
-        return action_result.set_status(phantom.APP_SUCCESS, "Updated Computer Object successfully")
+        return action_result.set_status(phantom.APP_SUCCESS, "Computer Object Updated successfully")
 
     def handle_action(self, param):
 

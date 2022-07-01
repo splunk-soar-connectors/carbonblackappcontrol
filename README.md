@@ -31,7 +31,7 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [get system info](#action-get-system-info) - Get information about an endpoint  
 [get file instance](#action-get-system-info) - Searches for file instances  
 [update file instance](#action-get-system-info) - Change local file instance state  
-[update computer object](#action-get-system-info) - Change computer object details  
+[update computer](#action-get-system-info) - Change computer object details  
 
 ## action: 'test connectivity'
 Validate the API Token by attempting to connect to the Device URL\. This action runs a quick query on the device to check the connection and token

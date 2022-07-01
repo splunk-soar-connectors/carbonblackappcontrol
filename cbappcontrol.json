@@ -5,7 +5,7 @@
     "publisher": "Splunk",
     "type": "endpoint",
     "main_module": "cbappcontrol_connector.py",
-    "app_version": "2.3.0",
+    "app_version": "3.0.0",
     "utctime_updated": "2022-02-08T01:45:48.000000Z",
     "package_name": "phantom_cbprotect",
     "product_vendor": "Carbon Black",
@@ -171,7 +171,7 @@
                     "contains": [
                         "carbon black file id"
                     ],
-                    "column_name": "ID",
+                    "column_name": "CATALOG ID",
                     "column_order": 0
                 },
                 {
@@ -2077,16 +2077,16 @@
             "versions": "EQ(*)"
         },
         {
-            "action": "update computer object",
+            "action": "update computer",
             "description": "Change computer object details",
-            "verbose": "This action requires the following permission:<ul><li>View Computers</li><li>Manage Computers</li></ul>",
+            "verbose": "This action requires the following permission:<ul><li>View Computers.</li><li>Manage Computers.</li></ul>",
             "type": "correct",
             "identifier": "update_computer",
             "read_only": true,
             "parameters": {
                 "computer_id": {
                     "data_type": "numeric",
-                    "description": "Compouter Object Id",
+                    "description": "Computer Object Id",
                     "required": true,
                     "order": 0,
                     "primary": true
@@ -2104,9 +2104,9 @@
                     "order": 2,
                     "required": false
                 },
-                "name": {
+                "computer_tag": {
                     "data_type": "string",
-                    "description": "Name of computer",
+                    "description": "tags for computer",
                     "order": 3,
                     "required": false
                 }
@@ -2139,7 +2139,7 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.parameter.name",
+                    "data_path": "action_result.parameter.computer_tag",
                     "data_type": "string"
                 },
                 {
@@ -2152,7 +2152,7 @@
                     "contains": [
                         "carbon black computer id"
                     ],
-                    "column_name": "Computer ID",
+                    "column_name": "COMPUTER ID",
                     "column_order": 0
                 },
                 {
@@ -2161,7 +2161,7 @@
                     "contains": [
                         "carbon black computer name"
                     ],
-                    "column_name": "Computer name",
+                    "column_name": "Computer Name",
                     "column_order": 1
                 },
                 {
@@ -2179,8 +2179,14 @@
                 {
                     "data_path": "action_result.data.*.enforcementLevel",
                     "data_type": "numeric",
-                    "column_name": "enforcementlevel",
+                    "column_name": "Enforcement Level",
                     "column_order": 4
+                },
+                {
+                    "data_path": "action_result.data.*.computerTag",
+                    "data_type": "numeric",
+                    "column_name": "Computer Tag",
+                    "column_order": 5
                 },
                 {
                     "data_path": "action_result.summary",
