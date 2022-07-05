@@ -750,7 +750,7 @@ class Bit9Connector(BaseConnector):
 
     def _update_computer(self, param):
         action_result = self.add_action_result(ActionResult(param))
-
+        self.debug_print("validate computer id")
         ret_val, computer_id = self._validate_integer(action_result, param["computer_id"], 'Computer ID', False)
         if phantom.is_fail(ret_val):
             return action_result.get_status()
