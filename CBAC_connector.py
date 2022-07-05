@@ -1,4 +1,4 @@
-# File: cbappcontrol_connector.py
+# File: CBAC_connector.py
 # Copyright (c) 2016-2022 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,12 +21,11 @@ import sys
 import phantom.app as phantom
 import phantom.rules as phantomrules
 import requests
+# THIS Connector imports
+from cbappcontrol_consts import *
 from phantom.action_result import ActionResult
 from phantom.base_connector import BaseConnector
 from phantom.vault import Vault
-
-# THIS Connector imports
-from cbappcontrol_consts import *
 
 
 class Bit9Connector(BaseConnector):

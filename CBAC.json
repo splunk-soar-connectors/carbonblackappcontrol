@@ -4,7 +4,7 @@
     "description": "This app supports various investigative and containment actions on Carbon Black App Control (formerly Bit9)",
     "publisher": "Splunk",
     "type": "endpoint",
-    "main_module": "cbappcontrol_connector.py",
+    "main_module": "CBAC_connector.py",
     "app_version": "3.0.0",
     "utctime_updated": "2022-02-08T01:45:48.000000Z",
     "package_name": "phantom_cbprotect",
@@ -2098,7 +2098,7 @@
                 },
                 "computer_tag": {
                     "data_type": "string",
-                    "description": "tags for computer",
+                    "description": "Tags for computer",
                     "order": 3,
                     "required": false
                 }
@@ -2184,8 +2184,15 @@
                 {
                     "data_path": "action_result.message",
                     "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
                 }
-
             ],
             "versions": "EQ(*)"
         }

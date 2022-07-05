@@ -1,4 +1,4 @@
-# File: cbappcontrol_consts.py
+# File: CBAC_consts.py
 # Copyright (c) 2016-2022 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
