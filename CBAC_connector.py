@@ -21,11 +21,12 @@ import sys
 import phantom.app as phantom
 import phantom.rules as phantomrules
 import requests
-# THIS Connector imports
-from cbappcontrol_consts import *
 from phantom.action_result import ActionResult
 from phantom.base_connector import BaseConnector
 from phantom.vault import Vault
+
+# THIS Connector imports
+from CBAC_consts import *
 
 
 class Bit9Connector(BaseConnector):
@@ -79,7 +80,7 @@ class Bit9Connector(BaseConnector):
 
         self._headers = {'X-Auth-Token': config[CBAPPCONTROL_JSON_API_TOKEN], 'Content-Type': 'application/json'}
         self._base_url = "{0}{1}".format(config[CBAPPCONTROL_JSON_BASE_URL].rstrip('/'), CBAPPCONTROL_API_URI)
-        self._comment = CBAPPCONTROL_ADDED_BY_PHANTOM.format(self.get_product_installation_id())
+        self._comment = CBAPPCONTROL_ADDED_BY_PHANTOM
 
         return phantom.APP_SUCCESS
 
@@ -118,7 +119,7 @@ class Bit9Connector(BaseConnector):
                 elif len(e.args) == 1:
                     error_msg = e.args[0]
         except Exception as ex:
-            self.debug_print("Error occurred while retrieving exception information: {}".format(str(ex)))
+            self.debug_print("Error occurred while retrieving exception information: {}".format(self._get_error_message_from_exception(ex)))
 
         return "Error Code: {0}. Error Message: {1}".format(error_code, error_msg)
 
@@ -287,7 +288,6 @@ class Bit9Connector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, "Did not find a rule with Phantom tagged description to unblock")
 
         if self._comment.lower() not in description.lower():
-            # self.debug_print("comment: {}  and des: {}".format(self._comment.lower(),description.lower()))
             return action_result.set_status(phantom.APP_ERROR,
                                             "The rule for the given hash was not created by Phantom, cannot unblock the hash.")
 
@@ -463,7 +463,7 @@ class Bit9Connector(BaseConnector):
 
         action_result.add_data(catalog)
 
-        return action_result.set_status(phantom.APP_SUCCESS)
+        return action_result.set_status(phantom.APP_SUCCESS, "Fetched file details successfully")
 
     def _get_system_info(self, param):
 
@@ -510,8 +510,13 @@ class Bit9Connector(BaseConnector):
 
         action_result = self.add_action_result(ActionResult(param))
 
-        comp_id = param['computer_id']
-        file_id = param['file_id']
+        ret_val, comp_id = self._validate_integer(action_result, param["computer_id"], 'Computer ID', True)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        ret_val, file_id = self._validate_integer(action_result, param["file_id"], 'File ID', False)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
 
         endpoint = FILE_UPLOAD_ENDPOINT
         data = {'computerId': comp_id, 'fileCatalogId': file_id,
@@ -535,9 +540,9 @@ class Bit9Connector(BaseConnector):
             try:
                 summary['upload_status_desc'] = self.UPLOAD_STATUS_DESCS[str(upload_status)]
             except Exception as ex:
-                return action_result.set_status(phantom.APP_ERROR, "Error:{}".format(str(ex)))
+                return action_result.set_status(phantom.APP_ERROR, "Error occurred :{}".format(self._get_error_message_from_exception(ex)))
 
-        return action_result.set_status(phantom.APP_SUCCESS)
+        return action_result.set_status(phantom.APP_SUCCESS, "File status is changed to upload state successfully")
 
     def _list_files(self, param):
         action_result = self.add_action_result(ActionResult(param))
@@ -558,7 +563,7 @@ class Bit9Connector(BaseConnector):
             self.debug_print("Unable to list files")
             return action_result.get_status()
 
-        action_result.add_data(resp_json)
+        [action_result.add_data(instance) for instance in resp_json]
         if limit == -1:
             total = resp_json['count']
             action_result.update_summary({'total': total})
@@ -626,10 +631,19 @@ class Bit9Connector(BaseConnector):
 
         action_result = self.add_action_result(ActionResult(param))
 
-        comp_id = param['computer_id']
-        file_id = param['file_id']
+        ret_val, comp_id = self._validate_integer(action_result, param["computer_id"], 'Computer ID', False)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        ret_val, file_id = self._validate_integer(action_result, param["file_id"], 'File ID', False)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        ret_val, connector_id = self._validate_integer(action_result, param["connector_id"], 'Connector ID', False)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
         target = param['target_type']
-        connector_id = param['connector_id']
 
         endpoint = '/fileAnalysis'
         data = {'computerId': comp_id, 'fileCatalogId': file_id, 'connectorId': connector_id,
@@ -659,7 +673,7 @@ class Bit9Connector(BaseConnector):
             try:
                 summary['analysis_status_desc'] = self.ANALYSIS_STATUS_DESCS[str(analysis_status)]
             except Exception as ex:
-                action_result.set_status(phantom.APP_ERROR, "Error:{}".format(ex))
+                action_result.set_status(phantom.APP_ERROR, "Error: {}".format(self._get_error_message_from_exception(ex)))
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
