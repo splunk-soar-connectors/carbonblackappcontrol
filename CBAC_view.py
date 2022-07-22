@@ -1,4 +1,4 @@
-# File: bit9_view.py
+# File: CBAC_view.py
 # Copyright (c) 2016-2022 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
