@@ -103,7 +103,9 @@
                 {
                     "data_path": "action_result.data.*.acknowledged",
                     "data_type": "boolean",
-                    "example_value": true
+                    "example_values": [
+                        true
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.approvedByReputation",
@@ -124,7 +126,9 @@
                 {
                     "data_path": "action_result.data.*.clVersion",
                     "data_type": "numeric",
-                    "example_value": 1301
+                    "example_values": [
+                        1301
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.company",
@@ -148,12 +152,16 @@
                 {
                     "data_path": "action_result.data.*.dateModified",
                     "data_type": "string",
-                    "example_value": "2022-03-15T05:47:21.997Z"
+                    "example_values": [
+                        "2022-03-15T05:47:21.997Z"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.description",
                     "data_type": "string",
-                    "example_value": "Microsoft Malware Protection Signature Update Stub"
+                    "example_values": [
+                        "Microsoft Malware Protection Signature Update Stub"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.dirtyPrevalence",
@@ -205,7 +213,9 @@
                 {
                     "data_path": "action_result.data.*.initialized",
                     "data_type": "boolean",
-                    "example_value": false
+                    "example_values": [
+                        false
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.installedProgramName",
@@ -218,7 +228,9 @@
                 {
                     "data_path": "action_result.data.*.nodeType",
                     "data_type": "numeric",
-                    "example_value": 2
+                    "example_values": [
+                        2
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.pathName",
@@ -300,8 +312,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.verdict",
-                    "data_type": "string",
-                    "example_value": ""
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.summary.prevalence",
@@ -310,17 +321,23 @@
                 {
                     "data_path": "action_result.message",
                     "data_type": "string",
-                    "example_value": "Fetched file details successfully"
+                    "example_values": [
+                        "Fetched file details successfully"
+                    ]
                 },
                 {
                     "data_path": "summary.total_objects",
                     "data_type": "numeric",
-                    "example_value": 1
+                    "example_values": [
+                        1
+                    ]
                 },
                 {
                     "data_path": "summary.total_objects_successful",
                     "data_type": "numeric",
-                    "example_value": 1
+                    "example_values": [
+                        1
+                    ]
                 }
             ],
             "versions": "EQ(*)"
@@ -390,7 +407,9 @@
                     ],
                     "column_name": "Computer ID",
                     "column_order": 1,
-                    "example_value": 1
+                    "example_values":[
+                        1
+                    ]
                 },
                 {
                     "data_path": "action_result.parameter.file_id",
@@ -400,7 +419,9 @@
                     ],
                     "column_name": "File ID",
                     "column_order": 0,
-                    "example_value": 1
+                    "example_values":[
+                        1
+                    ]
                 },
                 {
                     "data_path": "action_result.parameter.priority",
@@ -490,17 +511,23 @@
                 {
                     "data_path": "action_result.message",
                     "data_type": "string",
-                    "example_value": "File status is changed to upload state successfully"
+                    "example_values": [
+                        "File status is changed to upload state successfully"
+                    ]
                 },
                 {
                     "data_path": "summary.total_objects",
                     "data_type": "numeric",
-                    "example_value": 1
+                    "example_values":[
+                        1
+                    ]
                 },
                 {
                     "data_path": "summary.total_objects_successful",
                     "data_type": "numeric",
-                    "example_value": 1
+                    "example_values":[
+                        1
+                    ]
                 }
             ],
             "versions": "EQ(*)"
@@ -1273,7 +1300,9 @@
                 {
                     "data_path": "action_result.data.*.fileRuleType",
                     "data_type": "string",
-                    "example_value": "Unapproved"
+                    "example_values": [
+                        "Unapproved"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.fileState",
@@ -1298,12 +1327,17 @@
                 {
                     "data_path": "action_result.data.*.idUnique",
                     "data_type": "string",
-                    "example_value": "502b2e2d-570f-4917-acc8-8f7083edfe66"
+                    "example_values": [
+                        "502b2e2d-570f-4917-acc8-8f7083edfe66"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.lazyApproval",
                     "data_type": "boolean",
-                    "example_value": false
+                    "example_values":[
+                        true,
+                        false
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.modifiedBy",
@@ -1359,12 +1393,17 @@
                 {
                     "data_path": "action_result.data.*.version",
                     "data_type": "numeric",
-                    "example_value": 184467
+                    "example_values":[
+                        184467
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.visible",
                     "data_type": "boolean",
-                    "example_value": false
+                    "example_values":[
+                        true,
+                        false
+                    ]
                 },
                 {
                     "data_path": "action_result.summary",
@@ -1373,17 +1412,23 @@
                 {
                     "data_path": "action_result.message",
                     "data_type": "string",
-                    "example_value": "Updated rule successfully"
+                    "example_values": [
+                        "Updated rule successfully"
+                    ]
                 },
                 {
                     "data_path": "summary.total_objects",
                     "data_type": "numeric",
-                    "example_value": 1
+                    "example_values":[
+                        1
+                    ]
                 },
                 {
                     "data_path": "summary.total_objects_successful",
                     "data_type": "numeric",
-                    "example_value": 1
+                    "example_values":[
+                        1
+                    ]
                 }
             ],
             "versions": "EQ(*)"
@@ -1433,7 +1478,9 @@
                 {
                     "data_path": "action_result.parameter.comment",
                     "data_type": "string",
-                    "example_value": "Added by SOAR Installation ID"
+                    "example_values": [
+                        "Added by SOAR Installation ID"
+                    ]
                 },
                 {
                     "data_path": "action_result.parameter.hash",
@@ -1485,7 +1532,9 @@
                 {
                     "data_path": "action_result.data.*.fileRuleType",
                     "data_type": "string",
-                    "example_value": "Ban"
+                    "example_values": [
+                        "Ban"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.fileState",
@@ -1510,12 +1559,17 @@
                 {
                     "data_path": "action_result.data.*.idUnique",
                     "data_type": "string",
-                    "example_value": "7bea0dcd-585e-413d-8559-4d4a2a4c3b3a"
+                    "example_values": [
+                        "7bea0dcd-585e-413d-8559-4d4a2a4c3b3a"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.lazyApproval",
                     "data_type": "boolean",
-                    "example_value": false
+                    "example_values":[
+                        true,
+                        false
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.modifiedBy",
@@ -1579,12 +1633,17 @@
                 {
                     "data_path": "action_result.data.*.version",
                     "data_type": "numeric",
-                    "example_value": 183563
+                    "example_values":[
+                        183563
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.visible",
                     "data_type": "boolean",
-                    "example_value": true
+                    "example_values":[
+                        true,
+                        false
+                    ]
                 },
                 {
                     "data_path": "action_result.summary",
@@ -1597,12 +1656,16 @@
                 {
                     "data_path": "summary.total_objects",
                     "data_type": "numeric",
-                    "example_value": 1
+                    "example_values":[
+                        1
+                    ]
                 },
                 {
                     "data_path": "summary.total_objects_successful",
                     "data_type": "numeric",
-                    "example_value": 1
+                    "example_values":[
+                        1
+                    ]
                 }
             ],
             "versions": "EQ(*)"
@@ -1656,7 +1719,9 @@
                     "contains": [
                         "carbon black computer id"
                     ],
-                    "example_value": 1
+                    "example_values":[
+                        1
+                    ]
                 },
                 {
                     "data_path": "action_result.parameter.ip_hostname",
@@ -1665,7 +1730,9 @@
                         "ip",
                         "host name"
                     ],
-                    "example_value": "8.8.8.8"
+                    "example_values": [
+                        "8.8.8.8"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.CLIPassword",
@@ -2065,7 +2132,9 @@
                     "contains": [
                         "carbon black computer id"
                     ],
-                    "example_value": 1
+                    "example_values":[
+                        1
+                    ]
                 },
                 {
                     "data_path": "action_result.parameter.filecatalog_id",
@@ -2073,7 +2142,9 @@
                     "contains": [
                         "carbon black filecatalog id"
                     ],
-                    "example_value": 10369
+                    "example_values":[
+                        10369
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.computerId",
@@ -2087,7 +2158,9 @@
                 {
                     "data_path": "action_result.data.*.dateCreated",
                     "data_type": "string",
-                    "example_value": "2017-04-11T20:28:45Z"
+                    "example_values": [
+                        "2017-04-11T20:28:45Z"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.detachedCertificateId",
@@ -2100,12 +2173,17 @@
                 {
                     "data_path": "action_result.data.*.detailedLocalState",
                     "data_type": "numeric",
-                    "example_value": 14
+                    "example_values":[
+                        14
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.executed",
                     "data_type": "boolean",
-                    "example_value": false
+                    "example_values":[
+                        true,
+                        false
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.fileCatalogId",
@@ -2119,7 +2197,9 @@
                 {
                     "data_path": "action_result.data.*.fileInstanceGroupId",
                     "data_type": "numeric",
-                    "example_value": 433
+                    "example_values": [
+                        433
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.fileName",
@@ -2151,17 +2231,23 @@
                 {
                     "data_path": "action_result.message",
                     "data_type": "string",
-                    "example_value": "Fetched file instance successfully"
+                    "example_values": [
+                        "Fetched file instance successfully"
+                    ]
                 },
                 {
                     "data_path": "summary.total_objects",
                     "data_type": "numeric",
-                    "example_value": 1
+                    "example_values":[
+                        1
+                    ]
                 },
                 {
                     "data_path": "summary.total_objects_successful",
                     "data_type": "numeric",
-                    "example_value": 1
+                    "example_values":[
+                        1
+                    ]
                 }
             ],
             "versions": "EQ(*)"
@@ -2210,7 +2296,9 @@
                 {
                     "data_path": "action_result.parameter.instance_id",
                     "data_type": "numeric",
-                    "example_value": 1
+                    "example_values":[
+                        1
+                    ]
                 },
                 {
                     "data_path": "action_result.parameter.local_state",
@@ -2223,7 +2311,9 @@
                 {
                     "data_path": "action_result.data.*.certificateId",
                     "data_type": "numeric",
-                    "example_value": 153
+                    "example_values":[
+                        153
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.computerId",
@@ -2237,7 +2327,9 @@
                 {
                     "data_path": "action_result.data.*.dateCreated",
                     "data_type": "string",
-                    "example_value": "2016-06-24T22:04:17Z"
+                    "example_values": [
+                        "2016-06-24T22:04:17Z"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.detachedCertificateId",
@@ -2250,12 +2342,17 @@
                 {
                     "data_path": "action_result.data.*.detailedLocalState",
                     "data_type": "numeric",
-                    "example_value": 4
+                    "example_values": [
+                        4
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.executed",
                     "data_type": "boolean",
-                    "example_value": true
+                    "example_values":[
+                        true,
+                        false
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.fileCatalogId",
@@ -2269,7 +2366,9 @@
                 {
                     "data_path": "action_result.data.*.fileInstanceGroupId",
                     "data_type": "numeric",
-                    "example_value": 31
+                    "example_values": [
+                        31
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.fileName",
@@ -2289,7 +2388,10 @@
                 {
                     "data_path": "action_result.data.*.initialized",
                     "data_type": "boolean",
-                    "example_value": false
+                    "example_values":[
+                        true,
+                        false
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.localState",
@@ -2302,12 +2404,17 @@
                 {
                     "data_path": "action_result.data.*.policyId",
                     "data_type": "numeric",
-                    "example_value": 5
+                    "example_values": [
+                        5
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.topLevel",
                     "data_type": "boolean",
-                    "example_value": false
+                    "example_values":[
+                        true,
+                        false
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.unifiedSource",
@@ -2320,17 +2427,23 @@
                 {
                     "data_path": "action_result.message",
                     "data_type": "string",
-                    "example_value": "Local state of file instance updated successfully"
+                    "example_values": [
+                        "Local state of file instance updated successfully"
+                    ]
                 },
                 {
                     "data_path": "summary.total_objects",
                     "data_type": "numeric",
-                    "example_value": 1
+                    "example_values":[
+                        1
+                    ]
                 },
                 {
                     "data_path": "summary.total_objects_successful",
                     "data_type": "numeric",
-                    "example_value": 1
+                    "example_values":[
+                        1
+                    ]
                 }
             ],
             "versions": "EQ(*)"
@@ -2387,17 +2500,23 @@
                 {
                     "data_path": "action_result.parameter.computer_id",
                     "data_type": "numeric",
-                    "example_value": 1
+                    "example_values":[
+                        1
+                    ]
                 },
                 {
                     "data_path": "action_result.parameter.computer_tag",
                     "data_type": "string",
-                    "example_value": "tag1,tag2"
+                    "example_values": [
+                        "tag1,tag2"
+                    ]
                 },
                 {
                     "data_path": "action_result.parameter.description",
                     "data_type": "string",
-                    "example_value": "computer description"
+                    "example_values": [
+                        "computer description"
+                    ]
                 },
                 {
                     "data_path": "action_result.parameter.prioritized",
@@ -2410,62 +2529,87 @@
                 {
                     "data_path": "action_result.data.*.CLIPassword",
                     "data_type": "string",
-                    "example_value": "MAWB-DVAO-FIYM-EHRB"
+                    "example_values": [
+                        "MAWB-DVAO-FIYM-EHRB"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.SCEPStatus",
                     "data_type": "numeric",
-                    "example_value": 0
+                    "example_values":[
+                        0
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.activeDebugFlags",
                     "data_type": "numeric",
-                    "example_value": 16
+                    "example_values":[
+                        16
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.activeDebugLevel",
                     "data_type": "numeric",
-                    "example_value": 0
+                    "example_values":[
+                        0
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.activeKernelDebugLevel",
                     "data_type": "numeric",
-                    "example_value": 2
+                    "example_values": [
+                        2
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.agentCacheSize",
                     "data_type": "numeric",
-                    "example_value": 35486
+                    "example_values": [
+                        35486
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.agentMemoryDumps",
                     "data_type": "numeric",
-                    "example_value": 0
+                    "example_values":[
+                        0
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.agentQueueSize",
                     "data_type": "numeric",
-                    "example_value": 0
+                    "example_values":[
+                        0
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.agentVersion",
                     "data_type": "string",
-                    "example_value": "7.2.2.1119"
+                    "example_values": [
+                        "7.2.2.1119"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.automaticPolicy",
                     "data_type": "boolean",
-                    "example_value": false
+                    "example_values":[
+                        true,
+                        false
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.cbSensorFlags",
                     "data_type": "numeric",
-                    "example_value": 0
+                    "example_values":[
+                        0
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.cbSensorId",
                     "data_type": "numeric",
-                    "example_value": 0
+                    "example_values":[
+                        0
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.cbSensorVersion",
@@ -2474,17 +2618,23 @@
                 {
                     "data_path": "action_result.data.*.ccFlags",
                     "data_type": "numeric",
-                    "example_value": 0
+                    "example_values":[
+                        0
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.ccLevel",
                     "data_type": "numeric",
-                    "example_value": 0
+                    "example_values":[
+                        0
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.clVersion",
                     "data_type": "numeric",
-                    "example_value": 1767
+                    "example_values":[
+                        1767
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.computerTag",
@@ -2495,37 +2645,53 @@
                 {
                     "data_path": "action_result.data.*.connected",
                     "data_type": "boolean",
-                    "example_value": false
+                    "example_values":[
+                        true,
+                        false
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.dateCreated",
                     "data_type": "string",
-                    "example_value": "2016-06-24T22:01:59.563Z"
+                    "example_values": [
+                        "2016-06-24T22:01:59.563Z"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.daysOffline",
                     "data_type": "numeric",
-                    "example_value": 1493
+                    "example_values":[
+                        1493
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.debugDuration",
                     "data_type": "numeric",
-                    "example_value": 0
+                    "example_values":[
+                        0
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.debugFlags",
                     "data_type": "numeric",
-                    "example_value": 0
+                    "example_values":[
+                        0
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.debugLevel",
                     "data_type": "numeric",
-                    "example_value": -1
+                    "example_values": [
+                        -1
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.deleted",
                     "data_type": "boolean",
-                    "example_value": false
+                    "example_values":[
+                        true,
+                        false
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.description",
@@ -2536,7 +2702,9 @@
                 {
                     "data_path": "action_result.data.*.disconnectedEnforcementLevel",
                     "data_type": "numeric",
-                    "example_value": 60
+                    "example_values": [
+                        60
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.enforcementLevel",
@@ -2547,17 +2715,26 @@
                 {
                     "data_path": "action_result.data.*.forceUpgrade",
                     "data_type": "boolean",
-                    "example_value": false
+                    "example_values":[
+                        true,
+                        false
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.hasDuplicates",
                     "data_type": "boolean",
-                    "example_value": false
+                    "example_values":[
+                        true,
+                        false
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.hasHealthCheckErrors",
                     "data_type": "boolean",
-                    "example_value": true
+                    "example_values":[
+                        true,
+                        false
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.id",
@@ -2571,57 +2748,82 @@
                 {
                     "data_path": "action_result.data.*.initPercent",
                     "data_type": "numeric",
-                    "example_value": 100
+                    "example_values":[
+                        100
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.initializing",
                     "data_type": "boolean",
-                    "example_value": false
+                    "example_values":[
+                        true,
+                        false
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.ipAddress",
                     "data_type": "string",
-                    "example_value": "10.16.0.171"
+                    "example_values": [
+                        "10.16.0.171"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.isActive",
                     "data_type": "boolean",
-                    "example_value": false
+                    "example_values":[
+                        true,
+                        false
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.kernelDebugLevel",
                     "data_type": "numeric",
-                    "example_value": 0
+                    "example_values":[
+                        0
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.lastPollDate",
                     "data_type": "string",
-                    "example_value": "2018-05-23T22:33:46.303Z"
+                    "example_values": [
+                        "2018-05-23T22:33:46.303Z"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.lastRegisterDate",
                     "data_type": "string",
-                    "example_value": "2018-05-23T22:33:08.987Z"
+                    "example_values": [
+                        "2018-05-23T22:33:08.987Z"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.localApproval",
                     "data_type": "boolean",
-                    "example_value": false
+                    "example_values":[
+                        true,
+                        false
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.macAddress",
                     "data_type": "string",
-                    "example_value": "00:50:56:86:D9:3E"
+                    "example_values": [
+                        "00:50:56:86:D9:3E"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.machineModel",
                     "data_type": "string",
-                    "example_value": "VMware Virtual Platform"
+                    "example_values": [
+                        "VMware Virtual Platform"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.memorySize",
                     "data_type": "numeric",
-                    "example_value": 4096
+                    "example_values": [
+                        4096
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.name",
@@ -2632,42 +2834,58 @@
                 {
                     "data_path": "action_result.data.*.osName",
                     "data_type": "string",
-                    "example_value": "Microsoft Windows Server 2008 R2 x64 Server Standard Service Pack 1 (6.1.7601)"
+                    "example_values": [
+                        "Microsoft Windows Server 2008 R2 x64 Server Standard Service Pack 1 (6.1.7601)"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.osShortName",
                     "data_type": "string",
-                    "example_value": "Windows Server 2008"
+                    "example_values": [
+                        "Windows Server 2008"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.platformId",
                     "data_type": "numeric",
-                    "example_value": 1
+                    "example_values":[
+                        1
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.policyId",
                     "data_type": "numeric",
-                    "example_value": 2
+                    "example_values": [
+                        2
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.policyName",
                     "data_type": "string",
-                    "example_value": "Template Policy"
+                    "example_values": [
+                        "Template Policy"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.policyStatus",
                     "data_type": "string",
-                    "example_value": "Approvals out of date"
+                    "example_values": [
+                        "Approvals out of date"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.policyStatusDetails",
                     "data_type": "string",
-                    "example_value": "Agent did not receive all the rules yet"
+                    "example_values": [
+                        "Agent did not receive all the rules yet"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.previousPolicyId",
                     "data_type": "numeric",
-                    "example_value": 6
+                    "example_values": [
+                        6
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.prioritized",
@@ -2678,57 +2896,82 @@
                 {
                     "data_path": "action_result.data.*.processorCount",
                     "data_type": "numeric",
-                    "example_value": 2
+                    "example_values": [
+                        2
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.processorModel",
                     "data_type": "string",
-                    "example_value": "Intel(R) Xeon(R) Silver 4116 CPU @ 2.10GHz"
+                    "example_values": [
+                        "Intel(R) Xeon(R) Silver 4116 CPU @ 2.10GHz"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.processorSpeed",
                     "data_type": "numeric",
-                    "example_value": 2100
+                    "example_values": [
+                        2100
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.refreshFlags",
                     "data_type": "numeric",
-                    "example_value": 0
+                    "example_values":[
+                        0
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.supportedKernel",
                     "data_type": "boolean",
-                    "example_value": true
+                    "example_values":[
+                        true,
+                        false
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.syncFlags",
                     "data_type": "numeric",
-                    "example_value": 136
+                    "example_values":[
+                        136
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.syncPercent",
                     "data_type": "numeric",
-                    "example_value": 100
+                    "example_values":[
+                        100
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.systemMemoryDumps",
                     "data_type": "numeric",
-                    "example_value": 0
+                    "example_values":[
+                        0
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.tamperProtectionActive",
                     "data_type": "boolean",
-                    "example_value": true
+                    "example_values":[
+                        true,
+                        false
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.tdCount",
                     "data_type": "numeric",
-                    "example_value": 0
+                    "example_values":[
+                        0
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.template",
                     "data_type": "boolean",
-                    "example_value": false
+                    "example_values":[
+                        true,
+                        false
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.templateCloneCleanupMode",
@@ -2745,7 +2988,9 @@
                 {
                     "data_path": "action_result.data.*.templateComputerId",
                     "data_type": "numeric",
-                    "example_value": 0
+                    "example_values":[
+                        0
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.templateDate",
@@ -2754,12 +2999,18 @@
                 {
                     "data_path": "action_result.data.*.templateTrackModsOnly",
                     "data_type": "boolean",
-                    "example_value": false
+                    "example_values":[
+                        true,
+                        false
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.uninstalled",
                     "data_type": "boolean",
-                    "example_value": false
+                    "example_values":[
+                        true,
+                        false
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.upgradeError",
@@ -2768,7 +3019,9 @@
                 {
                     "data_path": "action_result.data.*.upgradeErrorCount",
                     "data_type": "numeric",
-                    "example_value": 0
+                    "example_values":[
+                        0
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.upgradeErrorTime",
@@ -2777,7 +3030,9 @@
                 {
                     "data_path": "action_result.data.*.upgradeStatus",
                     "data_type": "string",
-                    "example_value": "Up to date"
+                    "example_values": [
+                        "Up to date"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.users",
@@ -2786,12 +3041,16 @@
                 {
                     "data_path": "action_result.data.*.virtualPlatform",
                     "data_type": "string",
-                    "example_value": "VMware"
+                    "example_values": [
+                        "VMware"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.virtualized",
                     "data_type": "string",
-                    "example_value": "Yes"
+                    "example_values": [
+                        "Yes"
+                    ]
                 },
                 {
                     "data_path": "action_result.summary",
@@ -2800,17 +3059,23 @@
                 {
                     "data_path": "action_result.message",
                     "data_type": "string",
-                    "example_value": "Computer object updated successfully"
+                    "example_values": [
+                        "Computer object updated successfully"
+                    ]
                 },
                 {
                     "data_path": "summary.total_objects",
                     "data_type": "numeric",
-                    "example_value": 1
+                    "example_values":[
+                        1
+                    ]
                 },
                 {
                     "data_path": "summary.total_objects_successful",
                     "data_type": "numeric",
-                    "example_value": 1
+                    "example_values":[
+                        1
+                    ]
                 }
             ],
             "versions": "EQ(*)"
