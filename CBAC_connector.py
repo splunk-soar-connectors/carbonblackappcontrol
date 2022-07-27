@@ -41,7 +41,7 @@ class Bit9Connector(BaseConnector):
     ACTION_ID_ANALYZE_FILE = "analyze_file"
     ACTION_ID_LIST_FILES = "list_files"
     ACTION_ID_GET_FILE = "get_file"
-    ACTION_ID_GET_FILE_INSTANCE = "get_fileinstance"
+    ACTION_ID_GET_FILE_INSTANCE = "get_fileinstances"
     ACTION_ID_UPDATE_FILE_INSTANCE = "update_fileinstance"
     ACTION_ID_UPDATE_COMPUTER = "update_computer"
 
@@ -677,7 +677,7 @@ class Bit9Connector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
-    def _get_fileinstance(self, param):
+    def _get_fileinstances(self, param):
 
         action_result = self.add_action_result(ActionResult(param))
 
@@ -831,7 +831,7 @@ class Bit9Connector(BaseConnector):
             result = self._get_file(param)
 
         elif action == self.ACTION_ID_GET_FILE_INSTANCE:
-            result = self._get_fileinstance(param)
+            result = self._get_fileinstances(param)
 
         elif action == self.ACTION_ID_UPDATE_FILE_INSTANCE:
             result = self._update_fileinstance(param)

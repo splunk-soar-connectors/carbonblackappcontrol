@@ -28,10 +28,7 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [analyze file](#action-analyze-file) - Analyze a file on a computer  
 [unblock hash](#action-unblock-hash) - Unblocks a particular hash  
 [block hash](#action-block-hash) - Ban the file hash  
-[get system info](#action-get-system-info) - Get information about an endpoint  
-[get file instance](#action-get-system-info) - Searches for file instances  
-[update file instance](#action-get-system-info) - Change local file instance state  
-[update computer](#action-get-system-info) - Change computer object details  
+[get system info](#action-get-system-info) - Get information about an endpoint
 
 ## action: 'test connectivity'
 Validate the API Token by attempting to connect to the Device URL\. This action runs a quick query on the device to check the connection and token
