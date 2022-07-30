@@ -1,10 +1,10 @@
 [comment]: # "Auto-generated SOAR connector documentation"
-# Carbon Black Protection Bit9
+# Carbon Black App Control
 
 Publisher: Splunk  
 Connector Version: 2\.2\.0  
 Product Vendor: Carbon Black  
-Product Name: Carbon Black Protection  
+Product Name: Carbon Black App Control  
 Product Version Supported (regex): "\.\*"  
 Minimum Product Version: 5\.1\.0  
 
@@ -28,7 +28,7 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [analyze file](#action-analyze-file) - Analyze a file on a computer  
 [unblock hash](#action-unblock-hash) - Unblocks a particular hash  
 [block hash](#action-block-hash) - Ban the file hash  
-[get system info](#action-get-system-info) - Get information about an endpoint  
+[get system info](#action-get-system-info) - Get information about an endpoint
 
 ## action: 'test connectivity'
 Validate the API Token by attempting to connect to the Device URL\. This action runs a quick query on the device to check the connection and token
