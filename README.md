@@ -1,17 +1,17 @@
 [comment]: # "Auto-generated SOAR connector documentation"
-# Carbon Black Protection Bit9
+# Carbon Black App Control
 
 Publisher: Splunk  
-Connector Version: 2\.2\.0  
+Connector Version: 3\.0\.0  
 Product Vendor: Carbon Black  
-Product Name: Carbon Black Protection  
+Product Name: Carbon Black App Control  
 Product Version Supported (regex): "\.\*"  
-Minimum Product Version: 5\.1\.0  
+Minimum Product Version: 5\.2\.0  
 
-This app supports various investigative and containment actions on Carbon Black Enterprise Protection \(formerly Bit9\)
+This app supports various investigative and containment actions on Carbon Black App Control \(formerly Bit9\)
 
 ### Configuration Variables
-The below configuration variables are required for this Connector to operate.  These variables are specified when configuring a Carbon Black Protection asset in SOAR.
+The below configuration variables are required for this Connector to operate.  These variables are specified when configuring a Carbon Black App Control asset in SOAR.
 
 VARIABLE | REQUIRED | TYPE | DESCRIPTION
 -------- | -------- | ---- | -----------
@@ -29,6 +29,9 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [unblock hash](#action-unblock-hash) - Unblocks a particular hash  
 [block hash](#action-block-hash) - Ban the file hash  
 [get system info](#action-get-system-info) - Get information about an endpoint  
+[get file instances](#action-get-file-instances) - Searches for file instances  
+[update file instance](#action-update-file-instance) - Change local file instance state  
+[update computer](#action-update-computer) - Change computer object details  
 
 ## action: 'test connectivity'
 Validate the API Token by attempting to connect to the Device URL\. This action runs a quick query on the device to check the connection and token
@@ -62,13 +65,18 @@ DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
 action\_result\.status | string | 
 action\_result\.parameter\.hash | string |  `hash`  `sha256`  `sha1`  `md5` 
+action\_result\.data\.\*\.acknowledged | boolean | 
 action\_result\.data\.\*\.approvedByReputation | boolean | 
 action\_result\.data\.\*\.category | string | 
 action\_result\.data\.\*\.certificateId | numeric | 
 action\_result\.data\.\*\.certificateState | numeric | 
+action\_result\.data\.\*\.clVersion | numeric | 
 action\_result\.data\.\*\.company | string | 
-action\_result\.data\.\*\.computerId | string |  `carbon black computer id` 
+action\_result\.data\.\*\.computerId | numeric |  `carbon black computer id` 
 action\_result\.data\.\*\.dateCreated | string | 
+action\_result\.data\.\*\.dateModified | string | 
+action\_result\.data\.\*\.description | string | 
+action\_result\.data\.\*\.dirtyPrevalence | string | 
 action\_result\.data\.\*\.effectiveState | string | 
 action\_result\.data\.\*\.fileExtension | string | 
 action\_result\.data\.\*\.fileFlags | numeric | 
@@ -76,9 +84,12 @@ action\_result\.data\.\*\.fileName | string |
 action\_result\.data\.\*\.fileSize | numeric | 
 action\_result\.data\.\*\.fileState | numeric | 
 action\_result\.data\.\*\.fileType | string | 
-action\_result\.data\.\*\.id | numeric |  `carbon black file id` 
+action\_result\.data\.\*\.globalStateDetails | string | 
+action\_result\.data\.\*\.id | numeric |  `carbon black filecatalog id` 
+action\_result\.data\.\*\.initialized | boolean | 
 action\_result\.data\.\*\.installedProgramName | string | 
 action\_result\.data\.\*\.md5 | string | 
+action\_result\.data\.\*\.nodeType | numeric | 
 action\_result\.data\.\*\.pathName | string | 
 action\_result\.data\.\*\.prevalence | numeric | 
 action\_result\.data\.\*\.productName | string | 
@@ -92,9 +103,13 @@ action\_result\.data\.\*\.reputationEnabled | boolean |
 action\_result\.data\.\*\.sha1 | string | 
 action\_result\.data\.\*\.sha256 | string | 
 action\_result\.data\.\*\.sha256HashType | numeric | 
+action\_result\.data\.\*\.stateSource | string | 
 action\_result\.data\.\*\.threat | numeric | 
+action\_result\.data\.\*\.transactionId | string | 
 action\_result\.data\.\*\.trust | numeric | 
 action\_result\.data\.\*\.trustMessages | string | 
+action\_result\.data\.\*\.unifiedSource | string | 
+action\_result\.data\.\*\.verdict | string | 
 action\_result\.summary\.prevalence | numeric | 
 action\_result\.message | string | 
 summary\.total\_objects | numeric | 
@@ -122,7 +137,7 @@ action\_result\.status | string |
 action\_result\.parameter\.computer\_id | numeric |  `carbon black computer id` 
 action\_result\.parameter\.file\_id | numeric |  `carbon black file id` 
 action\_result\.parameter\.priority | numeric | 
-action\_result\.data\.\*\.computerId | numeric | 
+action\_result\.data\.\*\.computerId | numeric |  `carbon black computer id` 
 action\_result\.data\.\*\.createdBy | string | 
 action\_result\.data\.\*\.createdByUserId | numeric | 
 action\_result\.data\.\*\.dateCreated | string | 
@@ -159,20 +174,20 @@ DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
 action\_result\.status | string | 
 action\_result\.parameter\.limit | numeric | 
-action\_result\.data\.\*\.\*\.computerId | numeric | 
-action\_result\.data\.\*\.\*\.count | numeric | 
-action\_result\.data\.\*\.\*\.createdBy | string | 
-action\_result\.data\.\*\.\*\.createdByUserId | numeric | 
-action\_result\.data\.\*\.\*\.dateCreated | string | 
-action\_result\.data\.\*\.\*\.dateModified | string | 
-action\_result\.data\.\*\.\*\.fileCatalogId | numeric | 
-action\_result\.data\.\*\.\*\.fileName | string | 
-action\_result\.data\.\*\.\*\.id | numeric |  `carbon black file id` 
-action\_result\.data\.\*\.\*\.pathName | string | 
-action\_result\.data\.\*\.\*\.priority | numeric | 
-action\_result\.data\.\*\.\*\.uploadPath | string | 
-action\_result\.data\.\*\.\*\.uploadStatus | numeric | 
-action\_result\.data\.\*\.\*\.uploadedFileSize | numeric | 
+action\_result\.data\.\*\.computerId | numeric | 
+action\_result\.data\.\*\.count | numeric | 
+action\_result\.data\.\*\.createdBy | string | 
+action\_result\.data\.\*\.createdByUserId | numeric | 
+action\_result\.data\.\*\.dateCreated | string | 
+action\_result\.data\.\*\.dateModified | string | 
+action\_result\.data\.\*\.fileCatalogId | numeric | 
+action\_result\.data\.\*\.fileName | string | 
+action\_result\.data\.\*\.id | numeric |  `carbon black file id` 
+action\_result\.data\.\*\.pathName | string | 
+action\_result\.data\.\*\.priority | numeric | 
+action\_result\.data\.\*\.uploadPath | string | 
+action\_result\.data\.\*\.uploadStatus | numeric | 
+action\_result\.data\.\*\.uploadedFileSize | numeric | 
 action\_result\.summary | string | 
 action\_result\.summary\.num\_files | numeric | 
 action\_result\.summary\.total | numeric | 
@@ -274,7 +289,7 @@ Unblocks a particular hash
 Type: **correct**  
 Read only: **False**
 
-This action requires the following permissions\: <ul><li>View files</li><li>Manage files</li></ul>Sets the global state of the hash to either <b>approved</b> or <b>unapproved</b> by updating the file rule\. If the action does not find a rule for the hash, it will return an error\. If the hash rule found by the action does not contain a description containing a matching Phantom Identification ID, it will return an error status without changing the state of the rule\. This is to make sure the app only modifies rules that have been created or updated by itself\.
+This action requires the following permissions\: <ul><li>View files</li><li>Manage files</li></ul>Sets the global state of the hash to either <b>approved</b> or <b>unapproved</b> by updating the file rule\. If the action does not find a rule for the hash, it will return an error\. If the hash rule found by the action does not contain a description containing a matching SOAR Identification ID, it will return an error status without changing the state of the rule\. This is to make sure the app only modifies rules that have been created or updated by itself\.
 
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
@@ -295,20 +310,29 @@ action\_result\.data\.\*\.dateCreated | string |
 action\_result\.data\.\*\.dateModified | string | 
 action\_result\.data\.\*\.description | string | 
 action\_result\.data\.\*\.fileCatalogId | numeric | 
+action\_result\.data\.\*\.fileName | string | 
+action\_result\.data\.\*\.fileRuleType | string | 
 action\_result\.data\.\*\.fileState | numeric | 
 action\_result\.data\.\*\.forceInstaller | boolean | 
 action\_result\.data\.\*\.forceNotInstaller | boolean | 
 action\_result\.data\.\*\.hash | string | 
 action\_result\.data\.\*\.id | numeric | 
+action\_result\.data\.\*\.idUnique | string | 
+action\_result\.data\.\*\.lazyApproval | boolean | 
 action\_result\.data\.\*\.modifiedBy | string | 
 action\_result\.data\.\*\.modifiedByUserId | numeric | 
 action\_result\.data\.\*\.name | string | 
+action\_result\.data\.\*\.origIdUnique | string | 
 action\_result\.data\.\*\.platformFlags | numeric | 
 action\_result\.data\.\*\.policyIds | string | 
 action\_result\.data\.\*\.reportOnly | boolean | 
 action\_result\.data\.\*\.reputationApprovalsEnabled | boolean | 
 action\_result\.data\.\*\.sourceId | numeric | 
 action\_result\.data\.\*\.sourceType | numeric | 
+action\_result\.data\.\*\.unifiedFlag | string | 
+action\_result\.data\.\*\.unifiedSource | string | 
+action\_result\.data\.\*\.version | numeric | 
+action\_result\.data\.\*\.visible | boolean | 
 action\_result\.summary | string | 
 action\_result\.message | string | 
 summary\.total\_objects | numeric | 
@@ -320,7 +344,7 @@ Ban the file hash
 Type: **contain**  
 Read only: **False**
 
-This action requires the following permissions\: <ul><li>View files</li><li>Manage files</li></ul>Sets the global state of the file hash to <b>ban</b> by adding or updating a <i>file rule</i>\. If a file is found in the catalog, the action will use the catalog id in the rule\. The action also appends the Phantom Installation ID to the description of the rule\. This is the action's way of tagging rules that are created by the app\. If the action finds the current state of the file as <i>banned</i> it does not attempt to set the state, this also results in the description of the rule remaining unchanged\.
+This action requires the following permissions\: <ul><li>View files</li><li>Manage files</li></ul>Sets the global state of the file hash to <b>ban</b> by adding or updating a <i>file rule</i>\. If a file is found in the catalog, the action will use the catalog id in the rule\. The action also appends the SOAR Installation ID to the description of the rule\. This is the action's way of tagging rules that are created by the app\. If the action finds the current state of the file as <i>banned</i> it does not attempt to set the state, this also results in the description of the rule remaining unchanged\.
 
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
@@ -341,14 +365,19 @@ action\_result\.data\.\*\.dateCreated | string |
 action\_result\.data\.\*\.dateModified | string | 
 action\_result\.data\.\*\.description | string | 
 action\_result\.data\.\*\.fileCatalogId | numeric | 
+action\_result\.data\.\*\.fileName | string | 
+action\_result\.data\.\*\.fileRuleType | string | 
 action\_result\.data\.\*\.fileState | numeric | 
 action\_result\.data\.\*\.forceInstaller | boolean | 
 action\_result\.data\.\*\.forceNotInstaller | boolean | 
 action\_result\.data\.\*\.hash | string | 
 action\_result\.data\.\*\.id | numeric | 
+action\_result\.data\.\*\.idUnique | string | 
+action\_result\.data\.\*\.lazyApproval | boolean | 
 action\_result\.data\.\*\.modifiedBy | string | 
 action\_result\.data\.\*\.modifiedByUserId | numeric | 
 action\_result\.data\.\*\.name | string | 
+action\_result\.data\.\*\.origIdUnique | string | 
 action\_result\.data\.\*\.platformFlags | numeric | 
 action\_result\.data\.\*\.policyFlags | string | 
 action\_result\.data\.\*\.policyIds | string | 
@@ -357,6 +386,10 @@ action\_result\.data\.\*\.reportOnly | boolean |
 action\_result\.data\.\*\.reputationApprovalsEnabled | boolean | 
 action\_result\.data\.\*\.sourceId | numeric | 
 action\_result\.data\.\*\.sourceType | numeric | 
+action\_result\.data\.\*\.unifiedFlag | string | 
+action\_result\.data\.\*\.unifiedSource | string | 
+action\_result\.data\.\*\.version | numeric | 
+action\_result\.data\.\*\.visible | boolean | 
 action\_result\.summary | string | 
 action\_result\.message | string | 
 summary\.total\_objects | numeric | 
@@ -446,6 +479,191 @@ action\_result\.data\.\*\.tamperProtectionActive | boolean |
 action\_result\.data\.\*\.tdCount | numeric | 
 action\_result\.data\.\*\.template | boolean | 
 action\_result\.data\.\*\.templateCloneCleanupMode | string | 
+action\_result\.data\.\*\.templateCloneCleanupTime | numeric | 
+action\_result\.data\.\*\.templateCloneCleanupTimeScale | numeric | 
+action\_result\.data\.\*\.templateComputerId | numeric | 
+action\_result\.data\.\*\.templateDate | string | 
+action\_result\.data\.\*\.templateTrackModsOnly | boolean | 
+action\_result\.data\.\*\.uninstalled | boolean | 
+action\_result\.data\.\*\.upgradeError | string | 
+action\_result\.data\.\*\.upgradeErrorCount | numeric | 
+action\_result\.data\.\*\.upgradeErrorTime | string | 
+action\_result\.data\.\*\.upgradeStatus | string | 
+action\_result\.data\.\*\.users | string | 
+action\_result\.data\.\*\.virtualPlatform | string | 
+action\_result\.data\.\*\.virtualized | string | 
+action\_result\.summary\.total\_endpoints | numeric | 
+action\_result\.message | string | 
+summary\.total\_objects | numeric | 
+summary\.total\_objects\_successful | numeric |   
+
+## action: 'get file instances'
+Searches for file instances
+
+Type: **generic**  
+Read only: **True**
+
+This action requires the following permission\: <ul><li>View files</li></ul>\.
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**filecatalog\_id** |  required  | Id of fileCatalog associated with this file instance | numeric |  `carbon black filecatalog id` 
+**computer\_id** |  required  | Id of computer associated with this file instance | numeric |  `carbon black computer id` 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS
+--------- | ---- | --------
+action\_result\.status | string | 
+action\_result\.parameter\.computer\_id | numeric |  `carbon black computer id` 
+action\_result\.parameter\.filecatalog\_id | numeric |  `carbon black filecatalog id` 
+action\_result\.data\.\*\.computerId | numeric |  `carbon black computer id` 
+action\_result\.data\.\*\.dateCreated | string | 
+action\_result\.data\.\*\.detachedCertificateId | string | 
+action\_result\.data\.\*\.detachedPublisherId | string | 
+action\_result\.data\.\*\.detailedLocalState | numeric | 
+action\_result\.data\.\*\.executed | boolean | 
+action\_result\.data\.\*\.fileCatalogId | numeric |  `carbon black filecatalog id` 
+action\_result\.data\.\*\.fileInstanceGroupId | numeric | 
+action\_result\.data\.\*\.fileName | string | 
+action\_result\.data\.\*\.id | numeric |  `carbon black fileinstance id` 
+action\_result\.data\.\*\.localState | numeric | 
+action\_result\.data\.\*\.pathName | string | 
+action\_result\.summary | numeric | 
+action\_result\.message | string | 
+summary\.total\_objects | numeric | 
+summary\.total\_objects\_successful | numeric |   
+
+## action: 'update file instance'
+Change local file instance state
+
+Type: **generic**  
+Read only: **False**
+
+This action requires the following permission\:<ul><li>View files</li><li>Change local state</li></ul>\.<p>Note that changed local state might not be reflected in the object immediately, but only after agent reports new state\.</p>
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**instance\_id** |  required  | File Instance Id | numeric | 
+**local\_state** |  required  | Local state to set | string | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS
+--------- | ---- | --------
+action\_result\.status | string | 
+action\_result\.parameter\.instance\_id | numeric | 
+action\_result\.parameter\.local\_state | string | 
+action\_result\.data\.\*\.certificateId | numeric | 
+action\_result\.data\.\*\.computerId | numeric |  `carbon black computer id` 
+action\_result\.data\.\*\.dateCreated | string | 
+action\_result\.data\.\*\.detachedCertificateId | string | 
+action\_result\.data\.\*\.detachedPublisherId | string | 
+action\_result\.data\.\*\.detailedLocalState | numeric | 
+action\_result\.data\.\*\.executed | boolean | 
+action\_result\.data\.\*\.fileCatalogId | numeric |  `carbon black filecatalog id` 
+action\_result\.data\.\*\.fileInstanceGroupId | numeric | 
+action\_result\.data\.\*\.fileName | string | 
+action\_result\.data\.\*\.id | numeric |  `carbon black fileinstance id` 
+action\_result\.data\.\*\.initialized | boolean | 
+action\_result\.data\.\*\.localState | numeric | 
+action\_result\.data\.\*\.pathName | string | 
+action\_result\.data\.\*\.policyId | numeric | 
+action\_result\.data\.\*\.topLevel | boolean | 
+action\_result\.data\.\*\.unifiedSource | string | 
+action\_result\.summary | numeric | 
+action\_result\.message | string | 
+summary\.total\_objects | numeric | 
+summary\.total\_objects\_successful | numeric |   
+
+## action: 'update computer'
+Change computer object details
+
+Type: **generic**  
+Read only: **False**
+
+This action requires the following permission\:<ul><li>View Computers\.</li><li>Manage Computers\.</li></ul>
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**computer\_id** |  required  | Computer Object Id | numeric | 
+**prioritized** |  optional  | Priority of computer | boolean | 
+**description** |  optional  | Description about computer | string | 
+**computer\_tag** |  optional  | Tags for computer | string | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS
+--------- | ---- | --------
+action\_result\.status | string | 
+action\_result\.parameter\.computer\_id | numeric | 
+action\_result\.parameter\.computer\_tag | string | 
+action\_result\.parameter\.description | string | 
+action\_result\.parameter\.prioritized | boolean | 
+action\_result\.data\.\*\.CLIPassword | string | 
+action\_result\.data\.\*\.SCEPStatus | numeric | 
+action\_result\.data\.\*\.activeDebugFlags | numeric | 
+action\_result\.data\.\*\.activeDebugLevel | numeric | 
+action\_result\.data\.\*\.activeKernelDebugLevel | numeric | 
+action\_result\.data\.\*\.agentCacheSize | numeric | 
+action\_result\.data\.\*\.agentMemoryDumps | numeric | 
+action\_result\.data\.\*\.agentQueueSize | numeric | 
+action\_result\.data\.\*\.agentVersion | string | 
+action\_result\.data\.\*\.automaticPolicy | boolean | 
+action\_result\.data\.\*\.cbSensorFlags | numeric | 
+action\_result\.data\.\*\.cbSensorId | numeric | 
+action\_result\.data\.\*\.cbSensorVersion | string | 
+action\_result\.data\.\*\.ccFlags | numeric | 
+action\_result\.data\.\*\.ccLevel | numeric | 
+action\_result\.data\.\*\.clVersion | numeric | 
+action\_result\.data\.\*\.computerTag | string | 
+action\_result\.data\.\*\.connected | boolean | 
+action\_result\.data\.\*\.dateCreated | string | 
+action\_result\.data\.\*\.daysOffline | numeric | 
+action\_result\.data\.\*\.debugDuration | numeric | 
+action\_result\.data\.\*\.debugFlags | numeric | 
+action\_result\.data\.\*\.debugLevel | numeric | 
+action\_result\.data\.\*\.deleted | boolean | 
+action\_result\.data\.\*\.description | string | 
+action\_result\.data\.\*\.disconnectedEnforcementLevel | numeric | 
+action\_result\.data\.\*\.enforcementLevel | numeric | 
+action\_result\.data\.\*\.forceUpgrade | boolean | 
+action\_result\.data\.\*\.hasDuplicates | boolean | 
+action\_result\.data\.\*\.hasHealthCheckErrors | boolean | 
+action\_result\.data\.\*\.id | numeric |  `carbon black computer id` 
+action\_result\.data\.\*\.initPercent | numeric | 
+action\_result\.data\.\*\.initializing | boolean | 
+action\_result\.data\.\*\.ipAddress | string | 
+action\_result\.data\.\*\.isActive | boolean | 
+action\_result\.data\.\*\.kernelDebugLevel | numeric | 
+action\_result\.data\.\*\.lastPollDate | string | 
+action\_result\.data\.\*\.lastRegisterDate | string | 
+action\_result\.data\.\*\.localApproval | boolean | 
+action\_result\.data\.\*\.macAddress | string | 
+action\_result\.data\.\*\.machineModel | string | 
+action\_result\.data\.\*\.memorySize | numeric | 
+action\_result\.data\.\*\.name | string | 
+action\_result\.data\.\*\.osName | string | 
+action\_result\.data\.\*\.osShortName | string | 
+action\_result\.data\.\*\.platformId | numeric | 
+action\_result\.data\.\*\.policyId | numeric | 
+action\_result\.data\.\*\.policyName | string | 
+action\_result\.data\.\*\.policyStatus | string | 
+action\_result\.data\.\*\.policyStatusDetails | string | 
+action\_result\.data\.\*\.previousPolicyId | numeric | 
+action\_result\.data\.\*\.prioritized | boolean | 
+action\_result\.data\.\*\.processorCount | numeric | 
+action\_result\.data\.\*\.processorModel | string | 
+action\_result\.data\.\*\.processorSpeed | numeric | 
+action\_result\.data\.\*\.refreshFlags | numeric | 
+action\_result\.data\.\*\.supportedKernel | boolean | 
+action\_result\.data\.\*\.syncFlags | numeric | 
+action\_result\.data\.\*\.syncPercent | numeric | 
+action\_result\.data\.\*\.systemMemoryDumps | numeric | 
+action\_result\.data\.\*\.tamperProtectionActive | boolean | 
+action\_result\.data\.\*\.tdCount | numeric | 
+action\_result\.data\.\*\.template | boolean | 
+action\_result\.data\.\*\.templateCloneCleanupMode | string | 
 action\_result\.data\.\*\.templateCloneCleanupTime | string | 
 action\_result\.data\.\*\.templateCloneCleanupTimeScale | string | 
 action\_result\.data\.\*\.templateComputerId | numeric | 
@@ -459,7 +677,7 @@ action\_result\.data\.\*\.upgradeStatus | string |
 action\_result\.data\.\*\.users | string | 
 action\_result\.data\.\*\.virtualPlatform | string | 
 action\_result\.data\.\*\.virtualized | string | 
-action\_result\.summary\.total\_endpoints | numeric | 
+action\_result\.summary | numeric | 
 action\_result\.message | string | 
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric | 

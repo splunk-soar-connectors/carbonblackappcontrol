@@ -1,4 +1,4 @@
-# File: bit9_connector.py
+# File: CBAC_connector.py
 # Copyright (c) 2016-2022 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,7 +26,7 @@ from phantom.base_connector import BaseConnector
 from phantom.vault import Vault
 
 # THIS Connector imports
-from bit9_consts import *
+from CBAC_consts import *
 
 
 class Bit9Connector(BaseConnector):
@@ -34,13 +34,16 @@ class Bit9Connector(BaseConnector):
     # The actions supported by this connector
     ACTION_ID_TEST_CONNECTIVITY = "test_connectivity"
     ACTION_ID_HUNT_FILE = "hunt_file"
-    ACTION_ID_WHITELIST = "whitelist"
-    ACTION_ID_BLACKLIST = "blacklist"
+    ACTION_ID_WHITELIST = "_unblock_hash"
+    ACTION_ID_BLACKLIST = "_block_hash"
     ACTION_ID_GET_SYSTEM_INFO = "get_system_info"
     ACTION_ID_UPLOAD_FILE = "upload_file"
     ACTION_ID_ANALYZE_FILE = "analyze_file"
     ACTION_ID_LIST_FILES = "list_files"
     ACTION_ID_GET_FILE = "get_file"
+    ACTION_ID_GET_FILE_INSTANCE = "get_fileinstances"
+    ACTION_ID_UPDATE_FILE_INSTANCE = "update_fileinstance"
+    ACTION_ID_UPDATE_COMPUTER = "update_computer"
 
     # This could be a list, but easier to read as a dictionary
     UPLOAD_STATUS_DESCS = {
@@ -50,7 +53,8 @@ class Bit9Connector(BaseConnector):
             "3": "Completed",
             "4": "Error",
             "5": "Cancelled",
-            "6": "Deleted"}
+            "6": "Deleted"
+    }
 
     ANALYSIS_STATUS_DESCS = {
             "0": "Scheduled",
@@ -58,7 +62,8 @@ class Bit9Connector(BaseConnector):
             "2": "Processed",
             "3": "Analyzed",
             "4": "Error",
-            "5": "Cancelled"}
+            "5": "Cancelled"
+    }
 
     def __init__(self):
 
@@ -73,9 +78,9 @@ class Bit9Connector(BaseConnector):
 
         config = self.get_config()
 
-        self._headers = {'X-Auth-Token': config[BIT9_JSON_API_TOKEN], 'Content-Type': 'application/json'}
-        self._base_url = "{0}{1}".format(config[BIT9_JSON_BASE_URL], BIT9_API_URI)
-        self._comment = BIT9_ADDED_BY_PHANTOM.format(self.get_product_installation_id())
+        self._headers = {'X-Auth-Token': config[CBAPPCONTROL_JSON_API_TOKEN], 'Content-Type': 'application/json'}
+        self._base_url = "{0}{1}".format(config[CBAPPCONTROL_JSON_BASE_URL].rstrip('/'), CBAPPCONTROL_API_URI)
+        self._comment = CBAPPCONTROL_ADDED_BY_PHANTOM
 
         return phantom.APP_SUCCESS
 
@@ -83,18 +88,18 @@ class Bit9Connector(BaseConnector):
         if parameter is not None:
             try:
                 if not float(parameter).is_integer():
-                    return action_result.set_status(phantom.APP_ERROR, BIT9_INVALID_INT.format(param=key)), None
+                    return action_result.set_status(phantom.APP_ERROR, CBAPPCONTROL_INVALID_INT.format(param=key)), None
 
                 parameter = int(parameter)
             except Exception:
-                return action_result.set_status(phantom.APP_ERROR, BIT9_INVALID_INT.format(param=key)), None
+                return action_result.set_status(phantom.APP_ERROR, CBAPPCONTROL_INVALID_INT.format(param=key)), None
 
             if key == 'Limit' and parameter == -1:
                 return phantom.APP_SUCCESS, parameter
             if parameter < 0:
-                return action_result.set_status(phantom.APP_ERROR, BIT9_ERR_NEGATIVE_INT_PARAM.format(param=key)), None
+                return action_result.set_status(phantom.APP_ERROR, CBAPPCONTROL_ERR_NEGATIVE_INT_PARAM.format(param=key)), None
             if not allow_zero and parameter == 0:
-                return action_result.set_status(phantom.APP_ERROR, BIT9_ERR_INVALID_PARAM.format(param=key)), None
+                return action_result.set_status(phantom.APP_ERROR, CBAPPCONTROL_ERR_INVALID_PARAM.format(param=key)), None
 
         return phantom.APP_SUCCESS, parameter
 
@@ -113,8 +118,8 @@ class Bit9Connector(BaseConnector):
                     error_msg = e.args[1]
                 elif len(e.args) == 1:
                     error_msg = e.args[0]
-        except Exception:
-            pass
+        except Exception as ex:
+            self.debug_print("Error occurred while retrieving exception information: {}".format(self._get_error_message_from_exception(ex)))
 
         return "Error Code: {0}. Error Message: {1}".format(error_code, error_msg)
 
@@ -141,19 +146,20 @@ class Bit9Connector(BaseConnector):
 
         # handle the error in case the caller specified a non-existent method
         if not request_func:
-            action_result.set_status(phantom.APP_ERROR, BIT9_ERR_API_UNSUPPORTED_METHOD, method=method)
+            action_result.set_status(phantom.APP_ERROR, CBAPPCONTROL_ERR_API_UNSUPPORTED_METHOD, method=method)
 
         # Make the call
         try:
-            r = request_func(   # nosemgrep
+            r = request_func(
                 self._base_url + endpoint,  # The url is made up of the base_url, the api url and the endpoint
                 data=json.dumps(data) if data else None,  # the data converted to json string if present
                 headers=headers,  # The headers to send in the HTTP call
                 verify=config[phantom.APP_JSON_VERIFY],  # should cert verification be carried out?
                 params=params,
+                timeout=30
             )  # uri parameters if any
         except Exception as e:
-            return action_result.set_status(phantom.APP_ERROR, BIT9_ERR_SERVER_CONNECTION,
+            return action_result.set_status(phantom.APP_ERROR, CBAPPCONTROL_ERR_SERVER_CONNECTION,
                                             self._get_error_message_from_exception(e)), resp_json
 
         content_type = r.headers.get('content-type')
@@ -165,7 +171,7 @@ class Bit9Connector(BaseConnector):
                 resp_json = r.json()
             except Exception as e:
                 # r.text is guaranteed to be NON None, it will be empty, but not None
-                msg_string = BIT9_ERR_JSON_PARSE.format(raw_text=r.text)
+                msg_string = CBAPPCONTROL_ERR_JSON_PARSE.format(raw_text=r.text)
                 return action_result.set_status(phantom.APP_ERROR, msg_string,
                                                 self._get_error_message_from_exception(e)), resp_json
 
@@ -199,7 +205,7 @@ class Bit9Connector(BaseConnector):
                        "as mentioned in the action documentation."
 
         return action_result.set_status(phantom.APP_ERROR,
-                                        BIT9_ERR_FROM_SERVER.format(status=r.status_code, detail=details)), resp_json
+                                        CBAPPCONTROL_ERR_FROM_SERVER.format(status=r.status_code, detail=details)), resp_json
 
     def _test_connectivity(self, param):
 
@@ -286,9 +292,9 @@ class Bit9Connector(BaseConnector):
                                             "The rule for the given hash was not created by Phantom, cannot unblock the hash.")
 
         # check if the state of the file is what we wanted
-        file_state = file_rule.get('fileState', BIT9_FILE_STATE_BANNED)
+        file_state = file_rule.get('fileState', CBAPPCONTROL_FILE_STATE_BANNED)
 
-        unblock_state = BIT9_UNBLOCK_STATE_MAP[param.get(BIT9_JSON_UNBLOCK_STATE, BIT9_DEFAULT_UNBLOCK_STATE)]
+        unblock_state = CBAPPCONTROL_UNBLOCK_STATE_MAP[param.get(CBAPPCONTROL_JSON_UNBLOCK_STATE, CBAPPCONTROL_DEFAULT_UNBLOCK_STATE)]
 
         if str(file_state) == unblock_state:
             action_result.add_data(file_rule)
@@ -395,9 +401,9 @@ class Bit9Connector(BaseConnector):
                 file_rule['fileCatalogId'] = catalog_found['id']
 
         # check if the state of the file is what we wanted
-        file_state = file_rule.get('fileState', BIT9_FILE_STATE_UNAPPROVED)
+        file_state = file_rule.get('fileState', CBAPPCONTROL_FILE_STATE_UNAPPROVED)
 
-        if str(file_state) == BIT9_FILE_STATE_BANNED:
+        if str(file_state) == CBAPPCONTROL_FILE_STATE_BANNED:
             action_result.add_data(file_rule)
             return action_result.set_status(phantom.APP_SUCCESS, "State of file same as required")
 
@@ -408,14 +414,14 @@ class Bit9Connector(BaseConnector):
             file_rule['fileCatalogId'] = 0
         file_rule['policyIds'] = 0  # 0 for global rule
 
-        description = param.get(BIT9_JSON_DESCRIPTION)
+        description = param.get(CBAPPCONTROL_JSON_DESCRIPTION)
 
         if description:
             description = "{0} - ".format(description)
 
         file_rule['description'] = "{0}{1}".format(description if description else '', self._comment)
 
-        file_rule['fileState'] = BIT9_FILE_STATE_BANNED
+        file_rule['fileState'] = CBAPPCONTROL_FILE_STATE_BANNED
 
         ret_val, resp_json = self._make_rest_call(FILE_RULE_ENDPOINT, action_result, data=file_rule, method="post")
 
@@ -439,13 +445,14 @@ class Bit9Connector(BaseConnector):
         summary = action_result.update_summary({'prevalence': 0})
 
         if phantom.is_fail(ret_val):
+            self.debug_print("Enable to get catalog")
             return action_result.get_status()
 
         if not catalog:
             # No catalog, so no more rule finding catalog
             return action_result.set_status(phantom.APP_SUCCESS,
                                             "File not present in the catalog. Possibly not present in Enterprise.")
-
+        self.debug_print("Getting Catalog id")
         catalog_id = catalog.get('id')
 
         if not catalog_id:
@@ -456,7 +463,7 @@ class Bit9Connector(BaseConnector):
 
         action_result.add_data(catalog)
 
-        return action_result.set_status(phantom.APP_SUCCESS)
+        return action_result.set_status(phantom.APP_SUCCESS, "Fetched file details successfully")
 
     def _get_system_info(self, param):
 
@@ -466,6 +473,7 @@ class Bit9Connector(BaseConnector):
         comp_id = param.get('id')
 
         if (not comp_id) and (not ip_hostname):
+            self.debug_print("Required details are not provided.")
             return action_result.set_status(phantom.APP_ERROR,
                                             "Neither {0} nor {1} specified. Please specify at-least one of them".format(
                                                 'ip_hostname', 'id'))
@@ -474,10 +482,13 @@ class Bit9Connector(BaseConnector):
         params = None
 
         if comp_id:
+            self.debug_print("Getting info using id")
             endpoint += '/{0}'.format(comp_id)
         elif phantom.is_ip(ip_hostname):
+            self.debug_print("Getting info using ip")
             params = { 'q': 'ipAddress:*{0}*'.format(ip_hostname) }
         else:
+            self.debug_print("Getting info using hostname")
             params = { 'q': 'name:*{0}*'.format(ip_hostname) }
 
         ret_val, resp_json = self._make_rest_call(endpoint, action_result, params=params)
@@ -499,8 +510,13 @@ class Bit9Connector(BaseConnector):
 
         action_result = self.add_action_result(ActionResult(param))
 
-        comp_id = param['computer_id']
-        file_id = param['file_id']
+        ret_val, comp_id = self._validate_integer(action_result, param["computer_id"], 'Computer ID', True)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        ret_val, file_id = self._validate_integer(action_result, param["file_id"], 'File ID', False)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
 
         endpoint = FILE_UPLOAD_ENDPOINT
         data = {'computerId': comp_id, 'fileCatalogId': file_id,
@@ -509,28 +525,30 @@ class Bit9Connector(BaseConnector):
         ret_val, resp_json = self._make_rest_call(endpoint, action_result, data=data, method="post")
 
         if phantom.is_fail(ret_val):
+            self.debug_print("Unable to upload file")
             return action_result.get_status()
 
         if resp_json is None:
             return action_result.set_status(phantom.APP_ERROR, "File ID not found. Please provide a correct file ID")
 
         action_result.add_data(resp_json)
-
+        self.debug_print("Getting file upload status")
         upload_status = resp_json.get('uploadStatus')
 
         if upload_status is not None:
             summary = action_result.update_summary({'upload_status': upload_status})
             try:
                 summary['upload_status_desc'] = self.UPLOAD_STATUS_DESCS[str(upload_status)]
-            except Exception:
-                pass
+            except Exception as ex:
+                return action_result.set_status(phantom.APP_ERROR, "Error occurred :{}".format(self._get_error_message_from_exception(ex)))
 
-        return action_result.set_status(phantom.APP_SUCCESS)
+        return action_result.set_status(phantom.APP_SUCCESS, "File status is changed to upload state successfully")
 
     def _list_files(self, param):
         action_result = self.add_action_result(ActionResult(param))
         ret_val, limit = self._validate_integer(action_result, param.get('limit', 100), 'Limit', False)
         if phantom.is_fail(ret_val):
+            self.debug_print("Invalid Integer taken")
             return action_result.get_status()
 
         params = {
@@ -539,12 +557,13 @@ class Bit9Connector(BaseConnector):
 
         endpoint = FILE_UPLOAD_ENDPOINT
 
-        ret_val, resp_json = self._make_rest_call(endpoint, action_result, method="get", params=params)
+        ret_val, resp_json = self._make_rest_call(endpoint, action_result, params=params)
 
         if phantom.is_fail(ret_val):
+            self.debug_print("Unable to list files")
             return action_result.get_status()
 
-        action_result.add_data(resp_json)
+        [action_result.add_data(instance) for instance in resp_json]
         if limit == -1:
             total = resp_json['count']
             action_result.update_summary({'total': total})
@@ -552,9 +571,9 @@ class Bit9Connector(BaseConnector):
 
         num_files = len(resp_json)
         action_result.update_summary({'num_files': num_files})
-        return action_result.set_status(phantom.APP_SUCCESS, BIT9_LIST_FILES_SUCC.format(num_files))
+        return action_result.set_status(phantom.APP_SUCCESS, CBAPPCONTROL_LIST_FILES_SUCC.format(num_files))
 
-    def _get_file_and_save_to_vault(self, param):
+    def _get_file(self, param):
         """
         This method is used to get the file content from controller
         and save it to vault
@@ -569,18 +588,20 @@ class Bit9Connector(BaseConnector):
             'downloadFile': True
         }
 
-        endpoint = FILE_UPLOAD_ENDPOINT + '/' + str(file_id)
+        endpoint = '{0}/{1}'.format(FILE_UPLOAD_ENDPOINT, str(file_id))
 
-        ret_val, resp_json = self._make_rest_call(endpoint, action_result, method="get")
+        ret_val, resp_json = self._make_rest_call(endpoint, action_result)
 
         if phantom.is_fail(ret_val):
+            self.debug_print("Unable to find file with given id")
             return action_result.get_status()
 
         filename = resp_json.get('fileName')
 
-        ret_val, resp = self._make_rest_call(endpoint, action_result, method="get", params=params)
+        ret_val, resp = self._make_rest_call(endpoint, action_result, params=params)
 
         if phantom.is_fail(ret_val):
+            self.debug_print("Unable to download file")
             return action_result.get_status()
 
         if hasattr(Vault, 'get_vault_tmp_dir'):
@@ -602,7 +623,7 @@ class Bit9Connector(BaseConnector):
             }
             action_result.add_data(vault_details)
             action_result.update_summary({'vault_id': vault_id})
-            return action_result.set_status(phantom.APP_SUCCESS, BIT9_GET_FILE_SUCC.format(vault_id))
+            return action_result.set_status(phantom.APP_SUCCESS, CBAPPCONTROL_GET_FILE_SUCC.format(vault_id))
 
         return action_result.set_status(phantom.APP_ERROR, 'Error adding file to vault: {0}'.format(message))
 
@@ -610,10 +631,19 @@ class Bit9Connector(BaseConnector):
 
         action_result = self.add_action_result(ActionResult(param))
 
-        comp_id = param['computer_id']
-        file_id = param['file_id']
+        ret_val, comp_id = self._validate_integer(action_result, param["computer_id"], 'Computer ID', False)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        ret_val, file_id = self._validate_integer(action_result, param["file_id"], 'File ID', False)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        ret_val, connector_id = self._validate_integer(action_result, param["connector_id"], 'Connector ID', False)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
         target = param['target_type']
-        connector_id = param['connector_id']
 
         endpoint = '/fileAnalysis'
         data = {'computerId': comp_id, 'fileCatalogId': file_id, 'connectorId': connector_id,
@@ -623,11 +653,13 @@ class Bit9Connector(BaseConnector):
         ret_val, resp_json = self._make_rest_call(endpoint, action_result, data=data, method="post")
 
         if phantom.is_fail(ret_val):
+            self.debug_print("Unable to make file analysis")
             return action_result.get_status()
 
         if resp_json is None:
             return action_result.set_status(phantom.APP_ERROR, "File ID not found. Please provide a correct file ID")
 
+        self.debug_print("Getting filestatus")
         analysis_status = resp_json.get('analysisStatus')
 
         if type(resp_json) != list:
@@ -640,10 +672,126 @@ class Bit9Connector(BaseConnector):
             summary = action_result.update_summary({'analysis_status': analysis_status})
             try:
                 summary['analysis_status_desc'] = self.ANALYSIS_STATUS_DESCS[str(analysis_status)]
-            except Exception:
-                pass
+            except Exception as ex:
+                action_result.set_status(phantom.APP_ERROR, "Error: {}".format(self._get_error_message_from_exception(ex)))
 
         return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _get_fileinstances(self, param):
+
+        action_result = self.add_action_result(ActionResult(param))
+
+        self.save_progress("Validating given parameters")
+
+        ret_val, catalog_id = self._validate_integer(action_result, param["filecatalog_id"], 'FileCatalog ID', False)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        ret_val, computer_id = self._validate_integer(action_result, param["computer_id"], 'Computer ID', False)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        params = {
+            'q': [
+                'computerId:{0}'.format(computer_id),
+                'fileCatalogId:{0}'.format(catalog_id)
+            ]
+        }
+
+        ret_val, resp_json = self._make_rest_call(FILE_INSTANCE_ENDPOINT, action_result, params=params)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        if resp_json:
+            [action_result.add_data(instance) for instance in resp_json]
+
+        self.debug_print("Fetched FileInstance successfully")
+
+        return action_result.set_status(phantom.APP_SUCCESS, "Fetched file instance successfully")
+
+    def _update_fileinstance(self, param):
+
+        action_result = self.add_action_result(ActionResult(param))
+
+        ret_val, instance_id = self._validate_integer(action_result, param["instance_id"], 'FileInstance ID', False)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        if param["local_state"] not in ["unapproved", "approved"]:
+            return action_result.set_status(phantom.APP_ERROR, "Invalid local state provided")
+
+        endpoint = '{0}/{1}'.format(FILE_INSTANCE_ENDPOINT, instance_id)
+
+        # get instance for this id
+        ret_val, resp_json = self._make_rest_call(endpoint, action_result)
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        if not resp_json:
+            return action_result.set_status(phantom.APP_ERROR, "No matching instance for the ID were found")
+
+        if isinstance(resp_json, list) and len(resp_json) > 1:
+            return action_result.set_status(phantom.APP_ERROR,
+                                            "More than one file instance matched for the id. This is treated as an error")
+
+        self.save_progress("Got File  Instance for ID '{0}'".format(instance_id))
+        instance = resp_json
+
+        # check if the state of the file is what we wanted
+        local_state = instance.get('localState', CBAPPCONTROL_LOCAL_STATE_UNAPPROVED)
+
+        unblock_state = CBAPPCONTROL_UNBLOCK_LOCAL_STATE_MAP[param['local_state']]
+
+        if str(local_state) == unblock_state:
+            action_result.add_data(instance)
+            return action_result.set_status(phantom.APP_SUCCESS, "Local state of file instance same as required")
+
+        self.save_progress("Setting new state '{0}'".format(unblock_state))
+
+        instance['localState'] = unblock_state
+
+        ret_val, resp_json = self._make_rest_call(endpoint, action_result, data=instance, method="put")
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        if resp_json:
+            action_result.add_data(resp_json)
+
+        return action_result.set_status(phantom.APP_SUCCESS, "Local state of file instance updated successfully")
+
+    def _update_computer(self, param):
+        action_result = self.add_action_result(ActionResult(param))
+        self.debug_print("validate computer id")
+        ret_val, computer_id = self._validate_integer(action_result, param["computer_id"], 'Computer ID', False)
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        endpoint = '{0}/{1}'.format(COMPUTER_OBJECT_ENDPONIT, computer_id)
+
+        # get computer object for this id
+        self.debug_print("Getting computer object")
+        ret_val, resp_json = self._make_rest_call(endpoint, action_result)
+
+        if phantom.is_fail(ret_val):
+            self.save_progress("Computer with given id {} not available".format(computer_id))
+            return action_result.set_status(phantom.APP_ERROR, "Unable to find computer object with id {}".format(computer_id))
+
+        self.save_progress("changing computer object")
+        resp_json["prioritized"] = param.get("prioritized", resp_json["prioritized"])
+        resp_json["computerTag"] = param.get("computer_tag", resp_json["computerTag"])
+        resp_json["description"] = param.get("description", resp_json["description"])
+
+        ret_val, resp_json = self._make_rest_call(endpoint, action_result, data=resp_json, method="put")
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        if resp_json:
+            action_result.add_data(resp_json)
+
+        return action_result.set_status(phantom.APP_SUCCESS, "Computer object updated successfully")
 
     def handle_action(self, param):
 
@@ -680,7 +828,16 @@ class Bit9Connector(BaseConnector):
             result = self._list_files(param)
 
         elif action == self.ACTION_ID_GET_FILE:
-            result = self._get_file_and_save_to_vault(param)
+            result = self._get_file(param)
+
+        elif action == self.ACTION_ID_GET_FILE_INSTANCE:
+            result = self._get_fileinstances(param)
+
+        elif action == self.ACTION_ID_UPDATE_FILE_INSTANCE:
+            result = self._update_fileinstance(param)
+
+        elif action == self.ACTION_ID_UPDATE_COMPUTER:
+            result = self._update_computer(param)
 
         return result
 
@@ -717,7 +874,7 @@ if __name__ == '__main__':
         try:
             print("Accessing the Login page")
             login_url = BaseConnector._get_phantom_base_url() + 'login'
-            r = requests.get(login_url, verify=verify, timeout=BIT9_DEFAULT_TIMEOUT)
+            r = requests.get(login_url, verify=verify, timeout=CBAPPCONTROL_DEFAULT_TIMEOUT)
             csrftoken = r.cookies['csrftoken']
 
             data = dict()
@@ -730,7 +887,7 @@ if __name__ == '__main__':
             headers['Referer'] = login_url
 
             print("Logging into Platform to get the session id")
-            r2 = requests.post(login_url, verify=verify, timeout=BIT9_DEFAULT_TIMEOUT, data=data, headers=headers)
+            r2 = requests.post(login_url, verify=verify, timeout=CBAPPCONTROL_DEFAULT_TIMEOUT, data=data, headers=headers)
             session_id = r2.cookies['sessionid']
         except Exception as e:
             print("Unable to get session id from the platfrom. Error: " + str(e))
