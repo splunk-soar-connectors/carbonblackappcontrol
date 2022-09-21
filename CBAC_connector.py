@@ -782,6 +782,14 @@ class Bit9Connector(BaseConnector):
         resp_json["prioritized"] = param.get("prioritized", resp_json["prioritized"])
         resp_json["computerTag"] = param.get("computer_tag", resp_json["computerTag"])
         resp_json["description"] = param.get("description", resp_json["description"])
+        resp_json["policyId"] = param.get("policy_id", resp_json["policyId"])
+
+        if param.get("policy_id"):
+            if resp_json["automaticPolicy"] == True:
+                return action_result.set_status(phantom.APP_ERROR, "Can't update policy on computer {} if automaticPolicy is True".format(computer_id))
+            elif resp_json["localApproval"] == True:
+                return action_result.set_status(phantom.APP_ERROR, "Can't update policy on computer {} if localApproval is True".format(computer_id))
+     
 
         ret_val, resp_json = self._make_rest_call(endpoint, action_result, data=resp_json, method="put")
 

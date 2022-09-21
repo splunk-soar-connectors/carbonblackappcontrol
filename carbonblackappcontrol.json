@@ -5,7 +5,7 @@
     "publisher": "Splunk",
     "type": "endpoint",
     "main_module": "CBAC_connector.py",
-    "app_version": "3.0.0",
+    "app_version": "3.0.0-fdse.1",
     "utctime_updated": "2022-02-08T01:45:48.000000Z",
     "package_name": "phantom_cbprotect",
     "product_vendor": "Carbon Black",
@@ -2480,6 +2480,10 @@
                     "description": "Tags for computer",
                     "order": 3,
                     "required": false
+                },
+                "policy_id": {
+                    "data_type": "string",
+                    "description": "New Id of policy for this computer. PolicyId is ignored if either automaticPolicy us True or localApproval is True"
                 }
             },
             "render": {
