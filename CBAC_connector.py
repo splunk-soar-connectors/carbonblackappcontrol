@@ -97,9 +97,9 @@ class Bit9Connector(BaseConnector):
             if key == 'Limit' and parameter == -1:
                 return phantom.APP_SUCCESS, parameter
             if parameter < 0:
-                return action_result.set_status(phantom.APP_ERROR, CBAPPCONTROL_ERR_NEGATIVE_INT_PARAM.format(param=key)), None
+                return action_result.set_status(phantom.APP_ERROR, CBAPPCONTROL_ERROR_NEGATIVE_INT_PARAM.format(param=key)), None
             if not allow_zero and parameter == 0:
-                return action_result.set_status(phantom.APP_ERROR, CBAPPCONTROL_ERR_INVALID_PARAM.format(param=key)), None
+                return action_result.set_status(phantom.APP_ERROR, CBAPPCONTROL_ERROR_INVALID_PARAM.format(param=key)), None
 
         return phantom.APP_SUCCESS, parameter
 
@@ -109,8 +109,8 @@ class Bit9Connector(BaseConnector):
         :return: error message
         """
 
-        error_code = ERR_CODE_UNAVAILABLE
-        error_msg = ERR_MSG_UNAVAILABLE
+        error_code = ERROR_CODE_UNAVAILABLE
+        error_msg = ERROR_MSG_UNAVAILABLE
         try:
             if hasattr(e, 'args'):
                 if len(e.args) > 1:
@@ -146,7 +146,7 @@ class Bit9Connector(BaseConnector):
 
         # handle the error in case the caller specified a non-existent method
         if not request_func:
-            action_result.set_status(phantom.APP_ERROR, CBAPPCONTROL_ERR_API_UNSUPPORTED_METHOD, method=method)
+            action_result.set_status(phantom.APP_ERROR, CBAPPCONTROL_ERROR_API_UNSUPPORTED_METHOD, method=method)
 
         # Make the call
         try:
@@ -159,7 +159,7 @@ class Bit9Connector(BaseConnector):
                 timeout=30
             )  # uri parameters if any
         except Exception as e:
-            return action_result.set_status(phantom.APP_ERROR, CBAPPCONTROL_ERR_SERVER_CONNECTION,
+            return action_result.set_status(phantom.APP_ERROR, CBAPPCONTROL_ERROR_SERVER_CONNECTION,
                                             self._get_error_message_from_exception(e)), resp_json
 
         content_type = r.headers.get('content-type')
@@ -171,7 +171,7 @@ class Bit9Connector(BaseConnector):
                 resp_json = r.json()
             except Exception as e:
                 # r.text is guaranteed to be NON None, it will be empty, but not None
-                msg_string = CBAPPCONTROL_ERR_JSON_PARSE.format(raw_text=r.text)
+                msg_string = CBAPPCONTROL_ERROR_JSON_PARSE.format(raw_text=r.text)
                 return action_result.set_status(phantom.APP_ERROR, msg_string,
                                                 self._get_error_message_from_exception(e)), resp_json
 
@@ -205,7 +205,7 @@ class Bit9Connector(BaseConnector):
                        "as mentioned in the action documentation."
 
         return action_result.set_status(phantom.APP_ERROR,
-                                        CBAPPCONTROL_ERR_FROM_SERVER.format(status=r.status_code, detail=details)), resp_json
+                                        CBAPPCONTROL_ERROR_FROM_SERVER.format(status=r.status_code, detail=details)), resp_json
 
     def _test_connectivity(self, param):
 
@@ -785,11 +785,12 @@ class Bit9Connector(BaseConnector):
         resp_json["policyId"] = param.get("policy_id", resp_json["policyId"])
 
         if param.get("policy_id"):
-            if resp_json["automaticPolicy"] == True:
-                return action_result.set_status(phantom.APP_ERROR, "Can't update policy on computer {} if automaticPolicy is True".format(computer_id))
-            elif resp_json["localApproval"] == True:
-                return action_result.set_status(phantom.APP_ERROR, "Can't update policy on computer {} if localApproval is True".format(computer_id))
-     
+            if resp_json["automaticPolicy"]:
+                return action_result.set_status(phantom.APP_ERROR,
+                        "Can't update policy on computer {} if automaticPolicy set to True".format(computer_id))
+            elif resp_json["localApproval"]:
+                return action_result.set_status(phantom.APP_ERROR,
+                        "Can't update policy on computer {} if localApproval set to True".format(computer_id))
 
         ret_val, resp_json = self._make_rest_call(endpoint, action_result, data=resp_json, method="put")
 

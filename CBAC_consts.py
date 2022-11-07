@@ -33,10 +33,10 @@ CBAPPCONTROL_API_URI = "/api/bit9platform/v1"
 CBAPPCONTROL_LIST_FILES_SUCC = "Number of files returned: {0}"
 CBAPPCONTROL_GET_FILE_SUCC = "Successfully added file to vault. Vault ID: {0}"
 
-CBAPPCONTROL_ERR_FROM_SERVER = "API failed, Status code: {status}, Detail: {detail}"
-CBAPPCONTROL_ERR_JSON_PARSE = "Unable to parse reply as a Json, raw string reply: '{raw_text}'"
-CBAPPCONTROL_ERR_API_UNSUPPORTED_METHOD = "Unsupported method"
-CBAPPCONTROL_ERR_SERVER_CONNECTION = "Connection failed"
+CBAPPCONTROL_ERROR_FROM_SERVER = "API failed, Status code: {status}, Detail: {detail}"
+CBAPPCONTROL_ERROR_JSON_PARSE = "Unable to parse reply as a Json, raw string reply: '{raw_text}'"
+CBAPPCONTROL_ERROR_API_UNSUPPORTED_METHOD = "Unsupported method"
+CBAPPCONTROL_ERROR_SERVER_CONNECTION = "Connection failed"
 
 CBAPPCONTROL_FILE_STATE_UNAPPROVED = "1"
 CBAPPCONTROL_FILE_STATE_APPROVED = "2"
@@ -51,10 +51,10 @@ CBAPPCONTROL_DEFAULT_UNBLOCK_STATE = "unapproved"
 CBAPPCONTROL_ADDED_BY_PHANTOM = "Added by Phantom Installation ID: {0}"
 
 CBAPPCONTROL_INVALID_INT = "Please provide a valid integer value in the {param}"
-CBAPPCONTROL_ERR_NEGATIVE_INT_PARAM = "Please provide a valid non-negative integer value in the {param}"
-CBAPPCONTROL_ERR_INVALID_PARAM = "Please provide a non-zero positive integer in the {param}"
+CBAPPCONTROL_ERROR_NEGATIVE_INT_PARAM = "Please provide a valid non-negative integer value in the {param}"
+CBAPPCONTROL_ERROR_INVALID_PARAM = "Please provide a non-zero positive integer in the {param}"
 
-ERR_CODE_UNAVAILABLE = "Error code unavailable"
-ERR_MSG_UNAVAILABLE = "Unknown error occurred. Please check the action parameters."
+ERROR_CODE_UNAVAILABLE = "Error code unavailable"
+ERROR_MSG_UNAVAILABLE = "Unknown error occurred. Please check the action parameters."
 
 CBAPPCONTROL_DEFAULT_TIMEOUT = 30
