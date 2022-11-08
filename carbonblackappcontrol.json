@@ -2449,25 +2449,25 @@
                     "description": "Computer Object Id",
                     "required": true,
                     "order": 0,
+                    "contains": [
+                        "carbon black computer id"
+                    ],
                     "primary": true
                 },
                 "prioritized": {
                     "data_type": "boolean",
                     "description": "Priority of computer",
-                    "order": 1,
-                    "required": false
+                    "order": 1
                 },
                 "description": {
                     "data_type": "string",
                     "description": "Description about computer",
-                    "order": 2,
-                    "required": false
+                    "order": 2
                 },
                 "computer_tag": {
                     "data_type": "string",
                     "description": "Tags for computer",
-                    "order": 3,
-                    "required": false
+                    "order": 3
                 },
                 "policy_id": {
                     "data_type": "string",
