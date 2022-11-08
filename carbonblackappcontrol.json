@@ -2448,11 +2448,7 @@
                     "data_type": "numeric",
                     "description": "Computer Object Id",
                     "required": true,
-                    "order": 0,
-                    "contains": [
-                        "carbon black computer id"
-                    ],
-                    "primary": true
+                    "order": 0
                 },
                 "prioritized": {
                     "data_type": "boolean",
