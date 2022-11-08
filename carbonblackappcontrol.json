@@ -2448,7 +2448,11 @@
                     "data_type": "numeric",
                     "description": "Computer Object Id",
                     "required": true,
-                    "order": 0
+                    "order": 0,
+                    "contains": [
+                        "carbon black computer id"
+                    ],
+                    "primary": true
                 },
                 "prioritized": {
                     "data_type": "boolean",
@@ -2491,6 +2495,9 @@
                     "data_type": "numeric",
                     "example_values": [
                         1
+                    ],
+                    "contains": [
+                        "carbon black computer id"
                     ]
                 },
                 {
@@ -2511,7 +2518,7 @@
                     "data_path": "action_result.parameter.policy_id",
                     "data_type": "string",
                     "example_values": [
-                        "12345"
+                        "1"
                     ]
                 },
                 {
