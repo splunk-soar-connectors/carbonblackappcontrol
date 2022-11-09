@@ -2471,7 +2471,7 @@
                 },
                 "policy_id": {
                     "data_type": "string",
-                    "description": "New Id of policy for this computer. PolicyId is ignored if either automaticPolicy us True or localApproval is True",
+                    "description": "New Id of policy for this computer. PolicyId is ignored if either automaticPolicy is True or localApproval is True",
                     "order": 4
                 }
             },
