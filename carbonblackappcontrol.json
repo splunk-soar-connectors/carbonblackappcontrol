@@ -2237,6 +2237,37 @@
                     "example_values": [
                         1
                     ]
+                },
+                {
+                    "data_path": "action_result.data.*.policyId",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.topLevel",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.initialized",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.certificateId",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.unifiedSource",
+                    "data_type": "string"
                 }
             ],
             "versions": "EQ(*)"
@@ -2860,14 +2891,18 @@
                     "data_type": "numeric",
                     "example_values": [
                         2
-                    ]
+                    ],
+                    "column_name": "Policy ID",
+                    "column_order": 6
                 },
                 {
                     "data_path": "action_result.data.*.policyName",
                     "data_type": "string",
                     "example_values": [
-                        "Template Policy"
-                    ]
+                        "Test Policy"
+                    ],
+                    "column_name": "Policy Name",
+                    "column_order": 7
                 },
                 {
                     "data_path": "action_result.data.*.policyStatus",
