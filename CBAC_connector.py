@@ -777,7 +777,7 @@ class Bit9Connector(BaseConnector):
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
-        endpoint = '{0}/{1}'.format(COMPUTER_OBJECT_ENDPONIT, computer_id)
+        endpoint = '{0}/{1}'.format(COMPUTER_OBJECT_ENDPOINT, computer_id)
 
         # get computer object for this id
         self.debug_print("Getting computer object")
@@ -795,7 +795,7 @@ class Bit9Connector(BaseConnector):
         resp_json["policyId"] = policy_id
 
         # get policy object from id
-        policy_endpoint = '{0}/{1}'.format(POLICY_OBJECT_ENDPONIT, policy_id)
+        policy_endpoint = '{0}/{1}'.format(POLICY_OBJECT_ENDPOINT, policy_id)
         self.debug_print("Getting policy object")
         ret_val, _ = self._make_rest_call(policy_endpoint, action_result)
 
