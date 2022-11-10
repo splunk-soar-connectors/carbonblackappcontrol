@@ -791,7 +791,17 @@ class Bit9Connector(BaseConnector):
         resp_json["prioritized"] = param.get("prioritized", resp_json["prioritized"])
         resp_json["computerTag"] = param.get("computer_tag", resp_json["computerTag"])
         resp_json["description"] = param.get("description", resp_json["description"])
-        resp_json["policyId"] = param.get("policy_id", resp_json["policyId"])
+        policy_id = param.get("policy_id", resp_json["policyId"])
+        resp_json["policyId"] = policy_id
+
+        # get policy object from id
+        policy_endpoint = '{0}/{1}'.format(POLICY_OBJECT_ENDPONIT, policy_id)
+        self.debug_print("Getting policy object")
+        ret_val, _ = self._make_rest_call(policy_endpoint, action_result)
+
+        if phantom.is_fail(ret_val):
+            self.save_progress("Policy with given id {} not available".format(policy_id))
+            return action_result.set_status(phantom.APP_ERROR, "Unable to find policy object with id {}".format(policy_id))
 
         if param.get("policy_id"):
             if resp_json["automaticPolicy"]:

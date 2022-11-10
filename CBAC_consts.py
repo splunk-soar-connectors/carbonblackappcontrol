@@ -23,6 +23,7 @@ FILE_RULE_ENDPOINT = "/fileRule"
 FILE_UPLOAD_ENDPOINT = "/fileUpload"
 FILE_INSTANCE_ENDPOINT = "/fileInstance"
 COMPUTER_OBJECT_ENDPONIT = "/computer"
+POLICY_OBJECT_ENDPONIT = "/policy"
 CAT_ID_DATA = "fileCatalogId:%s"
 APPEND_HASHES = "%s:%s"
 LISTDECISION_MAP = {"white": "2", "black": "3"}
