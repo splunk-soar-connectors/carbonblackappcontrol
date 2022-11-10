@@ -54,7 +54,6 @@ CBAPPCONTROL_INVALID_INT = "Please provide a valid integer value in the {param}"
 CBAPPCONTROL_ERROR_NEGATIVE_INT_PARAM = "Please provide a valid non-negative integer value in the {param}"
 CBAPPCONTROL_ERROR_INVALID_PARAM = "Please provide a non-zero positive integer in the {param}"
 
-ERROR_CODE_UNAVAILABLE = "Error code unavailable"
-ERROR_MSG_UNAVAILABLE = "Unknown error occurred. Please check the action parameters."
+ERROR_MSG_UNAVAILABLE = "Error message unavailable. Please check the asset configuration and|or action parameters"
 
 CBAPPCONTROL_DEFAULT_TIMEOUT = 30

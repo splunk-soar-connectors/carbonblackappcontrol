@@ -104,24 +104,33 @@ class Bit9Connector(BaseConnector):
         return phantom.APP_SUCCESS, parameter
 
     def _get_error_message_from_exception(self, e):
-        """ This method is used to get appropriate error message from the exception.
+        """
+        Get appropriate error message from the exception.
         :param e: Exception object
         :return: error message
         """
 
-        error_code = ERROR_CODE_UNAVAILABLE
+        error_code = None
         error_msg = ERROR_MSG_UNAVAILABLE
+
+        self.error_print("Error occurred.", e)
+
         try:
-            if hasattr(e, 'args'):
+            if hasattr(e, "args"):
                 if len(e.args) > 1:
                     error_code = e.args[0]
                     error_msg = e.args[1]
                 elif len(e.args) == 1:
                     error_msg = e.args[0]
-        except Exception as ex:
-            self.debug_print("Error occurred while retrieving exception information: {}".format(self._get_error_message_from_exception(ex)))
+        except Exception as e:
+            self.error_print("Error occurred while fetching exception information. Details: {}".format(str(e)))
 
-        return "Error Code: {0}. Error Message: {1}".format(error_code, error_msg)
+        if not error_code:
+            error_text = "Error Message: {}".format(error_msg)
+        else:
+            error_text = "Error Code: {}. Error Message: {}".format(error_code, error_msg)
+
+        return error_text
 
     def _make_rest_call(self, endpoint, action_result, headers=None, params=None, data=None, method="get"):
         """ Function that makes the REST call to the device, generic function that can be called from various action handlers"""
@@ -156,7 +165,7 @@ class Bit9Connector(BaseConnector):
                 headers=headers,  # The headers to send in the HTTP call
                 verify=config[phantom.APP_JSON_VERIFY],  # should cert verification be carried out?
                 params=params,
-                timeout=30
+                timeout=CBAPPCONTROL_DEFAULT_TIMEOUT
             )  # uri parameters if any
         except Exception as e:
             return action_result.set_status(phantom.APP_ERROR, CBAPPCONTROL_ERROR_SERVER_CONNECTION,
