@@ -17,7 +17,6 @@ CBAPPCONTROL_JSON_API_TOKEN = "api_token"
 CBAPPCONTROL_JSON_DESCRIPTION = "comment"
 CBAPPCONTROL_JSON_UNBLOCK_STATE = "file_state"
 
-VERIFY_CERT = "verify_server_cert"
 FILE_CATALOG_ENDPOINT = "/filecatalog"
 FILE_RULE_ENDPOINT = "/fileRule"
 FILE_UPLOAD_ENDPOINT = "/fileUpload"
