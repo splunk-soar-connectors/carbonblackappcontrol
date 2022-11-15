@@ -43,7 +43,8 @@ class Bit9Connector(BaseConnector):
     ACTION_ID_GET_FILE = "get_file"
     ACTION_ID_GET_FILE_INSTANCE = "get_fileinstances"
     ACTION_ID_UPDATE_FILE_INSTANCE = "update_fileinstance"
-    ACTION_ID_UPDATE_COMPUTER = "update_computer"
+    ACTION_ID_UPDATE_COMPUTER = "update_computer",
+    ACTION_ID_LIST_POLICIES = "list_policies"
 
     # This could be a list, but easier to read as a dictionary
     UPLOAD_STATUS_DESCS = {
@@ -821,6 +822,50 @@ class Bit9Connector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS, "Computer object updated successfully")
 
+    def _list_policies(self, param):
+        """
+
+        Args:
+            param: Parameter
+
+        Returns:
+            APP_STATUS :  Success/Error with user friendly message
+        """
+        action_result = self.add_action_result(ActionResult(param))
+        # If limit is None then also it will return all the policies
+        ret_val, limit = self._validate_integer(action_result, param.get('limit'), 'Limit', False)
+        if phantom.is_fail(ret_val):
+            self.debug_print("Invalid limit integer taken")
+            return action_result.get_status()
+
+        ret_val, offset = self._validate_integer(action_result, param.get('offset', 0), 'Offset', True)
+        if phantom.is_fail(ret_val):
+            self.debug_print("Invalid offset integer taken")
+            return action_result.get_status()
+
+        params = {
+            'limit': limit,
+            'offset': offset
+        }
+
+        endpoint = POLICY_OBJECT_ENDPOINT
+
+        ret_val, resp_json = self._make_rest_call(endpoint, action_result, params=params)
+
+        if phantom.is_fail(ret_val):
+            self.debug_print("Unable to fetch list of policy")
+            return action_result.get_status()
+
+        [action_result.add_data(instance) for instance in resp_json]
+        if limit == -1:
+            total = resp_json['count']
+            action_result.update_summary({'total': total})
+            return action_result.set_status(phantom.APP_SUCCESS, "Total: {}".format(total))
+
+        num_policies = len(resp_json)
+        action_result.update_summary({'num_policies': num_policies})
+        return action_result.set_status(phantom.APP_SUCCESS, CBAPPCONTROL_LIST_POLICIES_SUCC.format(num_policies))
+
     def handle_action(self, param):
 
         """
@@ -866,6 +911,9 @@ class Bit9Connector(BaseConnector):
 
         elif action == self.ACTION_ID_UPDATE_COMPUTER:
             result = self._update_computer(param)
+
+        elif action == self.ACTION_ID_LIST_POLICIES:
+            result = self._list_policies(param)
 
         return result
 

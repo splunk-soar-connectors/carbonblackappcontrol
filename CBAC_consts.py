@@ -31,6 +31,7 @@ CBAPPCONTROL_FID = "id"
 DECISION_MAP = {"local_approval": "localState", "global_approval": "fileState"}
 CBAPPCONTROL_API_URI = "/api/bit9platform/v1"
 CBAPPCONTROL_LIST_FILES_SUCC = "Number of files returned: {0}"
+CBAPPCONTROL_LIST_POLICIES_SUCC = "Number of policies returned: {0}"
 CBAPPCONTROL_GET_FILE_SUCC = "Successfully added file to vault. Vault ID: {0}"
 
 CBAPPCONTROL_ERROR_FROM_SERVER = "API failed, Status code: {status}, Detail: {detail}"
