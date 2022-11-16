@@ -2470,7 +2470,7 @@
         {
             "action": "update computer",
             "description": "Change computer object details",
-            "verbose": "This action requires the following permission:<ul><li>View Computers.</li><li>Manage Computers.</li></ul>The policyID is ignored if either localApproval is True or automaticPolicy is True.",
+            "verbose": "This action requires the following permission:<ul><li>View Computers</li><li>Manage Computers</li></ul>The policyID is ignored if either localApproval is True or automaticPolicy is True.",
             "type": "generic",
             "identifier": "update_computer",
             "read_only": false,

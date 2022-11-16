@@ -43,7 +43,7 @@ class Bit9Connector(BaseConnector):
     ACTION_ID_GET_FILE = "get_file"
     ACTION_ID_GET_FILE_INSTANCE = "get_fileinstances"
     ACTION_ID_UPDATE_FILE_INSTANCE = "update_fileinstance"
-    ACTION_ID_UPDATE_COMPUTER = "update_computer",
+    ACTION_ID_UPDATE_COMPUTER = "update_computer"
     ACTION_ID_LIST_POLICIES = "list_policies"
 
     # This could be a list, but easier to read as a dictionary
@@ -823,14 +823,6 @@ class Bit9Connector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS, "Computer object updated successfully")
 
     def _list_policies(self, param):
-        """
-
-        Args:
-            param: Parameter
-
-        Returns:
-            APP_STATUS :  Success/Error with user friendly message
-        """
         action_result = self.add_action_result(ActionResult(param))
         # If limit is None then also it will return all the policies
         ret_val, limit = self._validate_integer(action_result, param.get('limit'), 'Limit', False)
