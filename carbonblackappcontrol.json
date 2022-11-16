@@ -3128,7 +3128,7 @@
         {
             "action": "list policies",
             "description": "List the policies",
-            "verbose": "This action requires the following permissions: <ul><li>View policies</li></ul><p>When provided -1 in limit parameter, it will return the count of the number of files available.</p>",
+            "verbose": "This action requires the following permissions: <ul><li>View policies</li></ul><p>When <b>limit</b> is not set then all the policies will be returned. If set to '-1' then only the result count will be returned, without actual results.</p>",
             "type": "investigate",
             "identifier": "list_policies",
             "read_only": true,
@@ -3166,7 +3166,10 @@
                 },
                 {
                     "data_path": "action_result.parameter.offset",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
                 },
                 {
                     "data_path": "action_result.summary",
@@ -3178,7 +3181,10 @@
                 },
                 {
                     "data_path": "action_result.data.*.computerId",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.id",
