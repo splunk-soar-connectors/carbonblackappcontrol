@@ -2136,6 +2136,10 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.certificateId",
+                    "data_type": "numeric"
+                },
+                {
                     "data_path": "action_result.data.*.computerId",
                     "data_type": "numeric",
                     "contains": [
@@ -2206,11 +2210,38 @@
                     "column_order": 0
                 },
                 {
+                    "data_path": "action_result.data.*.initialized",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.localState",
                     "data_type": "numeric"
                 },
                 {
                     "data_path": "action_result.data.*.pathName",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.policyId",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.topLevel",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.unifiedSource",
                     "data_type": "string"
                 },
                 {
@@ -2237,37 +2268,6 @@
                     "example_values": [
                         1
                     ]
-                },
-                {
-                    "data_path": "action_result.data.*.policyId",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.topLevel",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.initialized",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.certificateId",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.unifiedSource",
-                    "data_type": "string"
                 }
             ],
             "versions": "EQ(*)"
@@ -3128,7 +3128,7 @@
         {
             "action": "list policies",
             "description": "List the policies",
-            "verbose": "This action requires the following permissions: <ul><li>View policies</li></ul><p>When <b>limit</b> is not set then all the policies will be returned. If set to '-1' then only the result count will be returned, without actual results.</p>",
+            "verbose": "This action requires the following permissions: <ul><li>View policies</li></ul><p>When <b>limit</b> is set to '0' or not set then all the policies will be returned. If set to '-1' then only the result count will be returned, without actual results.</p>",
             "type": "investigate",
             "identifier": "list_policies",
             "read_only": true,
@@ -3172,12 +3172,36 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.summary",
-                    "data_type": "string"
+                    "data_path": "action_result.data.*.allowAgentUpgrades",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
                 },
                 {
-                    "data_path": "action_result.message",
-                    "data_type": "string"
+                    "data_path": "action_result.data.*.atEnforcementComputers",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.automatic",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.automaticApprovalsOnTransition",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.clVersionMax",
+                    "data_type": "numeric"
                 },
                 {
                     "data_path": "action_result.data.*.computerId",
@@ -3187,53 +3211,17 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.id",
+                    "data_path": "action_result.data.*.connectedComputers",
                     "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ],
                     "contains": [
-                        "carbon black policy id"
+                        "carbon black computer id"
                     ],
-                    "column_name": "Policy ID",
-                    "column_order": 0
+                    "column_name": "Connected Computer",
+                    "column_order": 2
                 },
                 {
-                    "data_path": "action_result.data.*.name",
-                    "data_type": "string",
-                    "example_values": [
-                        "Test Policy"
-                    ],
-                    "column_name": "Policy Name",
-                    "column_order": 1
-                },
-                {
-                    "data_path": "action_result.data.*.hidden",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.imageUrl",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.readOnly",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.automatic",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
+                    "data_path": "action_result.data.*.createdByUserId",
+                    "data_type": "numeric"
                 },
                 {
                     "data_path": "action_result.data.*.customLogo",
@@ -3251,25 +3239,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.description",
-                    "data_type": "string",
-                    "example_values": [
-                        "This is test policy"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.helpDeskUrl",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.packageName",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.clVersionMax",
-                    "data_type": "numeric"
-                },
-                {
                     "data_path": "action_result.data.*.dateModified",
                     "data_type": "string",
                     "example_values": [
@@ -3277,12 +3246,18 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.totalComputers",
-                    "data_type": "numeric"
+                    "data_path": "action_result.data.*.description",
+                    "data_type": "string",
+                    "example_values": [
+                        "This is test policy"
+                    ]
                 },
                 {
-                    "data_path": "action_result.data.*.createdByUserId",
-                    "data_type": "numeric"
+                    "data_path": "action_result.data.*.disconnectedEnforcementLevel",
+                    "data_type": "numeric",
+                    "example_values": [
+                        60
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.enforcementLevel",
@@ -3290,35 +3265,6 @@
                     "example_values": [
                         60
                     ]
-                },
-                {
-                    "data_path": "action_result.data.*.modifiedByUserId",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.reputationEnabled",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.allowAgentUpgrades",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.connectedComputers",
-                    "data_type": "numeric",
-                    "contains": [
-                        "carbon black computer id"
-                    ],
-                    "column_name": "Connected Computer",
-                    "column_order": 2
                 },
                 {
                     "data_path": "action_result.data.*.fileTrackingEnabled",
@@ -3329,6 +3275,34 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.helpDeskUrl",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.hidden",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ],
+                    "contains": [
+                        "carbon black policy id"
+                    ],
+                    "column_name": "Policy ID",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.imageUrl",
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.data.*.loadAgentInSafeMode",
                     "data_type": "boolean",
                     "example_values": [
@@ -3337,23 +3311,56 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.atEnforcementComputers",
+                    "data_path": "action_result.data.*.modifiedByUserId",
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "action_result.data.*.disconnectedEnforcementLevel",
-                    "data_type": "numeric",
+                    "data_path": "action_result.data.*.name",
+                    "data_type": "string",
                     "example_values": [
-                        60
-                    ]
+                        "Test Policy"
+                    ],
+                    "column_name": "Policy Name",
+                    "column_order": 1
                 },
                 {
-                    "data_path": "action_result.data.*.automaticApprovalsOnTransition",
+                    "data_path": "action_result.data.*.packageName",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.readOnly",
                     "data_type": "boolean",
                     "example_values": [
                         true,
                         false
                     ]
+                },
+                {
+                    "data_path": "action_result.data.*.reputationEnabled",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.totalComputers",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.num_policies",
+                    "data_type": "numeric",
+                    "example_values": [
+                        10
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "summary.total_objects",
@@ -3367,13 +3374,6 @@
                     "data_type": "numeric",
                     "example_values": [
                         1
-                    ]
-                },
-                {
-                    "data_path": "action_result.summary.num_policies",
-                    "data_type": "numeric",
-                    "example_values": [
-                        10
                     ]
                 }
             ],

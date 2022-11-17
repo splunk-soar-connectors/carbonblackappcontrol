@@ -112,7 +112,7 @@ class Bit9Connector(BaseConnector):
         """
 
         error_code = None
-        error_msg = ERROR_MSG_UNAVAILABLE
+        error_message = ERROR_MESSAGE_UNAVAILABLE
 
         self.error_print("Error occurred.", e)
 
@@ -120,16 +120,16 @@ class Bit9Connector(BaseConnector):
             if hasattr(e, "args"):
                 if len(e.args) > 1:
                     error_code = e.args[0]
-                    error_msg = e.args[1]
+                    error_message = e.args[1]
                 elif len(e.args) == 1:
-                    error_msg = e.args[0]
+                    error_message = e.args[0]
         except Exception as e:
             self.error_print("Error occurred while fetching exception information. Details: {}".format(str(e)))
 
         if not error_code:
-            error_text = "Error Message: {}".format(error_msg)
+            error_text = "Error Message: {}".format(error_message)
         else:
-            error_text = "Error Code: {}. Error Message: {}".format(error_code, error_msg)
+            error_text = "Error Code: {}. Error Message: {}".format(error_code, error_message)
 
         return error_text
 
@@ -181,8 +181,8 @@ class Bit9Connector(BaseConnector):
                 resp_json = r.json()
             except Exception as e:
                 # r.text is guaranteed to be NON None, it will be empty, but not None
-                msg_string = CBAPPCONTROL_ERROR_JSON_PARSE.format(raw_text=r.text)
-                return action_result.set_status(phantom.APP_ERROR, msg_string,
+                message_string = CBAPPCONTROL_ERROR_JSON_PARSE.format(raw_text=r.text)
+                return action_result.set_status(phantom.APP_ERROR, message_string,
                                                 self._get_error_message_from_exception(e)), resp_json
 
         # Handle any special HTTP error codes here, many devices return an HTTP error code like 204.
@@ -789,10 +789,10 @@ class Bit9Connector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, "Unable to find computer object with id {}".format(computer_id))
 
         self.save_progress("changing computer object")
-        resp_json["prioritized"] = param.get("prioritized", resp_json["prioritized"])
-        resp_json["computerTag"] = param.get("computer_tag", resp_json["computerTag"])
-        resp_json["description"] = param.get("description", resp_json["description"])
-        policy_id = param.get("policy_id", resp_json["policyId"])
+        resp_json["prioritized"] = param.get("prioritized", resp_json.get("prioritized", False))
+        resp_json["computerTag"] = param.get("computer_tag", resp_json.get("computerTag", ''))
+        resp_json["description"] = param.get("description", resp_json.get("description", ''))
+        policy_id = param.get("policy_id", resp_json.get("policyId", None))
         resp_json["policyId"] = policy_id
 
         # get policy object from id
@@ -825,7 +825,7 @@ class Bit9Connector(BaseConnector):
     def _list_policies(self, param):
         action_result = self.add_action_result(ActionResult(param))
         # If limit is None then also it will return all the policies
-        ret_val, limit = self._validate_integer(action_result, param.get('limit'), 'Limit', False)
+        ret_val, limit = self._validate_integer(action_result, param.get('limit'), 'Limit', True)
         if phantom.is_fail(ret_val):
             self.debug_print("Invalid limit integer taken")
             return action_result.get_status()
@@ -848,12 +848,12 @@ class Bit9Connector(BaseConnector):
             self.debug_print("Unable to fetch list of policy")
             return action_result.get_status()
 
-        [action_result.add_data(instance) for instance in resp_json]
         if limit == -1:
             total = resp_json['count']
             action_result.update_summary({'total': total})
             return action_result.set_status(phantom.APP_SUCCESS, "Total: {}".format(total))
 
+        [action_result.add_data(instance) for instance in resp_json]
         num_policies = len(resp_json)
         action_result.update_summary({'num_policies': num_policies})
         return action_result.set_status(phantom.APP_SUCCESS, CBAPPCONTROL_LIST_POLICIES_SUCC.format(num_policies))
