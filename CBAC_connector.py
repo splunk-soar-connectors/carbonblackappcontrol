@@ -44,6 +44,7 @@ class Bit9Connector(BaseConnector):
     ACTION_ID_GET_FILE_INSTANCE = "get_fileinstances"
     ACTION_ID_UPDATE_FILE_INSTANCE = "update_fileinstance"
     ACTION_ID_UPDATE_COMPUTER = "update_computer"
+    ACTION_ID_LIST_POLICIES = "list_policies"
 
     # This could be a list, but easier to read as a dictionary
     UPLOAD_STATUS_DESCS = {
@@ -97,31 +98,40 @@ class Bit9Connector(BaseConnector):
             if key == 'Limit' and parameter == -1:
                 return phantom.APP_SUCCESS, parameter
             if parameter < 0:
-                return action_result.set_status(phantom.APP_ERROR, CBAPPCONTROL_ERR_NEGATIVE_INT_PARAM.format(param=key)), None
+                return action_result.set_status(phantom.APP_ERROR, CBAPPCONTROL_ERROR_NEGATIVE_INT_PARAM.format(param=key)), None
             if not allow_zero and parameter == 0:
-                return action_result.set_status(phantom.APP_ERROR, CBAPPCONTROL_ERR_INVALID_PARAM.format(param=key)), None
+                return action_result.set_status(phantom.APP_ERROR, CBAPPCONTROL_ERROR_INVALID_PARAM.format(param=key)), None
 
         return phantom.APP_SUCCESS, parameter
 
     def _get_error_message_from_exception(self, e):
-        """ This method is used to get appropriate error message from the exception.
+        """
+        Get appropriate error message from the exception.
         :param e: Exception object
         :return: error message
         """
 
-        error_code = ERR_CODE_UNAVAILABLE
-        error_msg = ERR_MSG_UNAVAILABLE
+        error_code = None
+        error_message = ERROR_MESSAGE_UNAVAILABLE
+
+        self.error_print("Error occurred.", e)
+
         try:
-            if hasattr(e, 'args'):
+            if hasattr(e, "args"):
                 if len(e.args) > 1:
                     error_code = e.args[0]
-                    error_msg = e.args[1]
+                    error_message = e.args[1]
                 elif len(e.args) == 1:
-                    error_msg = e.args[0]
-        except Exception as ex:
-            self.debug_print("Error occurred while retrieving exception information: {}".format(self._get_error_message_from_exception(ex)))
+                    error_message = e.args[0]
+        except Exception as e:
+            self.error_print("Error occurred while fetching exception information. Details: {}".format(str(e)))
 
-        return "Error Code: {0}. Error Message: {1}".format(error_code, error_msg)
+        if not error_code:
+            error_text = "Error Message: {}".format(error_message)
+        else:
+            error_text = "Error Code: {}. Error Message: {}".format(error_code, error_message)
+
+        return error_text
 
     def _make_rest_call(self, endpoint, action_result, headers=None, params=None, data=None, method="get"):
         """ Function that makes the REST call to the device, generic function that can be called from various action handlers"""
@@ -146,7 +156,7 @@ class Bit9Connector(BaseConnector):
 
         # handle the error in case the caller specified a non-existent method
         if not request_func:
-            action_result.set_status(phantom.APP_ERROR, CBAPPCONTROL_ERR_API_UNSUPPORTED_METHOD, method=method)
+            action_result.set_status(phantom.APP_ERROR, CBAPPCONTROL_ERROR_API_UNSUPPORTED_METHOD, method=method)
 
         # Make the call
         try:
@@ -154,12 +164,12 @@ class Bit9Connector(BaseConnector):
                 self._base_url + endpoint,  # The url is made up of the base_url, the api url and the endpoint
                 data=json.dumps(data) if data else None,  # the data converted to json string if present
                 headers=headers,  # The headers to send in the HTTP call
-                verify=config[phantom.APP_JSON_VERIFY],  # should cert verification be carried out?
+                verify=config.get(phantom.APP_JSON_VERIFY, False),  # should cert verification be carried out?
                 params=params,
-                timeout=30
+                timeout=CBAPPCONTROL_DEFAULT_TIMEOUT
             )  # uri parameters if any
         except Exception as e:
-            return action_result.set_status(phantom.APP_ERROR, CBAPPCONTROL_ERR_SERVER_CONNECTION,
+            return action_result.set_status(phantom.APP_ERROR, CBAPPCONTROL_ERROR_SERVER_CONNECTION,
                                             self._get_error_message_from_exception(e)), resp_json
 
         content_type = r.headers.get('content-type')
@@ -171,8 +181,8 @@ class Bit9Connector(BaseConnector):
                 resp_json = r.json()
             except Exception as e:
                 # r.text is guaranteed to be NON None, it will be empty, but not None
-                msg_string = CBAPPCONTROL_ERR_JSON_PARSE.format(raw_text=r.text)
-                return action_result.set_status(phantom.APP_ERROR, msg_string,
+                message_string = CBAPPCONTROL_ERROR_JSON_PARSE.format(raw_text=r.text)
+                return action_result.set_status(phantom.APP_ERROR, message_string,
                                                 self._get_error_message_from_exception(e)), resp_json
 
         # Handle any special HTTP error codes here, many devices return an HTTP error code like 204.
@@ -205,7 +215,7 @@ class Bit9Connector(BaseConnector):
                        "as mentioned in the action documentation."
 
         return action_result.set_status(phantom.APP_ERROR,
-                                        CBAPPCONTROL_ERR_FROM_SERVER.format(status=r.status_code, detail=details)), resp_json
+                                        CBAPPCONTROL_ERROR_FROM_SERVER.format(status=r.status_code, detail=details)), resp_json
 
     def _test_connectivity(self, param):
 
@@ -768,7 +778,7 @@ class Bit9Connector(BaseConnector):
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
-        endpoint = '{0}/{1}'.format(COMPUTER_OBJECT_ENDPONIT, computer_id)
+        endpoint = '{0}/{1}'.format(COMPUTER_OBJECT_ENDPOINT, computer_id)
 
         # get computer object for this id
         self.debug_print("Getting computer object")
@@ -779,9 +789,28 @@ class Bit9Connector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, "Unable to find computer object with id {}".format(computer_id))
 
         self.save_progress("changing computer object")
-        resp_json["prioritized"] = param.get("prioritized", resp_json["prioritized"])
-        resp_json["computerTag"] = param.get("computer_tag", resp_json["computerTag"])
-        resp_json["description"] = param.get("description", resp_json["description"])
+        resp_json["prioritized"] = param.get("prioritized", resp_json.get("prioritized", False))
+        resp_json["computerTag"] = param.get("computer_tag", resp_json.get("computerTag", ''))
+        resp_json["description"] = param.get("description", resp_json.get("description", ''))
+        policy_id = param.get("policy_id", resp_json.get("policyId", None))
+        resp_json["policyId"] = policy_id
+
+        # get policy object from id
+        policy_endpoint = '{0}/{1}'.format(POLICY_OBJECT_ENDPOINT, policy_id)
+        self.debug_print("Getting policy object")
+        ret_val, _ = self._make_rest_call(policy_endpoint, action_result)
+
+        if phantom.is_fail(ret_val):
+            self.save_progress("Policy with given id {} not available".format(policy_id))
+            return action_result.set_status(phantom.APP_ERROR, "Unable to find policy object with id {}".format(policy_id))
+
+        if param.get("policy_id"):
+            if resp_json["automaticPolicy"]:
+                return action_result.set_status(phantom.APP_ERROR,
+                        "Can't update policy on computer {} if automaticPolicy set to True".format(computer_id))
+            elif resp_json["localApproval"]:
+                return action_result.set_status(phantom.APP_ERROR,
+                        "Can't update policy on computer {} if localApproval set to True".format(computer_id))
 
         ret_val, resp_json = self._make_rest_call(endpoint, action_result, data=resp_json, method="put")
 
@@ -792,6 +821,42 @@ class Bit9Connector(BaseConnector):
             action_result.add_data(resp_json)
 
         return action_result.set_status(phantom.APP_SUCCESS, "Computer object updated successfully")
+
+    def _list_policies(self, param):
+        action_result = self.add_action_result(ActionResult(param))
+        # If limit is None then also it will return all the policies
+        ret_val, limit = self._validate_integer(action_result, param.get('limit'), 'Limit', True)
+        if phantom.is_fail(ret_val):
+            self.debug_print("Invalid limit integer taken")
+            return action_result.get_status()
+
+        ret_val, offset = self._validate_integer(action_result, param.get('offset', 0), 'Offset', True)
+        if phantom.is_fail(ret_val):
+            self.debug_print("Invalid offset integer taken")
+            return action_result.get_status()
+
+        params = {
+            'limit': limit,
+            'offset': offset
+        }
+
+        endpoint = POLICY_OBJECT_ENDPOINT
+
+        ret_val, resp_json = self._make_rest_call(endpoint, action_result, params=params)
+
+        if phantom.is_fail(ret_val):
+            self.debug_print("Unable to fetch list of policy")
+            return action_result.get_status()
+
+        if limit == -1:
+            total = resp_json['count']
+            action_result.update_summary({'total': total})
+            return action_result.set_status(phantom.APP_SUCCESS, "Total: {}".format(total))
+
+        [action_result.add_data(instance) for instance in resp_json]
+        num_policies = len(resp_json)
+        action_result.update_summary({'num_policies': num_policies})
+        return action_result.set_status(phantom.APP_SUCCESS, CBAPPCONTROL_LIST_POLICIES_SUCC.format(num_policies))
 
     def handle_action(self, param):
 
@@ -838,6 +903,9 @@ class Bit9Connector(BaseConnector):
 
         elif action == self.ACTION_ID_UPDATE_COMPUTER:
             result = self._update_computer(param)
+
+        elif action == self.ACTION_ID_LIST_POLICIES:
+            result = self._list_policies(param)
 
         return result
 

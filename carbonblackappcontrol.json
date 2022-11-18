@@ -5,16 +5,16 @@
     "publisher": "Splunk",
     "type": "endpoint",
     "main_module": "CBAC_connector.py",
-    "app_version": "3.0.0",
+    "app_version": "3.1.0",
     "utctime_updated": "2022-02-08T01:45:48.000000Z",
     "package_name": "phantom_cbprotect",
     "product_vendor": "Carbon Black",
     "product_name": "Carbon Black App Control",
     "product_version_regex": ".*",
-    "min_phantom_version": "5.2.0",
+    "min_phantom_version": "5.3.5",
     "fips_compliant": false,
     "latest_tested_versions": [
-        "On-prem, Version 8.8.0.262, July 04, 2022"
+        "On-prem, Version 8.8.0.262, November 14, 2022"
     ],
     "python_version": "3",
     "logo": "logo_carbonblack.svg",
@@ -36,16 +36,14 @@
         "verify_server_cert": {
             "data_type": "boolean",
             "description": "Verify server certificate",
-            "order": 2,
-            "default": false,
-            "required": true
+            "order": 2
         }
     },
     "actions": [
         {
             "action": "test connectivity",
             "description": "Validate the API Token by attempting to connect to the Device URL. This action runs a quick query on the device to check the connection and token",
-            "verbose": "This action requires the following permission: <ul><li>View files</li></ul>.",
+            "verbose": "This action requires the following permission: <ul><li>View files</li></ul>",
             "type": "test",
             "identifier": "test_connectivity",
             "read_only": true,
@@ -56,7 +54,7 @@
         {
             "action": "hunt file",
             "description": "Searches for a particular file across all the endpoints",
-            "verbose": "This action requires the following permission: <ul><li>View files</li></ul>.",
+            "verbose": "This action requires the following permission: <ul><li>View files</li></ul>",
             "type": "investigate",
             "identifier": "hunt_file",
             "read_only": true,
@@ -160,7 +158,7 @@
                     "data_path": "action_result.data.*.description",
                     "data_type": "string",
                     "example_values": [
-                        "Microsoft Malware Protection Signature Update Stub"
+                        "Test Malware Protection Signature Update Stub"
                     ]
                 },
                 {
@@ -407,7 +405,7 @@
                     ],
                     "column_name": "Computer ID",
                     "column_order": 1,
-                    "example_values":[
+                    "example_values": [
                         1
                     ]
                 },
@@ -419,7 +417,7 @@
                     ],
                     "column_name": "File ID",
                     "column_order": 0,
-                    "example_values":[
+                    "example_values": [
                         1
                     ]
                 },
@@ -427,11 +425,7 @@
                     "data_path": "action_result.parameter.priority",
                     "data_type": "numeric",
                     "example_values": [
-                        -2,
-                        -1,
-                        0,
-                        1,
-                        2
+                        1
                     ]
                 },
                 {
@@ -518,14 +512,14 @@
                 {
                     "data_path": "summary.total_objects",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         1
                     ]
                 },
                 {
                     "data_path": "summary.total_objects_successful",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         1
                     ]
                 }
@@ -821,7 +815,7 @@
         {
             "action": "analyze file",
             "description": "Analyze a file on a computer",
-            "verbose": "This action requires the following permissions: <ul><li>View files</li><li>Submit files for analysis</li></ul>.",
+            "verbose": "This action requires the following permissions: <ul><li>View files</li><li>Submit files for analysis</li></ul>",
             "type": "investigate",
             "identifier": "analyze_file",
             "read_only": false,
@@ -1246,7 +1240,6 @@
                     "data_path": "action_result.parameter.file_state",
                     "data_type": "string",
                     "example_values": [
-                        "unapproved",
                         "approved"
                     ]
                 },
@@ -1260,8 +1253,6 @@
                         "md5"
                     ],
                     "example_values": [
-                        "28028EB40338100C1ED237DCE457833AF2F23E22E160EDE94D83B25872ACFFGG",
-                        "D0F5CD635743A778AE533AE5E38DA4GG",
                         "DAEDF7CFB5A2A9E566A6CC9BBE26707D3F9918GG"
                     ]
                 },
@@ -1334,7 +1325,7 @@
                 {
                     "data_path": "action_result.data.*.lazyApproval",
                     "data_type": "boolean",
-                    "example_values":[
+                    "example_values": [
                         true,
                         false
                     ]
@@ -1393,14 +1384,14 @@
                 {
                     "data_path": "action_result.data.*.version",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         184467
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.visible",
                     "data_type": "boolean",
-                    "example_values":[
+                    "example_values": [
                         true,
                         false
                     ]
@@ -1419,14 +1410,14 @@
                 {
                     "data_path": "summary.total_objects",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         1
                     ]
                 },
                 {
                     "data_path": "summary.total_objects_successful",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         1
                     ]
                 }
@@ -1492,8 +1483,6 @@
                         "md5"
                     ],
                     "example_values": [
-                        "28028EB40338100C1ED237DCE457833AF2F23E22E160EDE94D83B25872ACFFGG",
-                        "D0F5CD635743A778AE533AE5E38DA4GG",
                         "DAEDF7CFB5A2A9E566A6CC9BBE26707D3F9918GG"
                     ]
                 },
@@ -1566,7 +1555,7 @@
                 {
                     "data_path": "action_result.data.*.lazyApproval",
                     "data_type": "boolean",
-                    "example_values":[
+                    "example_values": [
                         true,
                         false
                     ]
@@ -1633,14 +1622,14 @@
                 {
                     "data_path": "action_result.data.*.version",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         183563
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.visible",
                     "data_type": "boolean",
-                    "example_values":[
+                    "example_values": [
                         true,
                         false
                     ]
@@ -1656,14 +1645,14 @@
                 {
                     "data_path": "summary.total_objects",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         1
                     ]
                 },
                 {
                     "data_path": "summary.total_objects_successful",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         1
                     ]
                 }
@@ -1673,7 +1662,7 @@
         {
             "action": "get system info",
             "description": "Get information about an endpoint",
-            "verbose": "This action requires the following permission: <ul><li>View computers</li></ul>.",
+            "verbose": "This action requires the following permission: <ul><li>View computers</li></ul>",
             "type": "investigate",
             "identifier": "get_system_info",
             "read_only": true,
@@ -1719,7 +1708,7 @@
                     "contains": [
                         "carbon black computer id"
                     ],
-                    "example_values":[
+                    "example_values": [
                         1
                     ]
                 },
@@ -2085,7 +2074,7 @@
         {
             "action": "get file instances",
             "description": "Searches for file instances",
-            "verbose": "This action requires the following permission: <ul><li>View files</li></ul>.",
+            "verbose": "This action requires the following permission: <ul><li>View files</li></ul>",
             "type": "generic",
             "identifier": "get_fileinstances",
             "read_only": true,
@@ -2132,7 +2121,7 @@
                     "contains": [
                         "carbon black computer id"
                     ],
-                    "example_values":[
+                    "example_values": [
                         1
                     ]
                 },
@@ -2142,9 +2131,13 @@
                     "contains": [
                         "carbon black filecatalog id"
                     ],
-                    "example_values":[
+                    "example_values": [
                         10369
                     ]
+                },
+                {
+                    "data_path": "action_result.data.*.certificateId",
+                    "data_type": "numeric"
                 },
                 {
                     "data_path": "action_result.data.*.computerId",
@@ -2173,14 +2166,14 @@
                 {
                     "data_path": "action_result.data.*.detailedLocalState",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         14
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.executed",
                     "data_type": "boolean",
-                    "example_values":[
+                    "example_values": [
                         true,
                         false
                     ]
@@ -2217,11 +2210,38 @@
                     "column_order": 0
                 },
                 {
+                    "data_path": "action_result.data.*.initialized",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.localState",
                     "data_type": "numeric"
                 },
                 {
                     "data_path": "action_result.data.*.pathName",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.policyId",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.topLevel",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.unifiedSource",
                     "data_type": "string"
                 },
                 {
@@ -2238,14 +2258,14 @@
                 {
                     "data_path": "summary.total_objects",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         1
                     ]
                 },
                 {
                     "data_path": "summary.total_objects_successful",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         1
                     ]
                 }
@@ -2255,7 +2275,7 @@
         {
             "action": "update file instance",
             "description": "Change local file instance state",
-            "verbose": "This action requires the following permission:<ul><li>View files</li><li>Change local state</li></ul>.<p>Note that changed local state might not be reflected in the object immediately, but only after agent reports new state.</p>",
+            "verbose": "This action requires the following permission:<ul><li>View files</li><li>Change local state</li></ul><p>Note that changed local state might not be reflected in the object immediately, but only after agent reports new state.</p>",
             "type": "generic",
             "identifier": "update_fileinstance",
             "read_only": false,
@@ -2296,7 +2316,7 @@
                 {
                     "data_path": "action_result.parameter.instance_id",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         1
                     ]
                 },
@@ -2304,14 +2324,13 @@
                     "data_path": "action_result.parameter.local_state",
                     "data_type": "string",
                     "example_values": [
-                        "approved",
-                        "unapproved"
+                        "approved"
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.certificateId",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         153
                     ]
                 },
@@ -2349,7 +2368,7 @@
                 {
                     "data_path": "action_result.data.*.executed",
                     "data_type": "boolean",
-                    "example_values":[
+                    "example_values": [
                         true,
                         false
                     ]
@@ -2388,7 +2407,7 @@
                 {
                     "data_path": "action_result.data.*.initialized",
                     "data_type": "boolean",
-                    "example_values":[
+                    "example_values": [
                         true,
                         false
                     ]
@@ -2411,7 +2430,7 @@
                 {
                     "data_path": "action_result.data.*.topLevel",
                     "data_type": "boolean",
-                    "example_values":[
+                    "example_values": [
                         true,
                         false
                     ]
@@ -2434,14 +2453,14 @@
                 {
                     "data_path": "summary.total_objects",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         1
                     ]
                 },
                 {
                     "data_path": "summary.total_objects_successful",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         1
                     ]
                 }
@@ -2451,7 +2470,7 @@
         {
             "action": "update computer",
             "description": "Change computer object details",
-            "verbose": "This action requires the following permission:<ul><li>View Computers.</li><li>Manage Computers.</li></ul>",
+            "verbose": "This action requires the following permission:<ul><li>View Computers</li><li>Manage Computers</li></ul>The policyID is ignored if either localApproval is True or automaticPolicy is True.",
             "type": "generic",
             "identifier": "update_computer",
             "read_only": false,
@@ -2461,25 +2480,34 @@
                     "description": "Computer Object Id",
                     "required": true,
                     "order": 0,
+                    "contains": [
+                        "carbon black computer id"
+                    ],
                     "primary": true
                 },
                 "prioritized": {
                     "data_type": "boolean",
                     "description": "Priority of computer",
-                    "order": 1,
-                    "required": false
+                    "order": 1
                 },
                 "description": {
                     "data_type": "string",
                     "description": "Description about computer",
-                    "order": 2,
-                    "required": false
+                    "order": 2
                 },
                 "computer_tag": {
                     "data_type": "string",
                     "description": "Tags for computer",
-                    "order": 3,
-                    "required": false
+                    "order": 3
+                },
+                "policy_id": {
+                    "data_type": "string",
+                    "description": "New Id of policy for this computer",
+                    "order": 4,
+                    "primary": true,
+                    "contains": [
+                        "carbon black policy id"
+                    ]
                 }
             },
             "render": {
@@ -2500,8 +2528,11 @@
                 {
                     "data_path": "action_result.parameter.computer_id",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         1
+                    ],
+                    "contains": [
+                        "carbon black computer id"
                     ]
                 },
                 {
@@ -2516,6 +2547,16 @@
                     "data_type": "string",
                     "example_values": [
                         "computer description"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.policy_id",
+                    "data_type": "string",
+                    "example_values": [
+                        "1"
+                    ],
+                    "contains": [
+                        "carbon black policy id"
                     ]
                 },
                 {
@@ -2536,21 +2577,21 @@
                 {
                     "data_path": "action_result.data.*.SCEPStatus",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         0
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.activeDebugFlags",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         16
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.activeDebugLevel",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         0
                     ]
                 },
@@ -2571,14 +2612,14 @@
                 {
                     "data_path": "action_result.data.*.agentMemoryDumps",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         0
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.agentQueueSize",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         0
                     ]
                 },
@@ -2592,7 +2633,7 @@
                 {
                     "data_path": "action_result.data.*.automaticPolicy",
                     "data_type": "boolean",
-                    "example_values":[
+                    "example_values": [
                         true,
                         false
                     ]
@@ -2600,14 +2641,14 @@
                 {
                     "data_path": "action_result.data.*.cbSensorFlags",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         0
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.cbSensorId",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         0
                     ]
                 },
@@ -2618,21 +2659,21 @@
                 {
                     "data_path": "action_result.data.*.ccFlags",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         0
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.ccLevel",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         0
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.clVersion",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         1767
                     ]
                 },
@@ -2645,7 +2686,7 @@
                 {
                     "data_path": "action_result.data.*.connected",
                     "data_type": "boolean",
-                    "example_values":[
+                    "example_values": [
                         true,
                         false
                     ]
@@ -2660,21 +2701,21 @@
                 {
                     "data_path": "action_result.data.*.daysOffline",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         1493
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.debugDuration",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         0
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.debugFlags",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         0
                     ]
                 },
@@ -2688,7 +2729,7 @@
                 {
                     "data_path": "action_result.data.*.deleted",
                     "data_type": "boolean",
-                    "example_values":[
+                    "example_values": [
                         true,
                         false
                     ]
@@ -2715,7 +2756,7 @@
                 {
                     "data_path": "action_result.data.*.forceUpgrade",
                     "data_type": "boolean",
-                    "example_values":[
+                    "example_values": [
                         true,
                         false
                     ]
@@ -2723,7 +2764,7 @@
                 {
                     "data_path": "action_result.data.*.hasDuplicates",
                     "data_type": "boolean",
-                    "example_values":[
+                    "example_values": [
                         true,
                         false
                     ]
@@ -2731,7 +2772,7 @@
                 {
                     "data_path": "action_result.data.*.hasHealthCheckErrors",
                     "data_type": "boolean",
-                    "example_values":[
+                    "example_values": [
                         true,
                         false
                     ]
@@ -2748,14 +2789,14 @@
                 {
                     "data_path": "action_result.data.*.initPercent",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         100
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.initializing",
                     "data_type": "boolean",
-                    "example_values":[
+                    "example_values": [
                         true,
                         false
                     ]
@@ -2770,7 +2811,7 @@
                 {
                     "data_path": "action_result.data.*.isActive",
                     "data_type": "boolean",
-                    "example_values":[
+                    "example_values": [
                         true,
                         false
                     ]
@@ -2778,7 +2819,7 @@
                 {
                     "data_path": "action_result.data.*.kernelDebugLevel",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         0
                     ]
                 },
@@ -2799,7 +2840,7 @@
                 {
                     "data_path": "action_result.data.*.localApproval",
                     "data_type": "boolean",
-                    "example_values":[
+                    "example_values": [
                         true,
                         false
                     ]
@@ -2835,7 +2876,7 @@
                     "data_path": "action_result.data.*.osName",
                     "data_type": "string",
                     "example_values": [
-                        "Microsoft Windows Server 2008 R2 x64 Server Standard Service Pack 1 (6.1.7601)"
+                        "Test Server 2008 R2 x64 Server Standard Service Pack 1 (6.1.7601)"
                     ]
                 },
                 {
@@ -2848,7 +2889,7 @@
                 {
                     "data_path": "action_result.data.*.platformId",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         1
                     ]
                 },
@@ -2857,14 +2898,18 @@
                     "data_type": "numeric",
                     "example_values": [
                         2
-                    ]
+                    ],
+                    "column_name": "Policy ID",
+                    "column_order": 6
                 },
                 {
                     "data_path": "action_result.data.*.policyName",
                     "data_type": "string",
                     "example_values": [
-                        "Template Policy"
-                    ]
+                        "Test Policy"
+                    ],
+                    "column_name": "Policy Name",
+                    "column_order": 7
                 },
                 {
                     "data_path": "action_result.data.*.policyStatus",
@@ -2917,14 +2962,14 @@
                 {
                     "data_path": "action_result.data.*.refreshFlags",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         0
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.supportedKernel",
                     "data_type": "boolean",
-                    "example_values":[
+                    "example_values": [
                         true,
                         false
                     ]
@@ -2932,28 +2977,28 @@
                 {
                     "data_path": "action_result.data.*.syncFlags",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         136
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.syncPercent",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         100
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.systemMemoryDumps",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         0
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.tamperProtectionActive",
                     "data_type": "boolean",
-                    "example_values":[
+                    "example_values": [
                         true,
                         false
                     ]
@@ -2961,14 +3006,14 @@
                 {
                     "data_path": "action_result.data.*.tdCount",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         0
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.template",
                     "data_type": "boolean",
-                    "example_values":[
+                    "example_values": [
                         true,
                         false
                     ]
@@ -2988,7 +3033,7 @@
                 {
                     "data_path": "action_result.data.*.templateComputerId",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         0
                     ]
                 },
@@ -2999,7 +3044,7 @@
                 {
                     "data_path": "action_result.data.*.templateTrackModsOnly",
                     "data_type": "boolean",
-                    "example_values":[
+                    "example_values": [
                         true,
                         false
                     ]
@@ -3007,7 +3052,7 @@
                 {
                     "data_path": "action_result.data.*.uninstalled",
                     "data_type": "boolean",
-                    "example_values":[
+                    "example_values": [
                         true,
                         false
                     ]
@@ -3019,7 +3064,7 @@
                 {
                     "data_path": "action_result.data.*.upgradeErrorCount",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         0
                     ]
                 },
@@ -3066,14 +3111,268 @@
                 {
                     "data_path": "summary.total_objects",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
                         1
                     ]
                 },
                 {
                     "data_path": "summary.total_objects_successful",
                     "data_type": "numeric",
-                    "example_values":[
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "list policies",
+            "description": "List the policies",
+            "verbose": "This action requires the following permissions: <ul><li>View policies</li></ul><p>When <b>limit</b> is set to '0' or not set then all the policies will be returned. If set to '-1' then only the result count will be returned, without actual results.</p>",
+            "type": "investigate",
+            "identifier": "list_policies",
+            "read_only": true,
+            "parameters": {
+                "limit": {
+                    "data_type": "numeric",
+                    "description": "Number of records to fetch in each response",
+                    "order": 0
+                },
+                "offset": {
+                    "data_type": "numeric",
+                    "description": "Offset in query results",
+                    "order": 1,
+                    "default": 0
+                }
+            },
+            "render": {
+                "type": "table"
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.limit",
+                    "data_type": "numeric",
+                    "example_values": [
+                        10
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.offset",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.allowAgentUpgrades",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.atEnforcementComputers",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.automatic",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.automaticApprovalsOnTransition",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.clVersionMax",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.computerId",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.connectedComputers",
+                    "data_type": "numeric",
+                    "contains": [
+                        "carbon black computer id"
+                    ],
+                    "column_name": "Connected Computer",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.createdByUserId",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.customLogo",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.dateCreated",
+                    "data_type": "string",
+                    "example_values": [
+                        "2022-02-04T12:10:48.643Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.dateModified",
+                    "data_type": "string",
+                    "example_values": [
+                        "2022-11-15T02:13:12.76Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.description",
+                    "data_type": "string",
+                    "example_values": [
+                        "This is test policy"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.disconnectedEnforcementLevel",
+                    "data_type": "numeric",
+                    "example_values": [
+                        60
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.enforcementLevel",
+                    "data_type": "numeric",
+                    "example_values": [
+                        60
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.fileTrackingEnabled",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.helpDeskUrl",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.hidden",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ],
+                    "contains": [
+                        "carbon black policy id"
+                    ],
+                    "column_name": "Policy ID",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.imageUrl",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.loadAgentInSafeMode",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.modifiedByUserId",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.name",
+                    "data_type": "string",
+                    "example_values": [
+                        "Test Policy"
+                    ],
+                    "column_name": "Policy Name",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.packageName",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.readOnly",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.reputationEnabled",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.totalComputers",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.num_policies",
+                    "data_type": "numeric",
+                    "example_values": [
+                        10
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
                         1
                     ]
                 }
@@ -3085,7 +3384,7 @@
         "wheel": [
             {
                 "module": "certifi",
-                "input_file": "wheels/py3/certifi-2022.5.18.1-py3-none-any.whl"
+                "input_file": "wheels/py3/certifi-2022.9.24-py3-none-any.whl"
             },
             {
                 "module": "chardet",
@@ -3101,7 +3400,7 @@
             },
             {
                 "module": "urllib3",
-                "input_file": "wheels/shared/urllib3-1.26.9-py2.py3-none-any.whl"
+                "input_file": "wheels/shared/urllib3-1.26.12-py2.py3-none-any.whl"
             }
         ]
     }
