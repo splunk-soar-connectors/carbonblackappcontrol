@@ -2,11 +2,11 @@
 # Carbon Black App Control
 
 Publisher: Splunk  
-Connector Version: 3\.0\.0  
+Connector Version: 3\.1\.0  
 Product Vendor: Carbon Black  
 Product Name: Carbon Black App Control  
 Product Version Supported (regex): "\.\*"  
-Minimum Product Version: 5\.2\.0  
+Minimum Product Version: 5\.3\.5  
 
 This app supports various investigative and containment actions on Carbon Black App Control \(formerly Bit9\)
 
@@ -17,7 +17,7 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 -------- | -------- | ---- | -----------
 **base\_url** |  required  | string | Device URL, e\.g\. https\://mycb\.enterprise\.com
 **api\_token** |  required  | password | API Token
-**verify\_server\_cert** |  required  | boolean | Verify server certificate
+**verify\_server\_cert** |  optional  | boolean | Verify server certificate
 
 ### Supported Actions  
 [test connectivity](#action-test-connectivity) - Validate the API Token by attempting to connect to the Device URL\. This action runs a quick query on the device to check the connection and token  
@@ -32,6 +32,7 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [get file instances](#action-get-file-instances) - Searches for file instances  
 [update file instance](#action-update-file-instance) - Change local file instance state  
 [update computer](#action-update-computer) - Change computer object details  
+[list policies](#action-list-policies) - List the policies  
 
 ## action: 'test connectivity'
 Validate the API Token by attempting to connect to the Device URL\. This action runs a quick query on the device to check the connection and token
@@ -39,7 +40,7 @@ Validate the API Token by attempting to connect to the Device URL\. This action 
 Type: **test**  
 Read only: **True**
 
-This action requires the following permission\: <ul><li>View files</li></ul>\.
+This action requires the following permission\: <ul><li>View files</li></ul>
 
 #### Action Parameters
 No parameters are required for this action
@@ -53,7 +54,7 @@ Searches for a particular file across all the endpoints
 Type: **investigate**  
 Read only: **True**
 
-This action requires the following permission\: <ul><li>View files</li></ul>\.
+This action requires the following permission\: <ul><li>View files</li></ul>
 
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
@@ -227,7 +228,7 @@ Analyze a file on a computer
 Type: **investigate**  
 Read only: **False**
 
-This action requires the following permissions\: <ul><li>View files</li><li>Submit files for analysis</li></ul>\.
+This action requires the following permissions\: <ul><li>View files</li><li>Submit files for analysis</li></ul>
 
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
@@ -401,7 +402,7 @@ Get information about an endpoint
 Type: **investigate**  
 Read only: **True**
 
-This action requires the following permission\: <ul><li>View computers</li></ul>\.
+This action requires the following permission\: <ul><li>View computers</li></ul>
 
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
@@ -503,7 +504,7 @@ Searches for file instances
 Type: **generic**  
 Read only: **True**
 
-This action requires the following permission\: <ul><li>View files</li></ul>\.
+This action requires the following permission\: <ul><li>View files</li></ul>
 
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
@@ -517,6 +518,7 @@ DATA PATH | TYPE | CONTAINS
 action\_result\.status | string | 
 action\_result\.parameter\.computer\_id | numeric |  `carbon black computer id` 
 action\_result\.parameter\.filecatalog\_id | numeric |  `carbon black filecatalog id` 
+action\_result\.data\.\*\.certificateId | numeric | 
 action\_result\.data\.\*\.computerId | numeric |  `carbon black computer id` 
 action\_result\.data\.\*\.dateCreated | string | 
 action\_result\.data\.\*\.detachedCertificateId | string | 
@@ -527,8 +529,12 @@ action\_result\.data\.\*\.fileCatalogId | numeric |  `carbon black filecatalog i
 action\_result\.data\.\*\.fileInstanceGroupId | numeric | 
 action\_result\.data\.\*\.fileName | string | 
 action\_result\.data\.\*\.id | numeric |  `carbon black fileinstance id` 
+action\_result\.data\.\*\.initialized | boolean | 
 action\_result\.data\.\*\.localState | numeric | 
 action\_result\.data\.\*\.pathName | string | 
+action\_result\.data\.\*\.policyId | numeric | 
+action\_result\.data\.\*\.topLevel | boolean | 
+action\_result\.data\.\*\.unifiedSource | string | 
 action\_result\.summary | numeric | 
 action\_result\.message | string | 
 summary\.total\_objects | numeric | 
@@ -540,7 +546,7 @@ Change local file instance state
 Type: **generic**  
 Read only: **False**
 
-This action requires the following permission\:<ul><li>View files</li><li>Change local state</li></ul>\.<p>Note that changed local state might not be reflected in the object immediately, but only after agent reports new state\.</p>
+This action requires the following permission\:<ul><li>View files</li><li>Change local state</li></ul><p>Note that changed local state might not be reflected in the object immediately, but only after agent reports new state\.</p>
 
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
@@ -582,23 +588,25 @@ Change computer object details
 Type: **generic**  
 Read only: **False**
 
-This action requires the following permission\:<ul><li>View Computers\.</li><li>Manage Computers\.</li></ul>
+This action requires the following permission\:<ul><li>View Computers</li><li>Manage Computers</li></ul>The policyID is ignored if either localApproval is True or automaticPolicy is True\.
 
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**computer\_id** |  required  | Computer Object Id | numeric | 
+**computer\_id** |  required  | Computer Object Id | numeric |  `carbon black computer id` 
 **prioritized** |  optional  | Priority of computer | boolean | 
 **description** |  optional  | Description about computer | string | 
 **computer\_tag** |  optional  | Tags for computer | string | 
+**policy\_id** |  optional  | New Id of policy for this computer | string |  `carbon black policy id` 
 
 #### Action Output
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
 action\_result\.status | string | 
-action\_result\.parameter\.computer\_id | numeric | 
+action\_result\.parameter\.computer\_id | numeric |  `carbon black computer id` 
 action\_result\.parameter\.computer\_tag | string | 
 action\_result\.parameter\.description | string | 
+action\_result\.parameter\.policy\_id | string |  `carbon black policy id` 
 action\_result\.parameter\.prioritized | boolean | 
 action\_result\.data\.\*\.CLIPassword | string | 
 action\_result\.data\.\*\.SCEPStatus | numeric | 
@@ -678,6 +686,58 @@ action\_result\.data\.\*\.users | string |
 action\_result\.data\.\*\.virtualPlatform | string | 
 action\_result\.data\.\*\.virtualized | string | 
 action\_result\.summary | numeric | 
+action\_result\.message | string | 
+summary\.total\_objects | numeric | 
+summary\.total\_objects\_successful | numeric |   
+
+## action: 'list policies'
+List the policies
+
+Type: **investigate**  
+Read only: **True**
+
+This action requires the following permissions\: <ul><li>View policies</li></ul><p>When <b>limit</b> is set to '0' or not set then all the policies will be returned\. If set to '\-1' then only the result count will be returned, without actual results\.</p>
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**limit** |  optional  | Number of records to fetch in each response | numeric | 
+**offset** |  optional  | Offset in query results | numeric | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS
+--------- | ---- | --------
+action\_result\.status | string | 
+action\_result\.parameter\.limit | numeric | 
+action\_result\.parameter\.offset | numeric | 
+action\_result\.data\.\*\.allowAgentUpgrades | boolean | 
+action\_result\.data\.\*\.atEnforcementComputers | numeric | 
+action\_result\.data\.\*\.automatic | boolean | 
+action\_result\.data\.\*\.automaticApprovalsOnTransition | boolean | 
+action\_result\.data\.\*\.clVersionMax | numeric | 
+action\_result\.data\.\*\.computerId | numeric | 
+action\_result\.data\.\*\.connectedComputers | numeric |  `carbon black computer id` 
+action\_result\.data\.\*\.createdByUserId | numeric | 
+action\_result\.data\.\*\.customLogo | boolean | 
+action\_result\.data\.\*\.dateCreated | string | 
+action\_result\.data\.\*\.dateModified | string | 
+action\_result\.data\.\*\.description | string | 
+action\_result\.data\.\*\.disconnectedEnforcementLevel | numeric | 
+action\_result\.data\.\*\.enforcementLevel | numeric | 
+action\_result\.data\.\*\.fileTrackingEnabled | boolean | 
+action\_result\.data\.\*\.helpDeskUrl | string | 
+action\_result\.data\.\*\.hidden | boolean | 
+action\_result\.data\.\*\.id | numeric |  `carbon black policy id` 
+action\_result\.data\.\*\.imageUrl | string | 
+action\_result\.data\.\*\.loadAgentInSafeMode | boolean | 
+action\_result\.data\.\*\.modifiedByUserId | numeric | 
+action\_result\.data\.\*\.name | string | 
+action\_result\.data\.\*\.packageName | string | 
+action\_result\.data\.\*\.readOnly | boolean | 
+action\_result\.data\.\*\.reputationEnabled | boolean | 
+action\_result\.data\.\*\.totalComputers | numeric | 
+action\_result\.summary | string | 
+action\_result\.summary\.num\_policies | numeric | 
 action\_result\.message | string | 
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric | 
