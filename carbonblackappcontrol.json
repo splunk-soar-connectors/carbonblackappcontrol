@@ -5,7 +5,7 @@
     "publisher": "Splunk",
     "type": "endpoint",
     "main_module": "CBAC_connector.py",
-    "app_version": "3.1.0",
+    "app_version": "3.1.1",
     "utctime_updated": "2022-02-08T01:45:48.000000Z",
     "package_name": "phantom_cbprotect",
     "product_vendor": "Carbon Black",
@@ -3403,5 +3403,8 @@
                 "input_file": "wheels/shared/urllib3-1.26.12-py2.py3-none-any.whl"
             }
         ]
+    },
+    "pip39_dependencies": {
+        "wheel": []
     }
 }
