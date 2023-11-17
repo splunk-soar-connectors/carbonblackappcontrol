@@ -21,8 +21,10 @@ import sys
 import phantom.app as phantom
 import phantom.rules as phantomrules
 import requests
+import os
 from phantom.action_result import ActionResult
 from phantom.base_connector import BaseConnector
+from phantom_common import paths
 from phantom.vault import Vault
 
 # THIS Connector imports
@@ -617,7 +619,7 @@ class Bit9Connector(BaseConnector):
         if hasattr(Vault, 'get_vault_tmp_dir'):
             vault_tmp_dir = Vault.get_vault_tmp_dir()
         else:
-            vault_tmp_dir = '/opt/phantom/vault/tmp'
+            vault_tmp_dir = os.path.join(paths.PHANTOM_VAULT, "/tmp")
 
         file_loc = vault_tmp_dir + '/' + filename
         with open(file_loc, 'w') as file:
