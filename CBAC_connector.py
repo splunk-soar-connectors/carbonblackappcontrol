@@ -1,5 +1,5 @@
 # File: CBAC_connector.py
-# Copyright (c) 2016-2022 Splunk Inc.
+# Copyright (c) 2016-2023 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,16 +16,16 @@
 # Phantom imports
 # Other imports used by this connector
 import json
+import os
 import sys
 
 import phantom.app as phantom
 import phantom.rules as phantomrules
 import requests
-import os
 from phantom.action_result import ActionResult
 from phantom.base_connector import BaseConnector
-from phantom_common import paths
 from phantom.vault import Vault
+from phantom_common import paths
 
 # THIS Connector imports
 from CBAC_consts import *
