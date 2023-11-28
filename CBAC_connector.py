@@ -619,7 +619,7 @@ class Bit9Connector(BaseConnector):
         if hasattr(Vault, 'get_vault_tmp_dir'):
             vault_tmp_dir = Vault.get_vault_tmp_dir()
         else:
-            vault_tmp_dir = os.path.join(paths.PHANTOM_VAULT, "/tmp")
+            vault_tmp_dir = os.path.join(paths.PHANTOM_VAULT, "tmp")
 
         file_loc = vault_tmp_dir + '/' + filename
         with open(file_loc, 'w') as file:
