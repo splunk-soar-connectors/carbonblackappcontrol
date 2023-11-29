@@ -2,7 +2,7 @@
 # Carbon Black App Control
 
 Publisher: Splunk  
-Connector Version: 3.1.0  
+Connector Version: 3.1.1  
 Product Vendor: Carbon Black  
 Product Name: Carbon Black App Control  
 Product Version Supported (regex): ".\*"  
