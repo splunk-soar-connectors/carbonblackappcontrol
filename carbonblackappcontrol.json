@@ -6,12 +6,12 @@
     "type": "endpoint",
     "main_module": "CBAC_connector.py",
     "app_version": "3.1.1",
-    "utctime_updated": "2022-02-08T01:45:48.000000Z",
+    "utctime_updated": "2023-11-29T20:43:24.000000Z",
     "package_name": "phantom_cbprotect",
     "product_vendor": "Carbon Black",
     "product_name": "Carbon Black App Control",
     "product_version_regex": ".*",
-    "min_phantom_version": "5.3.5",
+    "min_phantom_version": "6.1.0",
     "fips_compliant": false,
     "latest_tested_versions": [
         "On-prem, Version 8.8.0.262, November 14, 2022"
@@ -19,7 +19,7 @@
     "python_version": "3",
     "logo": "logo_carbonblack.svg",
     "logo_dark": "logo_carbonblack_dark.svg",
-    "license": "Copyright (c) 2016-2022 Splunk Inc.",
+    "license": "Copyright (c) 2016-2023 Splunk Inc.",
     "configuration": {
         "base_url": {
             "data_type": "string",
@@ -3379,32 +3379,7 @@
             ],
             "versions": "EQ(*)"
         }
-    ],
-    "pip_dependencies": {
-        "wheel": [
-            {
-                "module": "certifi",
-                "input_file": "wheels/py3/certifi-2022.9.24-py3-none-any.whl"
-            },
-            {
-                "module": "chardet",
-                "input_file": "wheels/shared/chardet-3.0.4-py2.py3-none-any.whl"
-            },
-            {
-                "module": "idna",
-                "input_file": "wheels/shared/idna-2.10-py2.py3-none-any.whl"
-            },
-            {
-                "module": "requests",
-                "input_file": "wheels/shared/requests-2.25.0-py2.py3-none-any.whl"
-            },
-            {
-                "module": "urllib3",
-                "input_file": "wheels/shared/urllib3-1.26.12-py2.py3-none-any.whl"
-            }
-        ]
-    },
-    "pip39_dependencies": {
-        "wheel": []
-    }
+    ]
+    "pip_dependencies": {}
 }
+

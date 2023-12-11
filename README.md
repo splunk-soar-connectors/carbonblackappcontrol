@@ -6,7 +6,7 @@ Connector Version: 3.1.1
 Product Vendor: Carbon Black  
 Product Name: Carbon Black App Control  
 Product Version Supported (regex): ".\*"  
-Minimum Product Version: 5.3.5  
+Minimum Product Version: 6.1.0  
 
 This app supports various investigative and containment actions on Carbon Black App Control (formerly Bit9)
 

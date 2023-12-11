@@ -1,5 +1,5 @@
 # File: CBAC_connector.py
-# Copyright (c) 2016-2022 Splunk Inc.
+# Copyright (c) 2016-2023 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 # Phantom imports
 # Other imports used by this connector
 import json
+import os
 import sys
 
 import phantom.app as phantom
@@ -24,6 +25,7 @@ import requests
 from phantom.action_result import ActionResult
 from phantom.base_connector import BaseConnector
 from phantom.vault import Vault
+from phantom_common import paths
 
 # THIS Connector imports
 from CBAC_consts import *
@@ -617,7 +619,7 @@ class Bit9Connector(BaseConnector):
         if hasattr(Vault, 'get_vault_tmp_dir'):
             vault_tmp_dir = Vault.get_vault_tmp_dir()
         else:
-            vault_tmp_dir = '/opt/phantom/vault/tmp'
+            vault_tmp_dir = os.path.join(paths.PHANTOM_VAULT, "tmp")
 
         file_loc = vault_tmp_dir + '/' + filename
         with open(file_loc, 'w') as file:
