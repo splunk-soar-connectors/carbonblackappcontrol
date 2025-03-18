@@ -1,5 +1,5 @@
 # File: CBAC_view.py
-# Copyright (c) 2016-2023 Splunk Inc.
+# Copyright (c) 2016-2025 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ import phantom.utils as util
 
 
 def _get_hash_type(hash_value):
-
     if util.is_md5(hash_value):
         return phantom.APP_SUCCESS, "md5"
 
@@ -33,22 +32,21 @@ def _get_hash_type(hash_value):
 
 
 def get_ctx_result(result):
-
     ctx_result = {}
 
     param = result.get_param()
 
-    if 'hash' in param:
-        hash_val = param.get('hash')
-        ret_val, param['hash_type'] = _get_hash_type(hash_val)
+    if "hash" in param:
+        hash_val = param.get("hash")
+        ret_val, param["hash_type"] = _get_hash_type(hash_val)
 
-    ctx_result['param'] = param
+    ctx_result["param"] = param
 
     message = result.get_message()
-    ctx_result['message'] = message
+    ctx_result["message"] = message
 
     summary = result.get_summary()
-    ctx_result['summary'] = summary
+    ctx_result["summary"] = summary
 
     data = result.get_data()
 
@@ -60,20 +58,18 @@ def get_ctx_result(result):
     if not data:
         return ctx_result
 
-    ctx_result['data'] = data
+    ctx_result["data"] = data
 
     return ctx_result
 
 
 def hash_view(provides, all_app_runs, context):
-
-    context['results'] = results = []
+    context["results"] = results = []
     for summary, action_results in all_app_runs:
         for result in action_results:
-
             ctx_result = get_ctx_result(result)
             if not ctx_result:
                 continue
             results.append(ctx_result)
     # print context
-    return 'hash_view.html'
+    return "hash_view.html"
