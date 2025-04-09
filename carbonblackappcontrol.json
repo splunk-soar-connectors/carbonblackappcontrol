@@ -3379,6 +3379,5 @@
             ],
             "versions": "EQ(*)"
         }
-    ],
-    "pip_dependencies": {}
+    ]
 }
