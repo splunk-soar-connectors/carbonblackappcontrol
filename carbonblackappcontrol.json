@@ -16,7 +16,7 @@
     "latest_tested_versions": [
         "On-prem, Version 8.8.0.262, November 14, 2022"
     ],
-    "python_version": "3",
+    "python_version": ["3.9", "3.13"],
     "logo": "logo_carbonblack.svg",
     "logo_dark": "logo_carbonblack_dark.svg",
     "license": "Copyright (c) 2016-2025 Splunk Inc.",
