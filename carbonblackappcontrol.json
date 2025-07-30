@@ -5,8 +5,8 @@
     "publisher": "Splunk",
     "type": "endpoint",
     "main_module": "CBAC_connector.py",
-    "app_version": "3.1.1",
-    "utctime_updated": "2023-11-29T20:43:24.000000Z",
+    "app_version": "3.1.2",
+    "utctime_updated": "2025-07-30T17:35:31.966340Z",
     "package_name": "phantom_cbprotect",
     "product_vendor": "Carbon Black",
     "product_name": "Carbon Black App Control",
@@ -16,7 +16,10 @@
     "latest_tested_versions": [
         "On-prem, Version 8.8.0.262, November 14, 2022"
     ],
-    "python_version": ["3.9", "3.13"],
+    "python_version": [
+        "3.9",
+        "3.13"
+    ],
     "logo": "logo_carbonblack.svg",
     "logo_dark": "logo_carbonblack_dark.svg",
     "license": "Copyright (c) 2016-2025 Splunk Inc.",
