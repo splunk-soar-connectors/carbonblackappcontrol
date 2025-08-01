@@ -1,7 +1,7 @@
 # Carbon Black App Control
 
 Publisher: Splunk \
-Connector Version: 3.1.2 \
+Connector Version: 3.1.3 \
 Product Vendor: Carbon Black \
 Product Name: Carbon Black App Control \
 Minimum Product Version: 6.1.0
