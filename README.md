@@ -1,9 +1,9 @@
 # Carbon Black App Control
 
-Publisher: Splunk \
-Connector Version: 3.1.3 \
-Product Vendor: Carbon Black \
-Product Name: Carbon Black App Control \
+Publisher: Splunk <br>
+Connector Version: 3.1.3 <br>
+Product Vendor: Carbon Black <br>
+Product Name: Carbon Black App Control <br>
 Minimum Product Version: 6.1.0
 
 This app supports various investigative and containment actions on Carbon Black App Control (formerly Bit9)
@@ -20,25 +20,25 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 
 ### Supported Actions
 
-[test connectivity](#action-test-connectivity) - Validate the API Token by attempting to connect to the Device URL. This action runs a quick query on the device to check the connection and token \
-[hunt file](#action-hunt-file) - Searches for a particular file across all the endpoints \
-[upload file](#action-upload-file) - Upload a file to a computer \
-[list files](#action-list-files) - List the files available on the controller \
-[get file](#action-get-file) - Get the file from the controller and add it to the vault \
-[analyze file](#action-analyze-file) - Analyze a file on a computer \
-[unblock hash](#action-unblock-hash) - Unblocks a particular hash \
-[block hash](#action-block-hash) - Ban the file hash \
-[get system info](#action-get-system-info) - Get information about an endpoint \
-[get file instances](#action-get-file-instances) - Searches for file instances \
-[update file instance](#action-update-file-instance) - Change local file instance state \
-[update computer](#action-update-computer) - Change computer object details \
+[test connectivity](#action-test-connectivity) - Validate the API Token by attempting to connect to the Device URL. This action runs a quick query on the device to check the connection and token <br>
+[hunt file](#action-hunt-file) - Searches for a particular file across all the endpoints <br>
+[upload file](#action-upload-file) - Upload a file to a computer <br>
+[list files](#action-list-files) - List the files available on the controller <br>
+[get file](#action-get-file) - Get the file from the controller and add it to the vault <br>
+[analyze file](#action-analyze-file) - Analyze a file on a computer <br>
+[unblock hash](#action-unblock-hash) - Unblocks a particular hash <br>
+[block hash](#action-block-hash) - Ban the file hash <br>
+[get system info](#action-get-system-info) - Get information about an endpoint <br>
+[get file instances](#action-get-file-instances) - Searches for file instances <br>
+[update file instance](#action-update-file-instance) - Change local file instance state <br>
+[update computer](#action-update-computer) - Change computer object details <br>
 [list policies](#action-list-policies) - List the policies
 
 ## action: 'test connectivity'
 
 Validate the API Token by attempting to connect to the Device URL. This action runs a quick query on the device to check the connection and token
 
-Type: **test** \
+Type: **test** <br>
 Read only: **True**
 
 This action requires the following permission: <ul><li>View files</li></ul>
@@ -55,7 +55,7 @@ No Output
 
 Searches for a particular file across all the endpoints
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 This action requires the following permission: <ul><li>View files</li></ul>
@@ -126,7 +126,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Upload a file to a computer
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **False**
 
 This action requires the following permissions: <ul><li>View file uploads</li><li>Manage uploads of inventoried files</li></ul>It has been noticed that the default <b>admin</b> account does <i>not</i> have the required permissions to execute this action. Please create a new user with the required permissions for this app.
@@ -170,7 +170,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 List the files available on the controller
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 When provided -1 in limit parameter, it will return the count of the number of files available.
@@ -212,7 +212,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Get the file from the controller and add it to the vault
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 This will only add the file in vault, whose <b>uploadStatus</b> is 3 (Completed).
@@ -241,7 +241,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Analyze a file on a computer
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **False**
 
 This action requires the following permissions: <ul><li>View files</li><li>Submit files for analysis</li></ul>
@@ -306,7 +306,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Unblocks a particular hash
 
-Type: **correct** \
+Type: **correct** <br>
 Read only: **False**
 
 This action requires the following permissions: <ul><li>View files</li><li>Manage files</li></ul>Sets the global state of the hash to either <b>approved</b> or <b>unapproved</b> by updating the file rule. If the action does not find a rule for the hash, it will return an error. If the hash rule found by the action does not contain a description containing a matching SOAR Identification ID, it will return an error status without changing the state of the rule. This is to make sure the app only modifies rules that have been created or updated by itself.
@@ -364,7 +364,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Ban the file hash
 
-Type: **contain** \
+Type: **contain** <br>
 Read only: **False**
 
 This action requires the following permissions: <ul><li>View files</li><li>Manage files</li></ul>Sets the global state of the file hash to <b>ban</b> by adding or updating a <i>file rule</i>. If a file is found in the catalog, the action will use the catalog id in the rule. The action also appends the SOAR Installation ID to the description of the rule. This is the action's way of tagging rules that are created by the app. If the action finds the current state of the file as <i>banned</i> it does not attempt to set the state, this also results in the description of the rule remaining unchanged.
@@ -424,7 +424,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Get information about an endpoint
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 This action requires the following permission: <ul><li>View computers</li></ul>
@@ -529,7 +529,7 @@ summary.total_objects_successful | numeric | | |
 
 Searches for file instances
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **True**
 
 This action requires the following permission: <ul><li>View files</li></ul>
@@ -574,7 +574,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Change local file instance state
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **False**
 
 This action requires the following permission:<ul><li>View files</li><li>Change local state</li></ul><p>Note that changed local state might not be reflected in the object immediately, but only after agent reports new state.</p>
@@ -619,7 +619,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Change computer object details
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **False**
 
 This action requires the following permission:<ul><li>View Computers</li><li>Manage Computers</li></ul>The policyID is ignored if either localApproval is True or automaticPolicy is True.
@@ -730,7 +730,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 List the policies
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 This action requires the following permissions: <ul><li>View policies</li></ul><p>When <b>limit</b> is set to '0' or not set then all the policies will be returned. If set to '-1' then only the result count will be returned, without actual results.</p>
