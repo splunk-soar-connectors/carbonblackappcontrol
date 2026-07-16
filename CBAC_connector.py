@@ -148,7 +148,7 @@ class Bit9Connector(BaseConnector):
                 self._base_url + endpoint,  # The url is made up of the base_url, the api url and the endpoint
                 data=json.dumps(data) if data else None,  # the data converted to json string if present
                 headers=headers,  # The headers to send in the HTTP call
-                verify=config.get(phantom.APP_JSON_VERIFY, False),  # should cert verification be carried out?
+                verify=config.get(phantom.APP_JSON_VERIFY, True),  # should cert verification be carried out?
                 params=params,
                 timeout=CBAPPCONTROL_DEFAULT_TIMEOUT,
             )  # uri parameters if any
