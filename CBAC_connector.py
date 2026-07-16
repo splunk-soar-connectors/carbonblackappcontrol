@@ -30,7 +30,7 @@ from phantom_common import paths
 
 # THIS Connector imports
 from CBAC_consts import *
-from CBAC_security import redact_computer_credentials, safe_vault_filename
+from CBAC_security import is_connector_owned_rule, is_global_rule_scope, is_report_only, redact_computer_credentials, safe_vault_filename
 
 
 class Bit9Connector(BaseConnector):
@@ -273,22 +273,22 @@ class Bit9Connector(BaseConnector):
 
         file_rule = rules[0]
 
-        description = file_rule.get("description")
-
-        if not description:
-            return action_result.set_status(phantom.APP_ERROR, "Did not find a rule with Phantom tagged description to unblock")
-
-        if self._comment.lower() not in description.lower():
+        if not is_connector_owned_rule(file_rule, self._comment):
             return action_result.set_status(
                 phantom.APP_ERROR, "The rule for the given hash was not created by Phantom, cannot unblock the hash."
             )
+
+        if not is_global_rule_scope(file_rule):
+            return action_result.set_status(phantom.APP_ERROR, "The matching rule is policy-scoped and cannot be modified by this action.")
+
+        description = file_rule["description"]
 
         # check if the state of the file is what we wanted
         file_state = file_rule.get("fileState", CBAPPCONTROL_FILE_STATE_BANNED)
 
         unblock_state = CBAPPCONTROL_UNBLOCK_STATE_MAP[param.get(CBAPPCONTROL_JSON_UNBLOCK_STATE, CBAPPCONTROL_DEFAULT_UNBLOCK_STATE)]
 
-        if str(file_state) == unblock_state:
+        if str(file_state) == unblock_state and not is_report_only(file_rule):
             action_result.add_data(file_rule)
             return action_result.set_status(phantom.APP_SUCCESS, "State of file same as required")
 
@@ -301,10 +301,9 @@ class Bit9Connector(BaseConnector):
 
         if "fileCatalogId" not in file_rule:
             file_rule["fileCatalogId"] = 0
-        file_rule["policyIds"] = 0  # 0 for global rule
         file_rule["description"] = description
-
         file_rule["fileState"] = unblock_state
+        file_rule["reportOnly"] = False
 
         ret_val, resp_json = self._make_rest_call(FILE_RULE_ENDPOINT, action_result, data=file_rule, method="post")
 
@@ -380,10 +379,19 @@ class Bit9Connector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, "More than one rule matched for the hash. This is treated as an Error.")
 
         file_rule = {}
+        existing_rule = bool(rules)
 
-        if rules:
+        if existing_rule:
             self.save_progress("Got Rule for file")
             file_rule = rules[0]
+
+            if not is_connector_owned_rule(file_rule, self._comment):
+                return action_result.set_status(
+                    phantom.APP_ERROR, "The rule for the given hash was not created by Phantom, cannot block the hash."
+                )
+
+            if not is_global_rule_scope(file_rule):
+                return action_result.set_status(phantom.APP_ERROR, "The matching rule is policy-scoped and cannot be modified by this action.")
 
         if catalog_found and ("id" in catalog_found):
             if file_rule.get("fileCatalogId", 0) == 0:
@@ -392,7 +400,7 @@ class Bit9Connector(BaseConnector):
         # check if the state of the file is what we wanted
         file_state = file_rule.get("fileState", CBAPPCONTROL_FILE_STATE_UNAPPROVED)
 
-        if str(file_state) == CBAPPCONTROL_FILE_STATE_BANNED:
+        if str(file_state) == CBAPPCONTROL_FILE_STATE_BANNED and not is_report_only(file_rule):
             action_result.add_data(file_rule)
             return action_result.set_status(phantom.APP_SUCCESS, "State of file same as required")
 
@@ -401,16 +409,16 @@ class Bit9Connector(BaseConnector):
 
         if "fileCatalogId" not in file_rule:
             file_rule["fileCatalogId"] = 0
-        file_rule["policyIds"] = 0  # 0 for global rule
 
-        description = param.get(CBAPPCONTROL_JSON_DESCRIPTION)
-
-        if description:
-            description = f"{description} - "
-
-        file_rule["description"] = "{}{}".format(description if description else "", self._comment)
+        if not existing_rule:
+            file_rule["policyIds"] = 0  # 0 for a new global rule
+            description = param.get(CBAPPCONTROL_JSON_DESCRIPTION)
+            if description:
+                description = f"{description} - "
+            file_rule["description"] = "{}{}".format(description if description else "", self._comment)
 
         file_rule["fileState"] = CBAPPCONTROL_FILE_STATE_BANNED
+        file_rule["reportOnly"] = False
 
         ret_val, resp_json = self._make_rest_call(FILE_RULE_ENDPOINT, action_result, data=file_rule, method="post")
 

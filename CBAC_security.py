@@ -28,3 +28,21 @@ def redact_computer_credentials(computer):
     if not isinstance(computer, dict):
         return computer
     return {key: value for key, value in computer.items() if key.casefold() != "clipassword"}
+
+
+def is_connector_owned_rule(rule, ownership_marker):
+    """Return whether a file rule carries the connector ownership marker."""
+    description = rule.get("description") if isinstance(rule, dict) else None
+    return bool(description and ownership_marker.casefold() in description.casefold())
+
+
+def is_global_rule_scope(rule):
+    """Return whether a file rule applies globally rather than to selected policies."""
+    policy_ids = rule.get("policyIds") if isinstance(rule, dict) else None
+    return policy_ids in (None, "", 0, "0") or policy_ids == []
+
+
+def is_report_only(rule):
+    """Return whether a file rule reports matches without enforcing its state."""
+    value = rule.get("reportOnly", False) if isinstance(rule, dict) else False
+    return value is True or str(value).casefold() in {"1", "true"}
