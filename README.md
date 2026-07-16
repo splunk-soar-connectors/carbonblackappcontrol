@@ -212,8 +212,8 @@ summary.total_objects_successful | numeric | | 1 |
 
 Get the file from the controller and add it to the vault
 
-Type: **investigate** <br>
-Read only: **True**
+Type: **generic** <br>
+Read only: **False**
 
 This will only add the file in vault, whose <b>uploadStatus</b> is 3 (Completed).
 
@@ -443,7 +443,6 @@ DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 action_result.status | string | | success failed |
 action_result.parameter.id | numeric | `carbon black computer id` | 1 |
 action_result.parameter.ip_hostname | string | `ip` `host name` | 8.8.8.8 |
-action_result.data.\*.CLIPassword | string | | |
 action_result.data.\*.SCEPStatus | numeric | | |
 action_result.data.\*.activeDebugFlags | numeric | | |
 action_result.data.\*.activeDebugLevel | numeric | | |
@@ -644,7 +643,6 @@ action_result.parameter.computer_tag | string | | tag1,tag2 |
 action_result.parameter.description | string | | computer description |
 action_result.parameter.policy_id | string | `carbon black policy id` | 1 |
 action_result.parameter.prioritized | boolean | | true false |
-action_result.data.\*.CLIPassword | string | | MAWB-DVAO-FIYM-EHRB |
 action_result.data.\*.SCEPStatus | numeric | | 0 |
 action_result.data.\*.activeDebugFlags | numeric | | 16 |
 action_result.data.\*.activeDebugLevel | numeric | | 0 |
@@ -785,7 +783,7 @@ ______________________________________________________________________
 
 Auto-generated Splunk SOAR Connector documentation.
 
-Copyright 2025 Splunk Inc.
+Copyright 2026 Splunk Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
