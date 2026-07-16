@@ -2,7 +2,7 @@ import json
 import unittest
 from pathlib import Path
 
-from CBAC_security import safe_vault_filename
+from CBAC_security import redact_computer_credentials, safe_vault_filename
 
 
 ROOT = Path(__file__).parent
@@ -47,6 +47,19 @@ class ManifestSecurityTests(unittest.TestCase):
 
         self.assertIn("result.param.hash_type|escapejs", template)
         self.assertIn("result.param.hash|escapejs", template)
+
+    def test_computer_credentials_are_removed_from_results(self):
+        original = {"id": 42, "CLIPassword": "secret", "name": "endpoint"}
+
+        self.assertEqual(
+            redact_computer_credentials(original),
+            {"id": 42, "name": "endpoint"},
+        )
+        self.assertIn("CLIPassword", original)
+
+        manifest = json.loads((ROOT / "carbonblackappcontrol.json").read_text())
+        output_paths = {output["data_path"] for action in manifest["actions"] for output in action["output"]}
+        self.assertNotIn("action_result.data.*.CLIPassword", output_paths)
 
 
 if __name__ == "__main__":

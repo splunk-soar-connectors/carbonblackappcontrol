@@ -21,3 +21,10 @@ def safe_vault_filename(value):
     if filename in {"", ".", ".."}:
         raise ValueError("Invalid fileName returned by App Control")
     return filename
+
+
+def redact_computer_credentials(computer):
+    """Return a computer object without credential-bearing fields."""
+    if not isinstance(computer, dict):
+        return computer
+    return {key: value for key, value in computer.items() if key.casefold() != "clipassword"}

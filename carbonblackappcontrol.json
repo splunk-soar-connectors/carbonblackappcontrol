@@ -1725,10 +1725,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.CLIPassword",
-                    "data_type": "string"
-                },
-                {
                     "data_path": "action_result.data.*.SCEPStatus",
                     "data_type": "numeric"
                 },
@@ -2566,13 +2562,6 @@
                     "example_values": [
                         "true",
                         "false"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.CLIPassword",
-                    "data_type": "string",
-                    "example_values": [
-                        "MAWB-DVAO-FIYM-EHRB"
                     ]
                 },
                 {

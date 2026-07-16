@@ -30,7 +30,7 @@ from phantom_common import paths
 
 # THIS Connector imports
 from CBAC_consts import *
-from CBAC_security import safe_vault_filename
+from CBAC_security import redact_computer_credentials, safe_vault_filename
 
 
 class Bit9Connector(BaseConnector):
@@ -490,8 +490,8 @@ class Bit9Connector(BaseConnector):
         if type(resp_json) != list:
             resp_json = [resp_json]
 
-        for curr_endpiont in resp_json:
-            action_result.add_data(curr_endpiont)
+        for current_endpoint in resp_json:
+            action_result.add_data(redact_computer_credentials(current_endpoint))
 
         action_result.update_summary({"total_endpoints": len(resp_json)})
 
@@ -790,7 +790,7 @@ class Bit9Connector(BaseConnector):
             return action_result.get_status()
 
         if resp_json:
-            action_result.add_data(resp_json)
+            action_result.add_data(redact_computer_credentials(resp_json))
 
         return action_result.set_status(phantom.APP_SUCCESS, "Computer object updated successfully")
 
