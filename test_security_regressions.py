@@ -61,6 +61,13 @@ class ManifestSecurityTests(unittest.TestCase):
         output_paths = {output["data_path"] for action in manifest["actions"] for output in action["output"]}
         self.assertNotIn("action_result.data.*.CLIPassword", output_paths)
 
+    def test_vault_writing_action_is_not_read_only(self):
+        manifest = json.loads((ROOT / "carbonblackappcontrol.json").read_text())
+        get_file = next(action for action in manifest["actions"] if action["identifier"] == "get_file")
+
+        self.assertIs(get_file["read_only"], False)
+        self.assertEqual(get_file["type"], "generic")
+
 
 if __name__ == "__main__":
     unittest.main()
