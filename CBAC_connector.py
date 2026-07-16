@@ -458,16 +458,21 @@ class Bit9Connector(BaseConnector):
         ip_hostname = param.get("ip_hostname")
         comp_id = param.get("id")
 
-        if (not comp_id) and (not ip_hostname):
+        if comp_id is None and not ip_hostname:
             self.debug_print("Required details are not provided.")
             return action_result.set_status(
                 phantom.APP_ERROR, "Neither {} nor {} specified. Please specify at-least one of them".format("ip_hostname", "id")
             )
 
+        if comp_id is not None:
+            ret_val, comp_id = self._validate_integer(action_result, comp_id, "Computer ID")
+            if phantom.is_fail(ret_val):
+                return action_result.get_status()
+
         endpoint = "/computer"
         params = None
 
-        if comp_id:
+        if comp_id is not None:
             self.debug_print("Getting info using id")
             endpoint += f"/{comp_id}"
         elif phantom.is_ip(ip_hostname):

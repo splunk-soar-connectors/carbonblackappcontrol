@@ -34,6 +34,14 @@ class ManifestSecurityTests(unittest.TestCase):
         self.assertIn("file.write(resp.content)", source)
         self.assertNotIn('vault_tmp_dir + "/" + filename', source)
 
+    def test_computer_id_is_validated_before_path_construction(self):
+        source = (ROOT / "CBAC_connector.py").read_text()
+        validation = 'self._validate_integer(action_result, comp_id, "Computer ID")'
+        endpoint = 'endpoint += f"/{comp_id}"'
+
+        self.assertIn(validation, source)
+        self.assertLess(source.index(validation), source.index(endpoint))
+
 
 if __name__ == "__main__":
     unittest.main()
