@@ -18,6 +18,7 @@
 import json
 import os
 import sys
+import tempfile
 
 import phantom.app as phantom
 import phantom.rules as phantomrules
@@ -29,6 +30,7 @@ from phantom_common import paths
 
 # THIS Connector imports
 from CBAC_consts import *
+from CBAC_security import safe_vault_filename
 
 
 class Bit9Connector(BaseConnector):
@@ -574,7 +576,10 @@ class Bit9Connector(BaseConnector):
             self.debug_print("Unable to find file with given id")
             return action_result.get_status()
 
-        filename = resp_json.get("fileName")
+        try:
+            filename = safe_vault_filename(resp_json.get("fileName"))
+        except ValueError as exc:
+            return action_result.set_status(phantom.APP_ERROR, str(exc))
 
         ret_val, resp = self._make_rest_call(endpoint, action_result, params=params)
 
@@ -587,9 +592,9 @@ class Bit9Connector(BaseConnector):
         else:
             vault_tmp_dir = os.path.join(paths.PHANTOM_VAULT, "tmp")
 
-        file_loc = vault_tmp_dir + "/" + filename
-        with open(file_loc, "w") as file:
-            file.write(resp.text)
+        with tempfile.NamedTemporaryFile(dir=vault_tmp_dir, delete=False) as file:
+            file.write(resp.content)
+            file_loc = file.name
 
         success, message, vault_id = phantomrules.vault_add(container=self.get_container_id(), file_location=file_loc, file_name=filename)
         if success:
@@ -598,6 +603,10 @@ class Bit9Connector(BaseConnector):
             action_result.update_summary({"vault_id": vault_id})
             return action_result.set_status(phantom.APP_SUCCESS, CBAPPCONTROL_GET_FILE_SUCC.format(vault_id))
 
+        try:
+            os.unlink(file_loc)
+        except OSError:
+            pass
         return action_result.set_status(phantom.APP_ERROR, f"Error adding file to vault: {message}")
 
     def _analyze_file(self, param):

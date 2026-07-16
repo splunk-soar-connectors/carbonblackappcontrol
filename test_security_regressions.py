@@ -2,6 +2,8 @@ import json
 import unittest
 from pathlib import Path
 
+from CBAC_security import safe_vault_filename
+
 
 ROOT = Path(__file__).parent
 
@@ -15,6 +17,22 @@ class ManifestSecurityTests(unittest.TestCase):
             "config.get(phantom.APP_JSON_VERIFY, True)",
             (ROOT / "CBAC_connector.py").read_text(),
         )
+
+    def test_upstream_filename_is_reduced_to_display_name(self):
+        self.assertEqual(safe_vault_filename("../../etc/passwd"), "passwd")
+        self.assertEqual(safe_vault_filename(r"..\..\payload.bin"), "payload.bin")
+
+        for invalid in (None, "", ".", "..", "path/.."):
+            with self.subTest(invalid=invalid):
+                with self.assertRaises(ValueError):
+                    safe_vault_filename(invalid)
+
+    def test_download_uses_anonymous_binary_vault_staging(self):
+        source = (ROOT / "CBAC_connector.py").read_text()
+
+        self.assertIn("tempfile.NamedTemporaryFile(dir=vault_tmp_dir", source)
+        self.assertIn("file.write(resp.content)", source)
+        self.assertNotIn('vault_tmp_dir + "/" + filename', source)
 
 
 if __name__ == "__main__":
