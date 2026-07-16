@@ -42,6 +42,12 @@ class ManifestSecurityTests(unittest.TestCase):
         self.assertIn(validation, source)
         self.assertLess(source.index(validation), source.index(endpoint))
 
+    def test_widget_escapes_hash_values_in_javascript(self):
+        template = (ROOT / "hash_view.html").read_text()
+
+        self.assertIn("result.param.hash_type|escapejs", template)
+        self.assertIn("result.param.hash|escapejs", template)
+
 
 if __name__ == "__main__":
     unittest.main()
