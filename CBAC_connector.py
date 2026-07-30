@@ -30,7 +30,7 @@ from phantom_common import paths
 
 # THIS Connector imports
 from CBAC_consts import *
-from CBAC_security import is_connector_owned_rule, is_global_rule_scope, is_report_only, redact_computer_credentials, safe_vault_filename
+from CBAC_security import is_connector_owned_rule, is_global_rule_scope, is_report_only, safe_vault_filename
 
 
 class Bit9Connector(BaseConnector):
@@ -499,7 +499,7 @@ class Bit9Connector(BaseConnector):
             resp_json = [resp_json]
 
         for current_endpoint in resp_json:
-            action_result.add_data(redact_computer_credentials(current_endpoint))
+            action_result.add_data(current_endpoint)
 
         action_result.update_summary({"total_endpoints": len(resp_json)})
 
@@ -605,21 +605,16 @@ class Bit9Connector(BaseConnector):
         else:
             vault_tmp_dir = os.path.join(paths.PHANTOM_VAULT, "tmp")
 
-        with tempfile.NamedTemporaryFile(dir=vault_tmp_dir, delete=False) as file:
+        with tempfile.NamedTemporaryFile(dir=vault_tmp_dir) as file:
             file.write(resp.content)
-            file_loc = file.name
-
-        success, message, vault_id = phantomrules.vault_add(container=self.get_container_id(), file_location=file_loc, file_name=filename)
+            file.flush()
+            success, message, vault_id = phantomrules.vault_add(container=self.get_container_id(), file_location=file.name, file_name=filename)
         if success:
             vault_details = {phantom.APP_JSON_VAULT_ID: vault_id, "file_name": filename}
             action_result.add_data(vault_details)
             action_result.update_summary({"vault_id": vault_id})
             return action_result.set_status(phantom.APP_SUCCESS, CBAPPCONTROL_GET_FILE_SUCC.format(vault_id))
 
-        try:
-            os.unlink(file_loc)
-        except OSError:
-            pass
         return action_result.set_status(phantom.APP_ERROR, f"Error adding file to vault: {message}")
 
     def _analyze_file(self, param):
@@ -798,7 +793,7 @@ class Bit9Connector(BaseConnector):
             return action_result.get_status()
 
         if resp_json:
-            action_result.add_data(redact_computer_credentials(resp_json))
+            action_result.add_data(resp_json)
 
         return action_result.set_status(phantom.APP_SUCCESS, "Computer object updated successfully")
 
