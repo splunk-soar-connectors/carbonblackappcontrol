@@ -212,8 +212,8 @@ summary.total_objects_successful | numeric | | 1 |
 
 Get the file from the controller and add it to the vault
 
-Type: **investigate** <br>
-Read only: **True**
+Type: **generic** <br>
+Read only: **False**
 
 This will only add the file in vault, whose <b>uploadStatus</b> is 3 (Completed).
 
