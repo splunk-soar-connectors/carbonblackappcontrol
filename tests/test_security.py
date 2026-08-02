@@ -18,12 +18,12 @@ from CBAC_security import redact_computer_credentials
 
 class RedactComputerCredentialsTest(unittest.TestCase):
     def test_removes_cli_password_case_insensitively(self):
-        computer = {"id": 7, "CLIPassword": "secret", "clipassword": "also-secret"}
+        computer = {"id": 7, "CLIPassword": "secret", "clipassword": "also-secret"}  # pragma: allowlist secret
 
         self.assertEqual(redact_computer_credentials(computer), {"id": 7})
 
     def test_does_not_mutate_input(self):
-        computer = {"id": 7, "CLIPassword": "secret"}
+        computer = {"id": 7, "CLIPassword": "secret"}  # pragma: allowlist secret
 
         redact_computer_credentials(computer)
 
