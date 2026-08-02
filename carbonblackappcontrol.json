@@ -713,9 +713,9 @@
             "action": "get file",
             "description": "Get the file from the controller and add it to the vault",
             "verbose": "This will only add the file in vault, whose <b>uploadStatus</b> is 3 (Completed).",
-            "type": "generic",
+            "type": "investigate",
             "identifier": "get_file",
-            "read_only": false,
+            "read_only": true,
             "parameters": {
                 "file_id": {
                     "data_type": "numeric",
