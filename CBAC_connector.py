@@ -742,7 +742,7 @@ class Bit9Connector(BaseConnector):
             return action_result.get_status()
 
         if resp_json:
-            action_result.add_data(redact_computer_credentials(resp_json))
+            action_result.add_data(resp_json)
 
         return action_result.set_status(phantom.APP_SUCCESS, "Local state of file instance updated successfully")
 
@@ -793,7 +793,7 @@ class Bit9Connector(BaseConnector):
             return action_result.get_status()
 
         if resp_json:
-            action_result.add_data(resp_json)
+            action_result.add_data(redact_computer_credentials(resp_json))
 
         return action_result.set_status(phantom.APP_SUCCESS, "Computer object updated successfully")
 
