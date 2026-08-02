@@ -23,6 +23,13 @@ def safe_vault_filename(value):
     return filename
 
 
+def redact_computer_credentials(computer):
+    """Return a computer object without credential-bearing fields."""
+    if not isinstance(computer, dict):
+        return computer
+    return {key: value for key, value in computer.items() if key.casefold() != "clipassword"}
+
+
 def is_connector_owned_rule(rule, ownership_marker):
     """Return whether a file rule carries the connector ownership marker."""
     description = rule.get("description") if isinstance(rule, dict) else None
