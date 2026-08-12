@@ -19,7 +19,7 @@
     "python_version": "3.9, 3.13",
     "logo": "logo_carbonblack.svg",
     "logo_dark": "logo_carbonblack_dark.svg",
-    "license": "Copyright (c) 2016-2025 Splunk Inc.",
+    "license": "Copyright (c) 2016-2026 Splunk Inc.",
     "configuration": {
         "base_url": {
             "data_type": "string",
@@ -36,7 +36,8 @@
         "verify_server_cert": {
             "data_type": "boolean",
             "description": "Verify server certificate",
-            "order": 2
+            "order": 2,
+            "default": true
         }
     },
     "actions": [
@@ -1724,10 +1725,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.CLIPassword",
-                    "data_type": "string"
-                },
-                {
                     "data_path": "action_result.data.*.SCEPStatus",
                     "data_type": "numeric"
                 },
@@ -2568,13 +2565,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.CLIPassword",
-                    "data_type": "string",
-                    "example_values": [
-                        "MAWB-DVAO-FIYM-EHRB"
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.SCEPStatus",
                     "data_type": "numeric",
                     "example_values": [
@@ -3379,5 +3369,11 @@
             ],
             "versions": "EQ(*)"
         }
-    ]
+    ],
+    "pip39_dependencies": {
+        "wheel": []
+    },
+    "pip313_dependencies": {
+        "wheel": []
+    }
 }
