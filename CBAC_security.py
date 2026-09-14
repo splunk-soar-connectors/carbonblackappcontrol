@@ -39,3 +39,12 @@ def is_report_only(rule):
     """Return whether a file rule reports matches without enforcing its state."""
     value = rule.get("reportOnly", False) if isinstance(rule, dict) else False
     return value is True or str(value).casefold() in {"1", "true"}
+
+
+def redact_cli_password(value):
+    """Remove App Control CLI passwords from nested response data."""
+    if isinstance(value, dict):
+        return {key: redact_cli_password(item) for key, item in value.items() if not (isinstance(key, str) and key.casefold() == "clipassword")}
+    if isinstance(value, list):
+        return [redact_cli_password(item) for item in value]
+    return value

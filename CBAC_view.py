@@ -38,7 +38,7 @@ def get_ctx_result(result):
 
     if "hash" in param:
         hash_val = param.get("hash")
-        ret_val, param["hash_type"] = _get_hash_type(hash_val)
+        _ret_val, param["hash_type"] = _get_hash_type(hash_val)
 
     ctx_result["param"] = param
 

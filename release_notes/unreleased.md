@@ -6,3 +6,5 @@
 * Validate computer identifiers before constructing App Control API paths.
 * Escape file hash values rendered in the action widget.
 * Reject foreign and policy-scoped file rules, and enforce connector-owned report-only bans before reporting success.
+* Require approval for endpoint, policy, file-enumeration, and vault-writing actions previously classified as read-only.
+* Remove App Control CLI passwords from system-information and computer-update results.

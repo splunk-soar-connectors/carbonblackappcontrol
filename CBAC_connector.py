@@ -30,7 +30,7 @@ from phantom_common import paths
 
 # THIS Connector imports
 from CBAC_consts import *
-from CBAC_security import is_connector_owned_rule, is_global_rule_scope, is_report_only, safe_vault_filename
+from CBAC_security import is_connector_owned_rule, is_global_rule_scope, is_report_only, redact_cli_password, safe_vault_filename
 
 
 class Bit9Connector(BaseConnector):
@@ -211,7 +211,7 @@ class Bit9Connector(BaseConnector):
 
         params = {"limit": -1}
 
-        ret_val, resp_json = self._make_rest_call(FILE_CATALOG_ENDPOINT, action_result, params=params)
+        ret_val, _resp_json = self._make_rest_call(FILE_CATALOG_ENDPOINT, action_result, params=params)
 
         if phantom.is_fail(ret_val):
             self.save_progress("Test Connectivity Failed")
@@ -499,7 +499,7 @@ class Bit9Connector(BaseConnector):
             resp_json = [resp_json]
 
         for current_endpoint in resp_json:
-            action_result.add_data(current_endpoint)
+            action_result.add_data(redact_cli_password(current_endpoint))
 
         action_result.update_summary({"total_endpoints": len(resp_json)})
 
@@ -793,7 +793,7 @@ class Bit9Connector(BaseConnector):
             return action_result.get_status()
 
         if resp_json:
-            action_result.add_data(resp_json)
+            action_result.add_data(redact_cli_password(resp_json))
 
         return action_result.set_status(phantom.APP_SUCCESS, "Computer object updated successfully")
 

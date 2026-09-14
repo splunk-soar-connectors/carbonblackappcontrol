@@ -56,7 +56,7 @@ No Output
 Searches for a particular file across all the endpoints
 
 Type: **investigate** <br>
-Read only: **True**
+Read only: **False**
 
 This action requires the following permission: <ul><li>View files</li></ul>
 
@@ -171,7 +171,7 @@ summary.total_objects_successful | numeric | | 1 |
 List the files available on the controller
 
 Type: **investigate** <br>
-Read only: **True**
+Read only: **False**
 
 When provided -1 in limit parameter, it will return the count of the number of files available.
 
@@ -212,8 +212,8 @@ summary.total_objects_successful | numeric | | 1 |
 
 Get the file from the controller and add it to the vault
 
-Type: **investigate** <br>
-Read only: **True**
+Type: **generic** <br>
+Read only: **False**
 
 This will only add the file in vault, whose <b>uploadStatus</b> is 3 (Completed).
 
@@ -425,7 +425,7 @@ summary.total_objects_successful | numeric | | 1 |
 Get information about an endpoint
 
 Type: **investigate** <br>
-Read only: **True**
+Read only: **False**
 
 This action requires the following permission: <ul><li>View computers</li></ul>
 
@@ -529,7 +529,7 @@ summary.total_objects_successful | numeric | | |
 Searches for file instances
 
 Type: **generic** <br>
-Read only: **True**
+Read only: **False**
 
 This action requires the following permission: <ul><li>View files</li></ul>
 
@@ -729,7 +729,7 @@ summary.total_objects_successful | numeric | | 1 |
 List the policies
 
 Type: **investigate** <br>
-Read only: **True**
+Read only: **False**
 
 This action requires the following permissions: <ul><li>View policies</li></ul><p>When <b>limit</b> is set to '0' or not set then all the policies will be returned. If set to '-1' then only the result count will be returned, without actual results.</p>
 
