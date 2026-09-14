@@ -39,12 +39,12 @@ def test_sensitive_actions_require_approval() -> None:
 def test_cli_password_is_removed_case_insensitively_and_recursively() -> None:
     response = {
         "id": 42,
-        "CLIPassword": "top-level-secret",
+        "CLIPassword": "top-level-secret",  # pragma: allowlist secret
         "nested": {
-            "clipassword": "nested-secret",
+            "clipassword": "nested-secret",  # pragma: allowlist secret
             "safe": "value",
         },
-        "items": [{"CliPassword": "list-secret", "name": "endpoint"}],
+        "items": [{"CliPassword": "list-secret", "name": "endpoint"}],  # pragma: allowlist secret
     }
 
     assert redact_cli_password(response) == {
