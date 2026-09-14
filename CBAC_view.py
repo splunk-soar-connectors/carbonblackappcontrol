@@ -1,5 +1,5 @@
 # File: CBAC_view.py
-# Copyright (c) 2016-2025 Splunk Inc.
+# Copyright (c) 2016-2026 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ def get_ctx_result(result):
 
     if "hash" in param:
         hash_val = param.get("hash")
-        ret_val, param["hash_type"] = _get_hash_type(hash_val)
+        _ret_val, param["hash_type"] = _get_hash_type(hash_val)
 
     ctx_result["param"] = param
 
