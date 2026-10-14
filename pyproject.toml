@@ -1,10 +1,14 @@
 [project]
-name = "carbonblackappcontrol"
+name = "cbprotect"
 version = "3.1.4"
 description = "This app supports various investigative and containment actions on Carbon Black App Control (formerly Bit9)"
 license = "Copyright (c) 2016-2026 Splunk Inc."
 requires-python = ">=3.13,<3.15"
 dependencies = ["splunk-soar-sdk==6.1.2"]
+
+[tool.uv]
+# SOAR packages Linux wheels; macOS is retained for local development.
+environments = ["sys_platform == 'linux' or sys_platform == 'darwin'"]
 
 [tool.soar.app]
 main_module = "src.app:app"
