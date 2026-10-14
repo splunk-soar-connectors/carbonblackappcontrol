@@ -100,7 +100,6 @@ OUTPUT_FIELDS = [
     {"field_name": "filename", "alias": "fileName", "data_type": "string", "example_values": ["4b1f58.rbf"]},
     {"field_name": "id", "alias": "id", "data_type": "numeric", "example_values": [12]},
     {"field_name": "id", "alias": "id", "data_type": "numeric", "example_values": [5]},
-    {"field_name": "pathname", "alias": "pathName", "data_type": "string", "example_values": ["c:\\config.msi"]},
     {"field_name": "pathname", "alias": "pathName", "data_type": "string", "contains": ["file path"], "example_values": ["c:\\config.msi"]},
     {"field_name": "priority", "alias": "priority", "data_type": "numeric", "example_values": [0]},
     {"field_name": "priority", "alias": "priority", "data_type": "numeric", "example_values": [0]},

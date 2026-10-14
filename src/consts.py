@@ -28,6 +28,9 @@ LOCAL_STATE_APPROVED = "2"
 UNBLOCK_STATE_MAP = {"approved": FILE_STATE_APPROVED, "unapproved": FILE_STATE_UNAPPROVED}
 UNBLOCK_LOCAL_STATE_MAP = {"approved": LOCAL_STATE_APPROVED, "unapproved": LOCAL_STATE_UNAPPROVED}
 DEFAULT_UNBLOCK_STATE = "unapproved"
+# TODO: The legacy connector also used this literal placeholder. Preserve it for
+# compatibility until the SDK exposes a supported installation ID; then write
+# the real ID and continue recognizing this legacy marker when unblocking rules.
 ADDED_BY_PHANTOM = "Added by Phantom Installation ID: {0}"
 UPLOAD_STATUS_DESCS = {"0": "Queued", "1": "Initiated", "2": "Uploading", "3": "Completed", "4": "Error", "5": "Cancelled", "6": "Deleted"}
 ANALYSIS_STATUS_DESCS = {"0": "Scheduled", "1": "Submitted", "2": "Processed", "3": "Analyzed", "4": "Error", "5": "Cancelled"}

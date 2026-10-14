@@ -18,7 +18,7 @@ from typing import Any
 
 from pydantic import create_model
 
-from soar_sdk.action_results import ActionOutput, OutputField
+from soar_sdk.action_results import ActionOutput, OutputField, PermissiveActionOutput
 from soar_sdk.params import Param, Params
 
 from .consts import (
@@ -62,12 +62,14 @@ def make_params_model(name: str, fields: list[dict[str, Any]]) -> type[Params]:
             "column_name": item.get("column_name"),
             "alias": item.get("alias"),
         }
-        model_fields[item["field_name"]] = (field_type | None, Param(**kwargs))
+        is_optional = not item.get("required", False) and item.get("default") is None
+        annotation = field_type | None if is_optional else field_type
+        model_fields[item["field_name"]] = (annotation, Param(**kwargs))
     return create_model(name, __base__=Params, **model_fields)
 
 
 def make_output_model(name: str, fields: list[dict[str, Any]]) -> type[ActionOutput]:
-    """Create an ActionOutput model from the converted manifest field metadata."""
+    """Create a permissive output model with converted manifest field metadata."""
     model_fields = {}
     used_names = set()
     for item in fields:
@@ -82,7 +84,7 @@ def make_output_model(name: str, fields: list[dict[str, Any]]) -> type[ActionOut
             "column_name": item.get("column_name"),
         }
         model_fields[item["field_name"]] = (field_type | None, OutputField(**kwargs))
-    return create_model(name, __base__=ActionOutput, **model_fields)
+    return create_model(name, __base__=PermissiveActionOutput, **model_fields)
 
 
 def make_request(  # noqa: PLR0913
@@ -221,7 +223,10 @@ def _records(output_cls: type[ActionOutput], records: Any, *, status: str = "suc
     outputs = []
     for record in records:
         record_values = {"response": record} if not isinstance(record, dict) else record
-        values = _field_values(output_cls, record_values)
+        values = dict(record_values)
+        for field_name, value in _field_values(output_cls, record_values).items():
+            field = output_cls.model_fields[field_name]
+            values[field.alias or field_name] = value
         if "view_hash" in output_cls.model_fields:
             values["view_hash"] = record_values.get("view_hash", "")
             values["view_message"] = record_values.get("view_message", "")
@@ -283,7 +288,8 @@ def execute_action(  # noqa: PLR0912, PLR0913, PLR0915
                 rule["fileCatalogId"] = catalog.get("id")
             rule.update({"hash": file_hash, "policyIds": 0, "description": description, "fileState": unblock_state})
             response = make_request(asset, FILE_RULE_ENDPOINT, method="POST", data=rule)
-            records = [response or rule]
+            fallback = {**rule, "policyIds": str(rule["policyIds"])}
+            records = [response or fallback]
             message = "Updated rule successfully"
 
     elif action_id == "_block_hash":
@@ -305,7 +311,8 @@ def execute_action(  # noqa: PLR0912, PLR0913, PLR0915
             rule["description"] = f"{comment} - {ADDED_BY_PHANTOM}" if comment else ADDED_BY_PHANTOM
             rule["fileState"] = FILE_STATE_BANNED
             response = make_request(asset, FILE_RULE_ENDPOINT, method="POST", data=rule)
-            records = [response or rule]
+            fallback = {**rule, "policyIds": str(rule["policyIds"])}
+            records = [response or fallback]
             message = "Created/Updated rule successfully"
 
     elif action_id == "upload_file":
