@@ -472,7 +472,12 @@ def execute_action(  # noqa: PLR0912, PLR0913, PLR0915
     elif action_id == "list_policies":
         limit = validate_integer(values.get("limit"), "Limit", allow_zero=True, allow_minus_one_limit=True)
         offset = validate_integer(values.get("offset", 0), "Offset", allow_zero=True)
-        response = make_request(asset, POLICY_OBJECT_ENDPOINT, params={"limit": limit, "offset": offset})
+        query_params = {"limit": limit, "offset": offset}
+        response = make_request(
+            asset,
+            POLICY_OBJECT_ENDPOINT,
+            params={key: value for key, value in query_params.items() if value is not None},
+        )
         if limit == -1:
             summary["total"] = response["count"]
             message = f"Total: {response['count']}"
