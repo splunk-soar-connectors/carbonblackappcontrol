@@ -1,0 +1,21 @@
+API_URI = "/api/bit9platform/v1"
+FILE_CATALOG_ENDPOINT = "/filecatalog"
+FILE_RULE_ENDPOINT = "/fileRule"
+FILE_UPLOAD_ENDPOINT = "/fileUpload"
+FILE_INSTANCE_ENDPOINT = "/fileInstance"
+COMPUTER_OBJECT_ENDPOINT = "/computer"
+POLICY_OBJECT_ENDPOINT = "/policy"
+FILE_ANALYSIS_ENDPOINT = "/fileAnalysis"
+
+FILE_STATE_UNAPPROVED = "1"
+FILE_STATE_APPROVED = "2"
+FILE_STATE_BANNED = "3"
+LOCAL_STATE_UNAPPROVED = "1"
+LOCAL_STATE_APPROVED = "2"
+UNBLOCK_STATE_MAP = {"approved": FILE_STATE_APPROVED, "unapproved": FILE_STATE_UNAPPROVED}
+UNBLOCK_LOCAL_STATE_MAP = {"approved": LOCAL_STATE_APPROVED, "unapproved": LOCAL_STATE_UNAPPROVED}
+DEFAULT_UNBLOCK_STATE = "unapproved"
+ADDED_BY_PHANTOM = "Added by Phantom Installation ID: {0}"
+UPLOAD_STATUS_DESCS = {"0": "Queued", "1": "Initiated", "2": "Uploading", "3": "Completed", "4": "Error", "5": "Cancelled", "6": "Deleted"}
+ANALYSIS_STATUS_DESCS = {"0": "Scheduled", "1": "Submitted", "2": "Processed", "3": "Analyzed", "4": "Error", "5": "Cancelled"}
+DEFAULT_TIMEOUT = 60

@@ -1,0 +1,26 @@
+{% extends 'widgets/widget_template.html' %}
+{% block widget_content %}
+<div class="CBAC-hashview" style="overflow: auto; width: 100%; height: 100%; padding: 10px;">
+  <style>
+    .CBAC-hashview a:hover { text-decoration: underline; }
+    .CBAC-hashview table { border-collapse: collapse; font-size: 12px; }
+    .CBAC-hashview th, .CBAC-hashview td { border: 1px solid; padding: 5px; }
+    .CBAC-hashview th { text-align: center; text-transform: uppercase; font-weight: normal; }
+  </style>
+  {% for result in results %}
+    {% if result.hash %}
+      <table>
+        <tr><th>File Hash</th><th>Status Message</th></tr>
+        <tr>
+          <td>
+            <a href="javascript:;" onclick="context_menu(this, [{'contains': ['{{ result.hash_type }}'], 'value': '{{ result.hash }}'}], 0, {{ container }}, null, false);">
+              {{ result.hash }} <span class="fa fa-caret-down" style="font-size: smaller;"></span>
+            </a>
+          </td>
+          <td>{{ result.message }}</td>
+        </tr>
+      </table>
+    {% endif %}
+  {% endfor %}
+</div>
+{% endblock %}
