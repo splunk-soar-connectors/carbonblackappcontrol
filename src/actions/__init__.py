@@ -1,12 +1,25 @@
-from . import hunt_file  # noqa: F401
-from . import upload_file  # noqa: F401
-from . import list_files  # noqa: F401
-from . import get_file  # noqa: F401
-from . import analyze_file  # noqa: F401
-from . import unblock_hash  # noqa: F401
-from . import block_hash  # noqa: F401
-from . import get_system_info  # noqa: F401
-from . import get_fileinstances  # noqa: F401
-from . import update_fileinstance  # noqa: F401
-from . import update_computer  # noqa: F401
-from . import list_policies  # noqa: F401
+# Copyright (c) 2026 Splunk Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+from . import hunt_file
+from . import upload_file
+from . import list_files
+from . import get_file
+from . import analyze_file
+from . import unblock_hash
+from . import block_hash
+from . import get_system_info
+from . import get_fileinstances
+from . import update_fileinstance
+from . import update_computer
+from . import list_policies

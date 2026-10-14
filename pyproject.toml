@@ -2,7 +2,7 @@
 name = "carbonblackappcontrol"
 version = "3.1.4"
 description = "This app supports various investigative and containment actions on Carbon Black App Control (formerly Bit9)"
-license = { text = "Copyright (c) 2016-2025 Splunk Inc." }
+license = "Copyright (c) 2016-2026 Splunk Inc."
 requires-python = ">=3.13,<3.15"
 dependencies = ["splunk-soar-sdk==6.1.4"]
 

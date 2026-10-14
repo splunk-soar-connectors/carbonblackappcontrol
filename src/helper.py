@@ -1,3 +1,16 @@
+# Copyright (c) 2026 Splunk Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 import ipaddress
 import json
 import re
@@ -28,6 +41,10 @@ from .consts import (
     UPLOAD_STATUS_DESCS,
     API_URI,
 )
+
+HTTP_SUCCESS_MIN = 200
+HTTP_SUCCESS_MAX = 399
+HTTP_UNAUTHORIZED = 401
 
 
 def make_params_model(name: str, fields: list[dict[str, Any]]) -> type[Params]:
@@ -68,7 +85,7 @@ def make_output_model(name: str, fields: list[dict[str, Any]]) -> type[ActionOut
     return create_model(name, __base__=ActionOutput, **model_fields)
 
 
-def make_request(
+def make_request(  # noqa: PLR0913
     asset: Any,
     endpoint: str,
     *,
@@ -95,14 +112,14 @@ def make_request(
     except httpx.HTTPError as exc:
         raise RuntimeError(f"Connection failed: {exc}") from exc
 
-    if not 200 <= response.status_code <= 399:
+    if not HTTP_SUCCESS_MIN <= response.status_code <= HTTP_SUCCESS_MAX:
         detail = response.text
         try:
             body = response.json()
             detail = json.dumps(body).replace("{", "").replace("}", "")
         except ValueError:
             pass
-        if response.status_code == 401:
+        if response.status_code == HTTP_UNAUTHORIZED:
             detail += ". Please verify the user has been configured with the required permissions as mentioned in the action documentation."
         raise RuntimeError(f"API failed, Status code: {response.status_code}, Detail: {detail}")
 
@@ -177,7 +194,7 @@ def _field_values(model: type[ActionOutput], values: dict[str, Any]) -> dict[str
             accepted[field_name] = "success"
         elif source_name in values:
             value = values[source_name]
-            if isinstance(value, (dict, list)):
+            if isinstance(value, dict | list):
                 value = json.dumps(value)
             accepted[field_name] = value
     return accepted
@@ -203,19 +220,18 @@ def _records(output_cls: type[ActionOutput], records: Any, *, status: str = "suc
         records = [{"response": records}]
     outputs = []
     for record in records:
-        if not isinstance(record, dict):
-            record = {"response": record}
-        values = _field_values(output_cls, record)
+        record_values = {"response": record} if not isinstance(record, dict) else record
+        values = _field_values(output_cls, record_values)
         if "view_hash" in output_cls.model_fields:
-            values["view_hash"] = record.get("view_hash", "")
-            values["view_message"] = record.get("view_message", "")
+            values["view_hash"] = record_values.get("view_hash", "")
+            values["view_message"] = record_values.get("view_message", "")
         if "sdk_status_column" in output_cls.model_fields:
             values["sdk_status_column"] = status
         outputs.append(output_cls(**values))
     return outputs
 
 
-def execute_action(
+def execute_action(  # noqa: PLR0912, PLR0913, PLR0915
     action_id: str,
     params: Params,
     soar: Any,
@@ -390,11 +406,14 @@ def execute_action(
     elif action_id == "get_fileinstances":
         catalog_id = validate_integer(values["filecatalog_id"], "FileCatalog ID")
         computer_id = validate_integer(values["computer_id"], "Computer ID")
-        records = make_request(
-            asset,
-            FILE_INSTANCE_ENDPOINT,
-            params={"q": [f"computerId:{computer_id}", f"fileCatalogId:{catalog_id}"]},
-        ) or []
+        records = (
+            make_request(
+                asset,
+                FILE_INSTANCE_ENDPOINT,
+                params={"q": [f"computerId:{computer_id}", f"fileCatalogId:{catalog_id}"]},
+            )
+            or []
+        )
 
     elif action_id == "update_fileinstance":
         instance_id = validate_integer(values["instance_id"], "FileInstance ID")
@@ -436,9 +455,9 @@ def execute_action(
         if not policy:
             raise ValueError(f"Unable to find policy object with id {policy_id}")
         if values.get("policy_id") and computer.get("automaticPolicy"):
-            raise ValueError(f"Can't update policy on computer {computer_id} if automaticPolicy set to True")
+            raise ValueError(f"Can't update policy on computer {computer_id} if automaticPolicy set to True")  # noqa: S608
         if values.get("policy_id") and computer.get("localApproval"):
-            raise ValueError(f"Can't update policy on computer {computer_id} if localApproval set to True")
+            raise ValueError(f"Can't update policy on computer {computer_id} if localApproval set to True")  # noqa: S608
         updated = make_request(asset, endpoint, method="PUT", data=computer)
         records = [updated or computer]
         message = "Computer object updated successfully"
