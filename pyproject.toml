@@ -9,6 +9,9 @@ dependencies = ["splunk-soar-sdk==6.1.2"]
 [tool.soar.app]
 main_module = "src.app:app"
 
+[[tool.uv.index]]
+url = "https://pypi.python.org/simple"
+
 [tool.ruff]
 target-version = "py313"
 line-length = 145
