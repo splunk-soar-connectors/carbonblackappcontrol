@@ -644,7 +644,7 @@ action_result.parameter.computer_tag | string | | tag1,tag2 |
 action_result.parameter.description | string | | computer description |
 action_result.parameter.policy_id | string | `carbon black policy id` | 1 |
 action_result.parameter.prioritized | boolean | | true false |
-action_result.data.\*.CLIPassword | string | | MAWB-DVAO-FIYM-EHRB |
+action_result.data.\*.CLIPassword | string | | |
 action_result.data.\*.SCEPStatus | numeric | | 0 |
 action_result.data.\*.activeDebugFlags | numeric | | 16 |
 action_result.data.\*.activeDebugLevel | numeric | | 0 |

@@ -85,7 +85,7 @@ dependencies = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "splunk-soar-sdk", specifier = "==6.1.4" }]
+requires-dist = [{ name = "splunk-soar-sdk", specifier = "==6.1.2" }]
 
 [[package]]
 name = "certifi"
@@ -876,7 +876,7 @@ wheels = [
 
 [[package]]
 name = "splunk-soar-sdk"
-version = "6.1.4"
+version = "6.1.2"
 source = { registry = "https://repo.splunkdev.net/artifactory/api/pypi/pypi-test/simple" }
 dependencies = [
     { name = "authlib" },
@@ -902,9 +902,9 @@ dependencies = [
     { name = "tqdm" },
     { name = "typer" },
 ]
-sdist = { url = "https://repo.splunkdev.net/artifactory/api/pypi/pypi-test/packages/packages/b0/94/091cbccc7008ae72885937ac9f786a31716b36f9d88fc751ce89c68f1d22/splunk_soar_sdk-6.1.4.tar.gz", hash = "sha256:0617b323c165f26fb8e68db565fe5886648da3af4bef4c3c152f270417859f64" }
+sdist = { url = "https://repo.splunkdev.net/artifactory/api/pypi/pypi-test/packages/packages/33/a8/e73e8ab6cd74b88b5941a68c401f4dacc15cc27a02a8a63c17520cc3f32c/splunk_soar_sdk-6.1.2.tar.gz", hash = "sha256:c42cc04f402222bff6c16a3405d5fb2757ca2243714e597c88a1bb7f8897aad8" }
 wheels = [
-    { url = "https://repo.splunkdev.net/artifactory/api/pypi/pypi-test/packages/packages/74/7d/9af62cb7d16211a6126ff391347608065ee6fff99117a3ddbf17e89d6cbf/splunk_soar_sdk-6.1.4-py3-none-any.whl", hash = "sha256:86e7e0e3ab24e3d7331ff3a9a2fd49887c0759038ed698a3baadafea53696be9" },
+    { url = "https://repo.splunkdev.net/artifactory/api/pypi/pypi-test/packages/packages/5e/0d/ffa8940eca5567c7abef76f861e5f72ddbb5c0778e7f19a05e320f5305a4/splunk_soar_sdk-6.1.2-py3-none-any.whl", hash = "sha256:316acdd3d0d159e25aec92cc111ff41ab38793193ad6963f87b15f7ac128b879" },
 ]
 
 [[package]]

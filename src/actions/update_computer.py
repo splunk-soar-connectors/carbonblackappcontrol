@@ -89,7 +89,7 @@ OUTPUT_FIELDS = [
         "column_name": "Status",
         "example_values": ["success", "failed"],
     },
-    {"field_name": "clipassword", "alias": "CLIPassword", "data_type": "string", "example_values": ["MAWB-DVAO-FIYM-EHRB"]},
+    {"field_name": "clipassword", "alias": "CLIPassword", "data_type": "string"},
     {"field_name": "scepstatus", "alias": "SCEPStatus", "data_type": "numeric", "example_values": [0]},
     {"field_name": "activedebugflags", "alias": "activeDebugFlags", "data_type": "numeric", "example_values": [16]},
     {"field_name": "activedebuglevel", "alias": "activeDebugLevel", "data_type": "numeric", "example_values": [0]},
