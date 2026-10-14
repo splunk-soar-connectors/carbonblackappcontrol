@@ -1,79 +1,31 @@
-# Ruff linting
+[project]
+name = "cbprotect"
+version = "3.1.4"
+description = "This app supports various investigative and containment actions on Carbon Black App Control (formerly Bit9)"
+license = "Copyright (c) 2016-2026 Splunk Inc."
+requires-python = ">=3.13,<3.15"
+dependencies = ["splunk-soar-sdk==6.1.2"]
+
+[tool.uv]
+# SOAR packages Linux wheels; macOS is retained for local development.
+environments = ["sys_platform == 'linux' or sys_platform == 'darwin'"]
+
+[tool.soar.app]
+main_module = "src.app:app"
+
+[[tool.uv.index]]
+url = "https://pypi.python.org/simple"
+
 [tool.ruff]
+target-version = "py313"
 line-length = 145
-target-version = "py39"
 
 [tool.ruff.lint]
-select = [ # Auto-fixable rules only
-    "I",    # isort
-    "UP",   # pyupgrade
-    "F401", # unused imports
-    "RUF"   # ruff rules
-]
-
-ignore = [
-    "RUF012", # Not auto-fixable (remove eventually)
-    "RUF001" # Not auto-fixable (remove eventually)
-]
+select = ["ERA", "S", "DTZ", "SIM", "PTH", "E", "F", "W", "PL", "UP", "RUF"]
+ignore = ["E501", "RUF012", "RUF001"]
 
 [tool.ruff.lint.per-file-ignores]
-"__init__.py" = ["F401", "UP035"]  # __init__.py file exceptions
-
-# Keep complexity below 28
-[tool.ruff.lint.mccabe]
-max-complexity = 28
-
-[tool.ruff.lint.isort]
-combine-as-imports = true
-lines-after-imports = 2
+"src/actions/__init__.py" = ["F401"]
 
 [tool.ruff.format]
-quote-style = "double"
-indent-style = "space"
-skip-magic-trailing-comma = false
-line-ending = "auto"
-
-# HTML linting
-[tool.djlint]
-profile = "django"
-extension = "html"
-indent = 2
-
-# Auto-fixable rules only
-include = "H008,H009,H010,H014,H024,H026,H033,T028,T034"
-
-# Ignore troublesome rules that aren't auto-fixable or causing issues
-ignore = "D004,D018,H005,H006,H007,H011,H012,H013,H015,H016,H017,H019,H020,H021,H022,H023,H025,H029,H030,H031,H035,H036,H037,J004,J018,T001,T002,T003,T027,T032"
-
-# Markdown linting
-[tool.mdformat]
-wrap = true
-number = true
-
-# Semgrep configuration
-[tool.semgrep]
-config = [
-    "p/python", # Built-in Python rules
-    "semgrep", # Look for our other rules
-    "r/typescript.react.security.audit.react-dangerouslysetinnerhtml.react-dangerouslysetinnerhtml" # TypeScript React security rule
-]
-ignore-patterns = [
-    "node_modules/",
-    "build/",
-    "dist/",
-    "vendor/",
-    "env/",
-    ".env/",
-    "venv/",
-    ".venv/",
-    ".tox/",
-    "*.min.js",
-    "test/",
-    "tests/",
-    "*_test.go",
-    ".semgrep",
-    "wheels/",
-    ".html",
-    "*.md",
-    "*.svg"
-]
+docstring-code-format = true
