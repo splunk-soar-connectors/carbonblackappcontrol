@@ -2045,6 +2045,10 @@
                     "data_type": "string"
                 },
                 {
+                    "data_path": "action_result.data.*.response_json",
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.data.*.virtualPlatform",
                     "data_type": "string"
                 },

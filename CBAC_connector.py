@@ -484,7 +484,12 @@ class Bit9Connector(BaseConnector):
             resp_json = [resp_json]
 
         for curr_endpiont in resp_json:
-            action_result.add_data(curr_endpiont)
+            endpoint_data = curr_endpiont.copy()
+            try:
+                endpoint_data["response_json"] = json.dumps(curr_endpiont, allow_nan=False)
+            except (TypeError, ValueError) as exc:
+                self.debug_print(f"Could not encode response_json: {exc}")
+            action_result.add_data(endpoint_data)
 
         action_result.update_summary({"total_endpoints": len(resp_json)})
 
